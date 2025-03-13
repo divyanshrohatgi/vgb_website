@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # BNI Clone - MERN Stack
 
 This project is a clone of the [Business Network International (BNI) website](https://www.bni.com/) built using the MERN stack (MongoDB, Express.js, React.js, and Node.js).
@@ -102,3 +103,6 @@ This project is for educational purposes only. The original BNI website and its 
 
 - This project is inspired by the [BNI Website](https://www.bni.com/)
 - All images and logos used in this project belong to their respective owners
+=======
+# vgb_website
+>>>>>>> 4006d038ae68930d1e04f0a9adf3d3fbefd59378
