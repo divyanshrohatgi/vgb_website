@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+// client/src/pages/RegisterPage.jsx
+import { useState, useContext, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import AuthContext from '../context/AuthContext';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +16,21 @@ const RegisterPage = () => {
     location: ''
   });
 
-  const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
+  const { register, error, user, clearError } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/profile');
+    }
+    
+    // Clear any previous auth errors when component mounts
+    clearError();
+    
+    // eslint-disable-next-line
+  }, [user, navigate]);
 
   const { name, email, password, confirmPassword, company, profession, phone, location } = formData;
 
@@ -22,35 +38,58 @@ const RegisterPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submitted, validating...');
 
     // Validate form
     if (!name || !email || !password || !confirmPassword || !company || !profession) {
-      setError('Please fill in all required fields');
+      setFormError('Please fill in all required fields');
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setFormError('Passwords do not match');
       return;
     }
 
-    // In a real app, you would connect to your API here
-    console.log('Registration submitted:', formData);
+    if (password.length < 6) {
+      setFormError('Password must be at least 6 characters');
+      return;
+    }
 
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      company: '',
-      profession: '',
-      phone: '',
-      location: ''
-    });
-    setError('');
+    // Clear form error
+    setFormError('');
+
+    // Prepare data for registration
+    const userData = {
+      name,
+      email,
+      password,
+      company,
+      profession,
+      location,
+      phone
+    };
+
+    // Attempt registration
+    console.log('Attempting registration with:', { ...userData, password: '[REDACTED]' });
+    
+    try {
+      const result = await register(userData);
+      console.log('Registration result:', result);
+      
+      if (result.success) {
+        console.log('Registration successful, redirecting to profile');
+        navigate('/profile');
+      } else {
+        console.log('Registration failed:', result.message);
+        setFormError(result.message || 'Registration failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error during registration submission:', error);
+      setFormError('An unexpected error occurred. Please try again.');
+    }
   };
 
   return (
@@ -62,7 +101,7 @@ const RegisterPage = () => {
             <RegisterTitle>Create Account</RegisterTitle>
           </RegisterHeader>
 
-          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {(formError || error) && <ErrorMessage>{formError || error}</ErrorMessage>}
 
           <RegisterForm onSubmit={handleSubmit}>
             <FormRow>
@@ -177,8 +216,8 @@ const RegisterPage = () => {
 
             <TermsText>
               By creating an account, you agree to the
-              <TermsLink href="/terms" target="_blank">Terms of Service</TermsLink> and
-              <TermsLink href="/privacy" target="_blank">Privacy Policy</TermsLink>.
+              <TermsLink to="/terms">Terms of Service</TermsLink> and
+              <TermsLink to="/privacy">Privacy Policy</TermsLink>.
             </TermsText>
 
             <SubmitButton type="submit">Create Account</SubmitButton>
@@ -286,9 +325,10 @@ const TermsText = styled.p`
   color: #666;
 `;
 
-const TermsLink = styled.a`
+const TermsLink = styled(Link)`
   color: var(--primary-color);
   margin: 0 5px;
+  text-decoration: none;
 
   &:hover {
     text-decoration: underline;
@@ -326,6 +366,7 @@ const LoginText = styled.span`
 const LoginLink = styled(Link)`
   color: var(--primary-color);
   font-weight: 600;
+  text-decoration: none;
 
   &:hover {
     text-decoration: underline;

@@ -1,30 +1,47 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useContext, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import AuthContext from '../context/AuthContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSubmit = (e) => {
+  const [formError, setFormError] = useState('');
+  
+  const { login, error, user, clearError } = useContext(AuthContext);
+  const navigate = useNavigate();
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/profile');
+    }
+    
+    // Clear any previous auth errors when component mounts
+    clearError();
+    
+    // eslint-disable-next-line
+  }, [user, navigate]);
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     // Validate form
     if (!email || !password) {
-      setError('Please fill in all fields');
+      setFormError('Please fill in all fields');
       return;
     }
-
-    // In a real app, you would connect to your API here
-    console.log('Login submitted:', { email, password });
-
-    // Reset form
-    setEmail('');
-    setPassword('');
-    setError('');
+    
+    // Clear form error if any
+    setFormError('');
+    
+    // Attempt login
+    const result = await login(email, password);
+    if (result.success) {
+      navigate('/profile'); // Redirect to profile on success
+    }
   };
-
+  
   return (
     <LoginContainer>
       <div className="container">
@@ -33,14 +50,14 @@ const LoginPage = () => {
             <LoginLogo src="https://web-assets.same.dev/4078305203/3980109376.png" alt="BNI Logo" />
             <LoginTitle>Member Login</LoginTitle>
           </LoginHeader>
-
-          {error && <ErrorMessage>{error}</ErrorMessage>}
-
+          
+          {(formError || error) && <ErrorMessage>{formError || error}</ErrorMessage>}
+          
           <LoginForm onSubmit={handleSubmit}>
             <FormGroup>
               <FormLabel htmlFor="email">Email</FormLabel>
-              <FormInput
-                type="email"
+              <FormInput 
+                type="email" 
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -48,11 +65,11 @@ const LoginPage = () => {
                 required
               />
             </FormGroup>
-
+            
             <FormGroup>
               <FormLabel htmlFor="password">Password</FormLabel>
-              <FormInput
-                type="password"
+              <FormInput 
+                type="password" 
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -60,12 +77,12 @@ const LoginPage = () => {
                 required
               />
             </FormGroup>
-
+            
             <ForgotPassword to="/forgot-password">Forgot password?</ForgotPassword>
-
+            
             <SubmitButton type="submit">Sign In</SubmitButton>
           </LoginForm>
-
+          
           <RegisterSection>
             <RegisterText>Don't have an account?</RegisterText>
             <RegisterLink to="/register">Create Account</RegisterLink>
@@ -136,7 +153,7 @@ const FormInput = styled.input`
   border-radius: 5px;
   font-size: 16px;
   transition: border-color 0.3s;
-
+  
   &:focus {
     border-color: var(--primary-color);
     outline: none;
@@ -149,7 +166,8 @@ const ForgotPassword = styled(Link)`
   color: var(--primary-color);
   margin-bottom: 20px;
   font-size: 0.9rem;
-
+  text-decoration: none;
+  
   &:hover {
     text-decoration: underline;
   }
@@ -166,7 +184,7 @@ const SubmitButton = styled.button`
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s;
-
+  
   &:hover {
     background-color: #b01c26;
   }
@@ -186,7 +204,8 @@ const RegisterText = styled.span`
 const RegisterLink = styled(Link)`
   color: var(--primary-color);
   font-weight: 600;
-
+  text-decoration: none;
+  
   &:hover {
     text-decoration: underline;
   }

@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const {
-  authUser,
   registerUser,
+  authUser,
   getUserProfile,
   updateUserProfile,
+  updateMembershipStatus,
 } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -16,5 +17,7 @@ router.post('/login', authUser);
 router.route('/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
+
+router.put('/membership', protect, updateMembershipStatus);
 
 module.exports = router;

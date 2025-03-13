@@ -1,15 +1,10 @@
 const jwt = require('jsonwebtoken');
+const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
 
-// Create an express-async-handler function for error handling
-const asyncHandler = (fn) => (req, res, next) =>
-  Promise.resolve(fn(req, res, next)).catch(next);
-
-// Middleware to protect routes - verifies JWT token
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
-  // Check if token exists in the Authorization header
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
@@ -21,7 +16,7 @@ const protect = asyncHandler(async (req, res, next) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get user from the token (exclude password)
+      // Get user from the token
       req.user = await User.findById(decoded.id).select('-password');
 
       next();
@@ -38,7 +33,6 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-// Admin middleware
 const admin = (req, res, next) => {
   if (req.user && req.user.isAdmin) {
     next();
@@ -48,4 +42,4 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin, asyncHandler };
+module.exports = { protect, admin };
