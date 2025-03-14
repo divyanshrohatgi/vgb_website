@@ -1,11 +1,13 @@
+// client/src/components/Header.jsx
 import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaBars, FaTimes, FaUser } from 'react-icons/fa';
+import { FaBars, FaTimes, FaUser, FaHandHoldingHeart, FaTree, FaBookReader, FaOm} from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -21,76 +23,118 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <div className="container">
-        <HeaderContent>
-          <Logo>
-            <Link to="/">
-              <img 
-                src="https://web-assets.same.dev/4078305203/3980109376.png" 
-                alt="BNI Logo" 
-              />
-            </Link>
-          </Logo>
+      <TopHeader>
+        <div className="container">
+          <TopHeaderContent>
+            <SocialIcons>
+              <SocialIcon href="#"><i className="fab fa-facebook-f"></i></SocialIcon>
+              <SocialIcon href="#"><i className="fab fa-twitter"></i></SocialIcon>
+              <SocialIcon href="#"><i className="fab fa-instagram"></i></SocialIcon>
+              <SocialIcon href="#"><i className="fab fa-youtube"></i></SocialIcon>
+            </SocialIcons>
+            <ContactInfo>
+              <ContactItem><i className="fas fa-phone"></i> +91-9103544414</ContactItem>
+              <ContactItem><i className="fas fa-envelope"></i> info@vishwagurubharat.org</ContactItem>
+            </ContactInfo>
+          </TopHeaderContent>
+        </div>
+      </TopHeader>
+      
+      <MainHeader>
+        <div className="container">
+          <HeaderContent>
+            <Logo>
+              <Link to="/">
+                <img 
+                  src="https://web-assets.same.dev/335287695/52350043.png" 
+                  alt="Vishwa Guru Bharat Logo" 
+                />
+              </Link>
+            </Logo>
 
-          <NavMenu className={isOpen ? 'active' : ''}>
-            <NavItem>
-              <Link to="/experience" onClick={() => setIsOpen(false)}>BNI Experience</Link>
-            </NavItem>
-            <NavItem>
-              <Link to="/community" onClick={() => setIsOpen(false)}>Community</Link>
-            </NavItem>
-            <NavItem className="dropdown">
-              <span>About</span>
-              <DropdownContent>
-                <Link to="/about" onClick={() => setIsOpen(false)}>About Us</Link>
-                <Link to="/leadership" onClick={() => setIsOpen(false)}>Leadership</Link>
-                <Link to="/founders" onClick={() => setIsOpen(false)}>Our Founders</Link>
-              </DropdownContent>
-            </NavItem>
-            <NavItem>
-              <Link to="/donate" onClick={() => setIsOpen(false)}>Donate</Link>
-            </NavItem>
-            {user && (
-              <NavItem className="mobile-only">
-                <Link to="/profile" onClick={() => setIsOpen(false)}>My Profile</Link>
+            <NavMenu className={isOpen ? 'active' : ''}>
+              <NavItem>
+                <Link to="/experience" onClick={() => setIsOpen(false)}>
+                  <NavIcon><FaOm /></NavIcon>
+                  VGB Experience
+                </Link>
               </NavItem>
-            )}
-            {user && (
-              <NavItem className="mobile-only">
-                <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+              <NavItem
+                className="dropdown"
+                onMouseEnter={() => setDropdownOpen(true)}
+                onMouseLeave={() => setDropdownOpen(false)}
+              >
+              <span>
+                <NavIcon><FaHandHoldingHeart /></NavIcon>
+                Initiatives
+              </span>
+              {dropdownOpen && (
+                <DropdownContent>
+                  <DropdownItem to="/gau" onClick={() => setDropdownOpen(false)}>Gau Seva</DropdownItem>
+                  <DropdownItem to="/ganga" onClick={() => setDropdownOpen(false)}>Ganga Conservation</DropdownItem>
+                  <DropdownItem to="/gayatri" onClick={() => setDropdownOpen(false)}>Gayatri Awareness</DropdownItem>
+                  <DropdownItem to="/gita" onClick={() => setDropdownOpen(false)}>Gita Teachings</DropdownItem>
+                  <DropdownItem to="/guru" onClick={() => setDropdownOpen(false)}>Guru Initiatives</DropdownItem>
+                </DropdownContent>
+              )}
+            </NavItem>
+              <NavItem>
+                <Link to="/community" onClick={() => setIsOpen(false)}>
+                  <NavIcon><FaTree /></NavIcon>
+                  Community
+                </Link>
+                </NavItem>
+                <NavItem>
+                <Link to="/about" onClick={() => setIsOpen(false)}>
+                  <NavIcon><FaBookReader /></NavIcon>
+                  About
+                </Link>
               </NavItem>
-            )}
-            <MobileClose onClick={toggleMenu}>
-              <FaTimes />
-            </MobileClose>
-          </NavMenu>
+              <NavItem>
+                <Link to="/donate" onClick={() => setIsOpen(false)}>Donate</Link>
+              </NavItem>
+              {user && (
+                <NavItem className="mobile-only">
+                  <Link to="/profile" onClick={() => setIsOpen(false)}>My Profile</Link>
+                </NavItem>
+              )}
+              {user && (
+                <NavItem className="mobile-only">
+                  <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+                </NavItem>
+              )}
+              <MobileClose onClick={toggleMenu}>
+                <FaTimes />
+              </MobileClose>
+            </NavMenu>
 
-          <HeaderRight>
-            {user ? (
-              <UserMenu>
-                <UserButton to="/profile">
-                  <FaUser />
-                  <span>My Profile</span>
-                </UserButton>
-                <LogoutLink onClick={handleLogout}>Logout</LogoutLink>
-              </UserMenu>
-            ) : (
-              <AuthButtons>
-                <LoginButton to="/login">Sign In</LoginButton>
-                <RegisterButton to="/register">Join Now</RegisterButton>
-              </AuthButtons>
-            )}
-            <MobileToggle onClick={toggleMenu}>
-              <FaBars />
-            </MobileToggle>
-          </HeaderRight>
-        </HeaderContent>
-      </div>
+            <HeaderRight>
+              {user ? (
+                <UserMenu>
+                  <UserButton to="/profile">
+                    <FaUser />
+                    <span>My Profile</span>
+                  </UserButton>
+                  <LogoutLink onClick={handleLogout}>Logout</LogoutLink>
+                </UserMenu>
+              ) : (
+                <AuthButtons>
+                  <LoginButton to="/login">Sign In</LoginButton>
+                  <RegisterButton to="/register">Join Now</RegisterButton>
+                </AuthButtons>
+              )}
+              <MobileToggle onClick={toggleMenu}>
+                <FaBars />
+              </MobileToggle>
+            </HeaderRight>
+          </HeaderContent>
+        </div>
+      </MainHeader>
       
       {user && user.membershipStatus === 'pending' && (
         <MembershipAlert>
           <div className="container">
-            Complete your membership to access all BNI benefits. 
+            Complete your membership to access all features. 
             <MembershipAlertLink to="/profile">Go to your profile</MembershipAlertLink>
           </div>
         </MembershipAlert>
@@ -100,11 +144,65 @@ const Header = () => {
 };
 
 const HeaderContainer = styled.header`
-  background-color: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
+`;
+
+const TopHeader = styled.div`
+  background-color: #cd232e;
+  padding: 8px 0;
+  color: white;
+`;
+
+const TopHeaderContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 5px;
+  }
+`;
+
+const SocialIcons = styled.div`
+  display: flex;
+  gap: 15px;
+`;
+
+const SocialIcon = styled.a`
+  color: white;
+  font-size: 16px;
+  transition: opacity 0.3s;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const ContactInfo = styled.div`
+  display: flex;
+  gap: 20px;
+  
+  @media (max-width: 768px) {
+    gap: 10px;
+    flex-direction: column;
+    text-align: center;
+  }
+`;
+
+const ContactItem = styled.div`
+  font-size: 14px;
+  
+  i {
+    margin-right: 5px;
+  }
+`;
+
+const MainHeader = styled.div`
+  background-color: #fff;
   padding: 15px 0;
 `;
 
@@ -116,7 +214,11 @@ const HeaderContent = styled.div`
 
 const Logo = styled.div`
   img {
-    height: 40px;
+    height: 70px; /* Larger logo */
+    
+    @media (max-width: 768px) {
+      height: 50px;
+    }
   }
 `;
 
@@ -154,19 +256,30 @@ const NavMenu = styled.ul`
   }
 `;
 
+const NavIcon = styled.span`
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 20px; /* Larger icon */
+  color: #cd232e;
+  vertical-align: middle;
+`;
+
 const NavItem = styled.li`
   margin: 0 15px;
   position: relative;
   
   a, span {
-    color: var(--secondary-color);
+    color: #2b2928;
     font-weight: 500;
+    font-size: 16px;
     cursor: pointer;
     transition: color 0.3s;
     text-decoration: none;
+    display: flex;
+    align-items: center;
     
     &:hover {
-      color: var(--primary-color);
+      color: #cd232e;
     }
   }
   
@@ -230,25 +343,25 @@ const AuthButtons = styled.div`
 `;
 
 const LoginButton = styled(Link)`
-  color: var(--secondary-color);
+  color: #2b2928;
   font-weight: 600;
-  padding: 8px 15px;
+  padding: 10px 18px;
   margin-right: 10px;
   border-radius: 4px;
   transition: all 0.3s;
   text-decoration: none;
   
   &:hover {
-    color: var(--primary-color);
+    color: #cd232e;
     background-color: #f9f9f9;
   }
 `;
 
 const RegisterButton = styled(Link)`
-  background-color: var(--primary-color);
+  background-color: #cd232e;
   color: #fff;
   border-radius: 4px;
-  padding: 10px 20px;
+  padding: 12px 22px;
   font-weight: 600;
   transition: background-color 0.3s;
   text-decoration: none;
@@ -270,7 +383,7 @@ const UserMenu = styled.div`
 const UserButton = styled(Link)`
   display: flex;
   align-items: center;
-  color: var(--secondary-color);
+  color: #2b2928;
   font-weight: 600;
   padding: 8px 15px;
   border-radius: 4px;
@@ -279,10 +392,11 @@ const UserButton = styled(Link)`
   
   svg {
     margin-right: 8px;
+    font-size: 20px;
   }
   
   &:hover {
-    color: var(--primary-color);
+    color: #cd232e;
     background-color: #f9f9f9;
   }
 `;
@@ -290,7 +404,7 @@ const UserButton = styled(Link)`
 const LogoutLink = styled.button`
   background: none;
   border: none;
-  color: var(--secondary-color);
+  color: #2b2928;
   font-weight: 500;
   cursor: pointer;
   padding: 8px 15px;
@@ -298,14 +412,14 @@ const LogoutLink = styled.button`
   transition: color 0.3s;
   
   &:hover {
-    color: var(--primary-color);
+    color: #cd232e;
   }
 `;
 
 const LogoutButton = styled.button`
   background: none;
   border: none;
-  color: var(--secondary-color);
+  color: #2b2928;
   font-weight: 500;
   cursor: pointer;
   padding: 0;
@@ -314,7 +428,7 @@ const LogoutButton = styled.button`
   transition: color 0.3s;
   
   &:hover {
-    color: var(--primary-color);
+    color: #cd232e;
   }
 `;
 
@@ -322,8 +436,9 @@ const MobileToggle = styled.button`
   display: none;
   background: none;
   border: none;
-  font-size: 24px;
-  color: var(--secondary-color);
+  font-size: 28px; /* Larger icon */
+  color: #2b2928;
+  cursor: pointer;
   
   @media (max-width: 992px) {
     display: block;
@@ -334,11 +449,12 @@ const MobileClose = styled.button`
   display: none;
   background: none;
   border: none;
-  font-size: 24px;
-  color: var(--secondary-color);
+  font-size: 28px; /* Larger icon */
+  color: #2b2928;
   position: absolute;
   top: 20px;
   right: 20px;
+  cursor: pointer;
   
   @media (max-width: 992px) {
     display: block;
@@ -348,14 +464,13 @@ const MobileClose = styled.button`
 const MembershipAlert = styled.div`
   background-color: #fff3cd;
   color: #856404;
-  padding: 8px 0;
+  padding: 10px 0;
   text-align: center;
   font-size: 0.9rem;
-  margin-top: 10px;
 `;
 
 const MembershipAlertLink = styled(Link)`
-  color: var(--primary-color);
+  color: #cd232e;
   font-weight: 600;
   margin-left: 10px;
   text-decoration: none;
@@ -364,5 +479,19 @@ const MembershipAlertLink = styled(Link)`
     text-decoration: underline;
   }
 `;
+
+
+const DropdownItem = styled(Link)`
+  display: block;
+  padding: 10px 15px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    background-color: #f6f6f6;
+  }
+`;
+
 
 export default Header;

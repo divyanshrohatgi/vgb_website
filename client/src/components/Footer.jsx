@@ -1,318 +1,271 @@
-import { useState } from 'react';
+// client/src/components/Footer.jsx
+import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaLinkedin, FaYoutube, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
 
 const Footer = () => {
-  const [email, setEmail] = useState('');
-  const [isSubscribed, setIsSubscribed] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (email) {
-      setIsSubscribed(true);
-      setEmail('');
-      // In a real app, you'd send this to your backend
-    }
-  };
-
   return (
     <FooterContainer>
-      <MainFooter>
-        <div className="container">
-          <FooterGrid>
-            <FooterColumn>
-              <FooterTitle>The BNI Experience</FooterTitle>
-              <FooterLink to="/the-bni-experience">The BNI Experience</FooterLink>
-              <FooterLink to="/global-markets">Our Global Community</FooterLink>
-              <FooterLink to="/my-bni-stories">My BNI Story</FooterLink>
-              <FooterLink to="https://bnifranchise.com">BNI Franchising</FooterLink>
-            </FooterColumn>
-
-            <FooterColumn>
-              <FooterTitle>About Us</FooterTitle>
-              <FooterLink to="/about">About Us</FooterLink>
-              <FooterLink to="/about/leadership">Leadership</FooterLink>
-              <FooterLink to="/about/national-directors">National Directors</FooterLink>
-              <FooterLink to="/about/our-founder">Our Founder</FooterLink>
-              <FooterLink to="/about/careers">Careers</FooterLink>
-            </FooterColumn>
-
-            <FooterColumn>
-              <FooterTitle>The Latest</FooterTitle>
-              <FooterLink to="/the-latest">The Latest</FooterLink>
-              <FooterLink to="/the-latest/#blog-and-news">Blog & News</FooterLink>
-              <FooterLink to="/category/networking-tips">Networking Tips</FooterLink>
-              <FooterLink to="/global-events">Global Events</FooterLink>
-            </FooterColumn>
-
-            <FooterColumn>
-              <FooterTitle>Quick Links</FooterTitle>
-              <FooterLink to="https://bnipartner.com">Strategic Alliance</FooterLink>
-              <FooterLink to="https://www.bnifoundation.org">BNI Foundation</FooterLink>
-              <FooterLink to="/contact-us">Contact Us</FooterLink>
-            </FooterColumn>
-
-            <FooterColumn>
-              <FooterTitle>Member Services</FooterTitle>
-              <FooterLink to="https://www.bniconnectglobal.com">BNI Connect</FooterLink>
-              <FooterLink to="http://bnibusinessbuilder.com">BNI Business Builder</FooterLink>
-              <FooterLink to="http://bnibrandshare.com">BNI Brandshare</FooterLink>
-              <FooterLink to="http://www.bnipromos.com">BNI US Store</FooterLink>
-              <FooterLink to="https://bniglobalstore.com">BNI Global Store</FooterLink>
-            </FooterColumn>
-
-            <ContactColumn>
-              <FooterLink to="/contact-us">Contact Us</FooterLink>
-              <ContactInfo>
-                <ContactItem>
-                  <FaPhone /> In U.S. (800)-825-8286
-                </ContactItem>
-                <ContactItem>
-                  <FaEnvelope /> Outside U.S. support@bni.com
-                </ContactItem>
-                <ContactItem>
-                  <FaMapMarkerAlt /> 3430 Toringdon Way, Suite 300 Charlotte, NC 28277
-                </ContactItem>
-              </ContactInfo>
-            </ContactColumn>
-          </FooterGrid>
-        </div>
-      </MainFooter>
-
-      <NewsletterSection>
-        <div className="container">
-          <NewsletterContainer>
-            <NewsletterTitle>BNI SuccessNet<sup>TM</sup></NewsletterTitle>
-            <NewsletterText>Sign up for exclusive networking tips and more.</NewsletterText>
-            {isSubscribed ? (
-              <ThankYouMessage>Thank you for subscribing!</ThankYouMessage>
-            ) : (
-              <SubscribeForm onSubmit={handleSubmit}>
-                <SubscribeInput
-                  type="email"
-                  placeholder="Email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <SubscribeButton type="submit">
-                  Submit
-                </SubscribeButton>
-              </SubscribeForm>
-            )}
-          </NewsletterContainer>
-        </div>
-      </NewsletterSection>
-
-      <BottomFooter>
-        <div className="container">
-          <BottomFooterContent>
-            <FooterLinks>
-              <FooterBottomLink href="/cookie-policy">Cookie Policy</FooterBottomLink>
-              <FooterBottomLink href="/privacy">Privacy Policy</FooterBottomLink>
-              <FooterBottomLink href="/tos">Terms and Conditions</FooterBottomLink>
-              <Copyright>© 2025 BNI Global, LLC</Copyright>
-            </FooterLinks>
+      <div className="container">
+        <FooterContent>
+          <FooterSection>
+            <FooterLogo>
+              <img src="https://web-assets.same.dev/335287695/52350043.png" alt="Vishwa Guru Bharat Logo" />
+            </FooterLogo>
+            <FooterText>
+              Vishwa Guru Bharat is dedicated to reestablishing India as a global leader in spiritual wisdom,
+              sustainable practices, and holistic development through Vedic principles.
+            </FooterText>
             <SocialLinks>
-              <SocialLink href="https://www.linkedin.com/company/bni" target="_blank" rel="noopener noreferrer">
-                <FaLinkedin />
+              <SocialLink href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                <FaFacebook />
               </SocialLink>
-              <SocialLink href="https://www.youtube.com/user/BNIOfficialChannel" target="_blank" rel="noopener noreferrer">
+              <SocialLink href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                <FaTwitter />
+              </SocialLink>
+              <SocialLink href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                <FaInstagram />
+              </SocialLink>
+              <SocialLink href="https://youtube.com" target="_blank" rel="noopener noreferrer">
                 <FaYoutube />
               </SocialLink>
             </SocialLinks>
-          </BottomFooterContent>
-        </div>
-      </BottomFooter>
+          </FooterSection>
+          
+          <FooterSection>
+            <FooterHeading>Explore</FooterHeading>
+            <FooterLinksList>
+              <FooterLinkItem>
+                <FooterLink to="/">Home</FooterLink>
+              </FooterLinkItem>
+              <FooterLinkItem>
+                <FooterLink to="/about">About Us</FooterLink>
+              </FooterLinkItem>
+              <FooterLinkItem>
+                <FooterLink to="/donate">Donate</FooterLink>
+              </FooterLinkItem>
+              <FooterLinkItem>
+                <FooterLink to="/experience">VGB Experience</FooterLink>
+              </FooterLinkItem>
+              <FooterLinkItem>
+                <FooterLink to="/community">Community</FooterLink>
+              </FooterLinkItem>
+            </FooterLinksList>
+          </FooterSection>
+          
+          <FooterSection>
+            <FooterHeading>Our Initiatives</FooterHeading>
+            <FooterLinksList>
+              <FooterLinkItem>
+                <FooterLink to="/5elements">5 Elements</FooterLink>
+              </FooterLinkItem>
+              <FooterLinkItem>
+                <FooterLink to="/gau">Gau (Animals)</FooterLink>
+              </FooterLinkItem>
+              <FooterLinkItem>
+                <FooterLink to="/ganga">Ganga (Water)</FooterLink>
+              </FooterLinkItem>
+              <FooterLinkItem>
+                <FooterLink to="/gayatri">Gayatri (Mantras)</FooterLink>
+              </FooterLinkItem>
+              <FooterLinkItem>
+                <FooterLink to="/gita">Gita (Ancient Wisdom)</FooterLink>
+              </FooterLinkItem>
+            </FooterLinksList>
+          </FooterSection>
+          
+          <FooterSection>
+            <FooterHeading>Contact Us</FooterHeading>
+            <ContactList>
+              <ContactItem>
+                <ContactIcon>
+                  <FaMapMarkerAlt />
+                </ContactIcon>
+                <ContactText>Jammu, Distt. Kishtwar, J&K, India</ContactText>
+              </ContactItem>
+              <ContactItem>
+                <ContactIcon>
+                  <FaPhone />
+                </ContactIcon>
+                <ContactText>+91-9103544414</ContactText>
+              </ContactItem>
+              <ContactItem>
+                <ContactIcon>
+                  <FaEnvelope />
+                </ContactIcon>
+                <ContactText>info@vishwagurubharat.org</ContactText>
+              </ContactItem>
+            </ContactList>
+          </FooterSection>
+        </FooterContent>
+        
+        <FooterBottom>
+          <Copyright>
+            &copy; {new Date().getFullYear()} Vishwa Guru Bharat. All Rights Reserved.
+          </Copyright>
+          <FooterBottomLinks>
+            <FooterBottomLink to="/terms">Terms of Service</FooterBottomLink>
+            <FooterBottomLink to="/privacy">Privacy Policy</FooterBottomLink>
+            <FooterBottomLink to="/sitemap">Sitemap</FooterBottomLink>
+          </FooterBottomLinks>
+        </FooterBottom>
+      </div>
     </FooterContainer>
   );
 };
 
 const FooterContainer = styled.footer`
-  background-color: #f5f5f5;
-`;
-
-const MainFooter = styled.div`
-  padding: 50px 0;
-  background-color: #4c4a4c;
-  color: #fff;
-`;
-
-const FooterGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px;
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 576px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const FooterColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const ContactColumn = styled(FooterColumn)`
-  grid-column: span 2;
-
-  @media (max-width: 992px) {
-    grid-column: span 1;
-  }
-`;
-
-const FooterTitle = styled.h4`
-  font-size: 1.1rem;
-  margin-bottom: 20px;
-  font-weight: 600;
-`;
-
-const FooterLink = styled(Link)`
-  color: #fff;
-  margin-bottom: 10px;
-  transition: color 0.3s;
-
-  &:hover {
-    color: var(--primary-color);
-  }
-`;
-
-const ContactInfo = styled.div`
-  margin-top: 15px;
-`;
-
-const ContactItem = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-
-  svg {
-    margin-right: 10px;
-  }
-`;
-
-const NewsletterSection = styled.div`
   background-color: #2b2928;
-  color: #fff;
-  padding: 25px 0;
+  color: #f1f1f1;
+  padding: 60px 0 0;
 `;
 
-const NewsletterContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+const FooterContent = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 30px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
-const NewsletterTitle = styled.h4`
-  font-size: 1.2rem;
-  margin-bottom: 5px;
-  font-weight: 600;
-`;
+const FooterSection = styled.div``;
 
-const NewsletterText = styled.p`
-  margin-bottom: 15px;
-`;
-
-const SubscribeForm = styled.form`
-  display: flex;
-  width: 100%;
-  max-width: 400px;
-`;
-
-const SubscribeInput = styled.input`
-  flex: 1;
-  padding: 10px 15px;
-  border: none;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  font-size: 1rem;
-`;
-
-const SubscribeButton = styled.button`
-  background-color: var(--primary-color);
-  color: #fff;
-  border: none;
-  padding: 0 20px;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #b01c26;
+const FooterLogo = styled.div`
+  margin-bottom: 20px;
+  
+  img {
+    max-width: 150px;
+    filter: brightness(1.2);
   }
 `;
 
-const ThankYouMessage = styled.div`
-  color: #fff;
-  font-weight: 600;
-  margin-top: 10px;
-`;
-
-const BottomFooter = styled.div`
-  background-color: #1a1a1a;
-  color: #888;
-  padding: 15px 0;
-  font-size: 0.9rem;
-`;
-
-const BottomFooterContent = styled.div`
-  display: flex;
-  justify-content: space-between;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-  }
-`;
-
-const FooterLinks = styled.div`
-  display: flex;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-`;
-
-const FooterBottomLink = styled.a`
-  color: #888;
-  margin-right: 20px;
-  transition: color 0.3s;
-
-  &:hover {
-    color: #fff;
-  }
-
-  @media (max-width: 768px) {
-    margin: 5px 0;
-  }
-`;
-
-const Copyright = styled.span`
-  @media (max-width: 768px) {
-    margin-top: 10px;
-  }
+const FooterText = styled.p`
+  line-height: 1.6;
+  color: #ccc;
+  margin-bottom: 20px;
 `;
 
 const SocialLinks = styled.div`
   display: flex;
+  gap: 15px;
 `;
 
 const SocialLink = styled.a`
-  color: #888;
-  font-size: 1.2rem;
-  margin-left: 15px;
-  transition: color 0.3s;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 16px;
+  transition: all 0.3s;
+  
   &:hover {
-    color: #fff;
+    background-color: #cd232e;
+    transform: translateY(-3px);
+  }
+`;
+
+const FooterHeading = styled.h3`
+  color: #fff;
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+  position: relative;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background-color: #cd232e;
+  }
+`;
+
+const FooterLinksList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const FooterLinkItem = styled.li`
+  margin-bottom: 12px;
+`;
+
+const FooterLink = styled(Link)`
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.3s;
+  
+  &:hover {
+    color: #cd232e;
+  }
+`;
+
+const ContactList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const ContactItem = styled.li`
+  display: flex;
+  margin-bottom: 15px;
+`;
+
+const ContactIcon = styled.div`
+  color: #cd232e;
+  margin-right: 15px;
+  font-size: 18px;
+  line-height: 1.6;
+`;
+
+const ContactText = styled.div`
+  color: #ccc;
+  line-height: 1.6;
+`;
+
+const FooterBottom = styled.div`
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+  }
+`;
+
+const Copyright = styled.div`
+  color: #aaa;
+  font-size: 0.9rem;
+`;
+
+const FooterBottomLinks = styled.div`
+  display: flex;
+  gap: 20px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
+`;
+
+const FooterBottomLink = styled(Link)`
+  color: #aaa;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.3s;
+  
+  &:hover {
+    color: #cd232e;
   }
 `;
 

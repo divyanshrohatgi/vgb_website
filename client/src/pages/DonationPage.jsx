@@ -16,47 +16,47 @@ const DonationPage = () => {
     email: '',
     company: ''
   });
-  
-  const predefinedAmounts = [25, 50, 100, 250, 500, 1000];
-  
+
+  const predefinedAmounts = [1000, 2100, 5100, 11000, 21000, 51000];
+
   const handleDonationSelect = (amount) => {
     setDonationAmount(amount);
     setCustomAmount('');
   };
-  
+
   const handleCustomAmountChange = (e) => {
     setCustomAmount(e.target.value);
     setDonationAmount('custom');
   };
-  
+
   const handleDonorInfoChange = (e) => {
     const { name, value } = e.target;
     setDonorInfo(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handleContinueToPayment = (e) => {
     e.preventDefault();
     setStep(2);
     window.scrollTo(0, 0);
   };
-  
+
   const handlePaymentSuccess = (paymentData) => {
     console.log('Payment successful', paymentData);
     setStep(3);
     window.scrollTo(0, 0);
   };
-  
+
   const handlePaymentError = (error) => {
     console.error('Payment error:', error);
   };
-  
+
   const getCurrentAmount = () => {
     if (donationAmount === 'custom') {
       return parseFloat(customAmount) || 0;
     }
     return parseFloat(donationAmount) || 0;
   };
-  
+
   const resetForm = () => {
     setDonationAmount('');
     setCustomAmount('');
@@ -69,18 +69,30 @@ const DonationPage = () => {
     });
     setStep(1);
   };
-  
+
   return (
     <DonationContainer>
       <div className="container">
         <PageHeader>
-          <h1>Support BNI Foundation</h1>
-          <p>
-            Your generous donation helps us change the way the world does business by supporting 
-            educational programs and networking opportunities for entrepreneurs worldwide.
-          </p>
+          <h1>Support Vishwa Guru Bharat Foundation</h1>
+          <DonationMessage>
+            <p>
+              Your generous donation helps us preserve and promote India's ancient Vedic wisdom and Sanatan culture to the world.
+            </p>
+
+            <p>
+              विश्व गुरु भारत ट्रस्ट एक ऐसे भविष्य की कल्पना करता है और संकल्प करता है जहां
+              भारत अपनी वैदिक और सनातन संस्कृति, दिव्य वेद विज्ञान ज्ञान के साथ दुनिया को
+              रोशन करते हुए विश्व के मार्गदर्शक प्रकाश के रूप में अपना सही स्थान पुनः प्राप्त करता है।
+            </p>
+
+            <p>
+              लेकिन इस यात्रा के लिए हर हाथ, हर दिल, हर छोटी-बड़ी सहयोग की अति आवश्यकता है।
+              आपका योगदान, चाहे छोटा हो या बड़ा, इस मिशन को गति देता है।
+            </p>
+          </DonationMessage>
         </PageHeader>
-        
+
         {step === 3 ? (
           <SuccessContainer>
             <SuccessIcon>
@@ -88,8 +100,8 @@ const DonationPage = () => {
             </SuccessIcon>
             <h2>Thank You for Your Donation!</h2>
             <p>
-              Your generous contribution of ${getCurrentAmount()} {isRecurring ? 'monthly' : ''} 
-              helps support BNI's mission around the world.
+              Your generous contribution of ₹{getCurrentAmount()} {isRecurring ? 'monthly' : ''}
+              helps support Vishwa Guru Bharat's mission around the world.
             </p>
             <p>We've sent a confirmation email to {donorInfo.email}.</p>
             <DonateAgainButton onClick={resetForm}>Donate Again</DonateAgainButton>
@@ -107,24 +119,24 @@ const DonationPage = () => {
                       selected={donationAmount === amount.toString()}
                       onClick={() => handleDonationSelect(amount.toString())}
                     >
-                      ${amount}
+                      ₹{amount}
                     </AmountButton>
                   ))}
                 </AmountButtonsContainer>
-                
+
                 <CustomAmountContainer>
                   <label htmlFor="customAmount">Custom Amount:</label>
                   <CustomAmountInput
                     type="number"
                     id="customAmount"
-                    placeholder="Enter amount"
+                    placeholder="Enter amount in ₹"
                     value={customAmount}
                     onChange={handleCustomAmountChange}
                     min="1"
                     step="1"
                   />
                 </CustomAmountContainer>
-                
+
                 <RecurringContainer>
                   <input
                     type="checkbox"
@@ -134,7 +146,7 @@ const DonationPage = () => {
                   />
                   <label htmlFor="recurring">Make this a monthly donation</label>
                 </RecurringContainer>
-                
+
                 <SectionTitle style={{ marginTop: '30px' }}>Your Information</SectionTitle>
                 <FormRow>
                   <FormGroup>
@@ -160,7 +172,7 @@ const DonationPage = () => {
                     />
                   </FormGroup>
                 </FormRow>
-                
+
                 <FormRow>
                   <FormGroup>
                     <label htmlFor="email">Email Address*</label>
@@ -184,8 +196,8 @@ const DonationPage = () => {
                     />
                   </FormGroup>
                 </FormRow>
-                
-                <ContinueButton 
+
+                <ContinueButton
                   type="submit"
                   disabled={!donationAmount || (donationAmount === 'custom' && !customAmount)}
                 >
@@ -198,7 +210,7 @@ const DonationPage = () => {
                 <SummaryBox>
                   <SummaryRow>
                     <span>Donation Amount:</span>
-                    <span>${getCurrentAmount()}</span>
+                    <span>₹{getCurrentAmount()}</span>
                   </SummaryRow>
                   <SummaryRow>
                     <span>Frequency:</span>
@@ -209,15 +221,16 @@ const DonationPage = () => {
                     <span>{donorInfo.firstName} {donorInfo.lastName}</span>
                   </SummaryRow>
                 </SummaryBox>
-                
+
                 <Elements stripe={stripePromise}>
-                  <StripePaymentForm 
-                    amount={getCurrentAmount()} 
+                  <StripePaymentForm
+                    amount={getCurrentAmount()}
                     onSuccess={handlePaymentSuccess}
                     onError={handlePaymentError}
+                    currency="INR"
                   />
                 </Elements>
-                
+
                 <BackButton onClick={() => setStep(1)}>
                   Back to Donation Form
                 </BackButton>
@@ -238,18 +251,30 @@ const DonationContainer = styled.div`
 const PageHeader = styled.div`
   text-align: center;
   margin-bottom: 40px;
-  
+
   h1 {
     color: var(--primary-color, #cd232e);
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-size: 2.5rem;
   }
-  
+`;
+
+const DonationMessage = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+
   p {
-    max-width: 800px;
-    margin: 0 auto;
     color: #555;
     font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    text-align: justify;
+  }
+
+  p:first-child {
+    font-weight: 500;
+    font-size: 1.2rem;
+    color: #333;
   }
 `;
 
@@ -275,7 +300,7 @@ const AmountButtonsContainer = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   margin-bottom: 20px;
-  
+
   @media (max-width: 576px) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -291,7 +316,7 @@ const AmountButton = styled.button`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  
+
   &:hover {
     background-color: ${props => props.selected ? 'var(--primary-color, #cd232e)' : '#ebebeb'};
   }
@@ -301,7 +326,7 @@ const CustomAmountContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-  
+
   label {
     margin-right: 10px;
     font-weight: 500;
@@ -315,7 +340,7 @@ const CustomAmountInput = styled.input`
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
-  
+
   &:focus {
     outline: none;
     border-color: var(--primary-color, #cd232e);
@@ -326,13 +351,13 @@ const RecurringContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-  
+
   input {
     margin-right: 10px;
     width: 18px;
     height: 18px;
   }
-  
+
   label {
     cursor: pointer;
   }
@@ -343,7 +368,7 @@ const FormRow = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   margin-bottom: 15px;
-  
+
   @media (max-width: 576px) {
     grid-template-columns: 1fr;
   }
@@ -363,7 +388,7 @@ const Input = styled.input`
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
-  
+
   &:focus {
     outline: none;
     border-color: var(--primary-color, #cd232e);
@@ -382,11 +407,11 @@ const ContinueButton = styled.button`
   cursor: pointer;
   margin-top: 20px;
   transition: background-color 0.3s;
-  
+
   &:hover {
     background-color: #b01c26;
   }
-  
+
   &:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
@@ -401,7 +426,7 @@ const BackButton = styled.button`
   cursor: pointer;
   margin-top: 20px;
   display: block;
-  
+
   &:hover {
     color: var(--primary-color, #cd232e);
   }
@@ -418,7 +443,7 @@ const SummaryRow = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
-  
+
   &:last-child {
     margin-bottom: 0;
     padding-top: 8px;
@@ -435,12 +460,12 @@ const SuccessContainer = styled.div`
   padding: 40px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  
+
   h2 {
     color: var(--secondary-color, #2b2928);
     margin: 20px 0;
   }
-  
+
   p {
     color: #555;
     margin-bottom: 15px;
@@ -463,7 +488,7 @@ const DonateAgainButton = styled.button`
   cursor: pointer;
   margin-top: 20px;
   transition: background-color 0.3s;
-  
+
   &:hover {
     background-color: #b01c26;
   }
