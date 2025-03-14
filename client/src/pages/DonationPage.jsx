@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { Elements } from '@stripe/react-stripe-js';
-import stripePromise from '../config/stripeConfig';
-import StripePaymentForm from '../components/StripePaymentForm';
 import styled from 'styled-components';
 import { FaRegCheckCircle } from 'react-icons/fa';
+import RazorpayPaymentForm from '../components/RazorpayPaymentForm';
 
 const DonationPage = () => {
   const [donationAmount, setDonationAmount] = useState('');
@@ -16,6 +14,7 @@ const DonationPage = () => {
     email: '',
     company: ''
   });
+  const [paymentResult, setPaymentResult] = useState(null);
 
   const predefinedAmounts = [1000, 2100, 5100, 11000, 21000, 51000];
 
@@ -42,12 +41,17 @@ const DonationPage = () => {
 
   const handlePaymentSuccess = (paymentData) => {
     console.log('Payment successful', paymentData);
+    setPaymentResult(paymentData);
     setStep(3);
     window.scrollTo(0, 0);
+    
+    // You could also send a server request here to record the successful donation
+    // in your database or trigger an email confirmation
   };
 
   const handlePaymentError = (error) => {
     console.error('Payment error:', error);
+    // You might want to show an error message to the user
   };
 
   const getCurrentAmount = () => {
@@ -67,6 +71,7 @@ const DonationPage = () => {
       email: '',
       company: ''
     });
+    setPaymentResult(null);
     setStep(1);
   };
 
@@ -104,6 +109,12 @@ const DonationPage = () => {
               helps support Vishwa Guru Bharat's mission around the world.
             </p>
             <p>We've sent a confirmation email to {donorInfo.email}.</p>
+            {paymentResult && (
+              <PaymentDetails>
+                <p>Payment ID: {paymentResult.paymentId}</p>
+                <p>Payment Status: Successful</p>
+              </PaymentDetails>
+            )}
             <DonateAgainButton onClick={resetForm}>Donate Again</DonateAgainButton>
           </SuccessContainer>
         ) : (
@@ -222,14 +233,19 @@ const DonationPage = () => {
                   </SummaryRow>
                 </SummaryBox>
 
-                <Elements stripe={stripePromise}>
-                  <StripePaymentForm
-                    amount={getCurrentAmount()}
-                    onSuccess={handlePaymentSuccess}
-                    onError={handlePaymentError}
-                    currency="INR"
-                  />
-                </Elements>
+                <RazorpayPaymentForm
+                  amount={getCurrentAmount()}
+                  onSuccess={handlePaymentSuccess}
+                  onError={handlePaymentError}
+                  currency="INR"
+                  donorInfo={{
+                    firstName: donorInfo.firstName,
+                    lastName: donorInfo.lastName,
+                    email: donorInfo.email,
+                    company: donorInfo.company,
+                    isRecurring: isRecurring
+                  }}
+                />
 
                 <BackButton onClick={() => setStep(1)}>
                   Back to Donation Form
@@ -469,6 +485,21 @@ const SuccessContainer = styled.div`
   p {
     color: #555;
     margin-bottom: 15px;
+  }
+`;
+
+const PaymentDetails = styled.div`
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+  
+  p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #666;
   }
 `;
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaCheck, FaRegCheckCircle } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
+import axios from 'axios';
 
 const MembershipPage = () => {
   const { user, loading, updateMembership } = useContext(AuthContext);
@@ -12,6 +13,7 @@ const MembershipPage = () => {
   const [step, setStep] = useState(1); // 1: Plan selection, 2: Payment, 3: Success
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
+  const [paymentResult, setPaymentResult] = useState(null);
   
   // Redirect if not logged in
   useEffect(() => {
@@ -27,43 +29,43 @@ const MembershipPage = () => {
   
   const membershipPlans = [
     {
-      id: 'standard',
-      name: 'Standard Membership',
-      price: 99,
+      id: 'basic',
+      name: 'Basic Membership',
+      price: 1100,
       period: 'quarterly',
       features: [
-        'Access to local BNI chapter meetings',
-        'Basic networking opportunities',
-        'Online member directory access',
-        'BNI Connect access',
+        'Access to online resources',
+        'Quarterly newsletter',
+        'Invitation to basic cultural events',
+        'Digital certificate of membership',
       ],
     },
     {
-      id: 'premium',
-      name: 'Premium Membership',
-      price: 149,
+      id: 'silver',
+      name: 'Silver Membership',
+      price: 2100,
       period: 'quarterly',
       features: [
-        'All Standard features',
-        'Priority seating at events',
-        'Extended presentation time',
-        'Access to premium training materials',
-        'Ability to attend other chapter meetings',
+        'All Basic membership benefits',
+        'Exclusive access to monthly webinars',
+        'Vedic literature digital collection',
+        'Discounted Sanskrit learning sessions',
+        'Special invitations to cultural programs',
       ],
       recommended: true,
     },
     {
-      id: 'executive',
-      name: 'Executive Membership',
-      price: 249,
+      id: 'gold',
+      name: 'Gold Membership',
+      price: 5100,
       period: 'quarterly',
       features: [
-        'All Premium features',
-        'One-on-one coaching sessions',
-        'Featured in BNI directory',
-        'VIP networking events',
-        'Leadership opportunities',
-        'Global chapter access',
+        'All Silver membership benefits',
+        'Personal spiritual guidance sessions',
+        'Priority seating at major events',
+        'Exclusive retreats and workshops',
+        'Complete library of Vedic texts',
+        'Name recognition on our donor wall',
       ],
     },
   ];
@@ -79,38 +81,119 @@ const MembershipPage = () => {
     }
   };
   
-  const handlePayment = async () => {
+  const handleRazorpayPayment = async () => {
     if (!selectedPlan) return;
     
     setPaymentProcessing(true);
     setPaymentError(null);
     
     try {
-      // Simulate payment processing
-      // In a real implementation, you would integrate with Stripe here
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
       // Get the selected plan details
       const plan = membershipPlans.find(p => p.id === selectedPlan);
       
-      // Call the API to update membership status
-      const result = await updateMembership({
-        membershipType: plan.name,
-        paymentId: 'sim_' + Date.now(), // Simulated payment ID
-        // Set end date to 3 months from now
-        membershipEndDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+      // Create order with Razorpay through your backend
+      const response = await axios.post('http://localhost:5012/api/payments/create-order', {
+        amount: plan.price,
+        description: `${plan.name} - ${plan.period} membership`,
+        email: user?.email,
+        firstName: user?.firstName || user?.name,
+        lastName: user?.lastName || '',
+        metadata: {
+          userId: user?._id,
+          membershipPlan: plan.id,
+          membershipName: plan.name,
+        }
       });
       
-      if (result.success) {
-        setStep(3);
-        window.scrollTo(0, 0);
-      } else {
-        setPaymentError(result.message || 'Failed to update membership status');
+      const { data } = response;
+      
+      if (!data.success || !data.orderId) {
+        throw new Error(data.message || 'Failed to create order');
       }
+      
+      console.log('Order created successfully:', data.orderId);
+      
+      // Configure Razorpay options
+      const options = {
+        key: 'rzp_test_bToxqx9jfCqd57', // Your Razorpay test key
+        amount: data.amount * 100, // in paise
+        currency: data.currency || 'INR',
+        name: 'Vishwa Guru Bharat Foundation',
+        description: `${plan.name} - ${plan.period}`,
+        image: '/vgb-logo.png',
+        order_id: data.orderId,
+        handler: async function(response) {
+          // Payment successful - verify on the backend
+          try {
+            // Call your backend to verify the payment
+            await axios.post('http://localhost:5012/api/payments/verify-payment', {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            
+            // Update membership status in your app
+            const result = await updateMembership({
+              membershipType: plan.name,
+              membershipPlan: plan.id,
+              paymentId: response.razorpay_payment_id,
+              // Set end date based on period (quarterly = 3 months)
+              membershipEndDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+            });
+            
+            if (result.success) {
+              setPaymentResult({
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+                membershipType: plan.name,
+                amount: plan.price
+              });
+              
+              setStep(3);
+              window.scrollTo(0, 0);
+            } else {
+              setPaymentError('Membership updated failed: ' + result.message);
+            }
+          } catch (error) {
+            console.error('Verification error:', error);
+            setPaymentError('Payment verification failed. Please contact support.');
+          } finally {
+            setPaymentProcessing(false);
+          }
+        },
+        prefill: {
+          name: user ? `${user.firstName || ''} ${user.lastName || ''}` : '',
+          email: user?.email || '',
+          contact: user?.phone || ''
+        },
+        notes: {
+          userId: user?._id,
+          membershipPlan: plan.id
+        },
+        theme: {
+          color: '#cd232e'
+        },
+        modal: {
+          ondismiss: function() {
+            setPaymentProcessing(false);
+            console.log('Payment modal dismissed');
+          }
+        }
+      };
+      
+      // Initialize Razorpay
+      const rzp = new window.Razorpay(options);
+      
+      rzp.on('payment.failed', function(response) {
+        console.error('Payment failed:', response.error);
+        setPaymentError(response.error.description || 'Payment failed');
+        setPaymentProcessing(false);
+      });
+      
+      rzp.open();
     } catch (error) {
-      console.error('Payment error:', error);
-      setPaymentError('An unexpected error occurred. Please try again.');
-    } finally {
+      console.error('Payment initiation error:', error);
+      setPaymentError(error.message || 'An unexpected error occurred');
       setPaymentProcessing(false);
     }
   };
@@ -133,10 +216,10 @@ const MembershipPage = () => {
     <Container>
       <div className="container">
         <PageHeader>
-          <h1>Join BNI Membership</h1>
+          <h1>Become a Vishwa Guru Bharat Member</h1>
           <p>
-            Select a membership plan to unlock the full potential of BNI's global network
-            and start growing your business through structured referral marketing.
+            Join our community dedicated to preserving and promoting India's ancient Vedic wisdom and Sanatan culture.
+            Your membership supports our mission and grants you access to exclusive resources and events.
           </p>
         </PageHeader>
         
@@ -145,15 +228,22 @@ const MembershipPage = () => {
             <SuccessIcon>
               <FaRegCheckCircle />
             </SuccessIcon>
-            <h2>Welcome to BNI!</h2>
+            <h2>Welcome to the Vishwa Guru Bharat Family!</h2>
             <p>
               Your membership has been successfully activated. You now have access to all 
               the benefits of your {getSelectedPlan().name} plan.
             </p>
             <p>
               We've sent a confirmation email to your registered email address with details
-              about next steps and how to make the most of your membership.
+              about your membership benefits and upcoming events.
             </p>
+            {paymentResult && (
+              <PaymentDetails>
+                <p><strong>Payment ID:</strong> {paymentResult.paymentId}</p>
+                <p><strong>Order ID:</strong> {paymentResult.orderId}</p>
+                <p><strong>Amount Paid:</strong> ₹{paymentResult.amount}</p>
+              </PaymentDetails>
+            )}
             <ActionButton onClick={() => navigate('/profile')}>
               Go to Your Profile
             </ActionButton>
@@ -175,7 +265,7 @@ const MembershipPage = () => {
                       {plan.recommended && <RecommendedTag>Recommended</RecommendedTag>}
                       <PlanName>{plan.name}</PlanName>
                       <PlanPrice>
-                        ${plan.price}
+                        ₹{plan.price}
                         <PlanPeriod>/{plan.period}</PlanPeriod>
                       </PlanPrice>
                       <PlanFeatures>
@@ -219,7 +309,7 @@ const MembershipPage = () => {
                   </SummaryRow>
                   <SummaryRow total>
                     <span>Total:</span>
-                    <span>${getSelectedPlan().price}</span>
+                    <span>₹{getSelectedPlan().price}</span>
                   </SummaryRow>
                 </OrderSummary>
                 
@@ -229,41 +319,28 @@ const MembershipPage = () => {
                 
                 <PaymentSection>
                   <h3>Payment Information</h3>
-                  <PaymentForm>
-                    <FormRow>
-                      <FormGroup>
-                        <Label>Card Number</Label>
-                        <Input placeholder="4242 4242 4242 4242" />
-                      </FormGroup>
-                    </FormRow>
-                    <FormRow>
-                      <FormGroup>
-                        <Label>Cardholder Name</Label>
-                        <Input placeholder="John Smith" />
-                      </FormGroup>
-                    </FormRow>
-                    <FormRow cols="2fr 1fr">
-                      <FormGroup>
-                        <Label>Expiration Date</Label>
-                        <Input placeholder="MM/YY" />
-                      </FormGroup>
-                      <FormGroup>
-                        <Label>CVV</Label>
-                        <Input placeholder="123" />
-                      </FormGroup>
-                    </FormRow>
-                    
-                    <PayButton 
-                      onClick={handlePayment}
-                      disabled={paymentProcessing}
-                    >
-                      {paymentProcessing ? 'Processing...' : `Pay $${getSelectedPlan().price}`}
-                    </PayButton>
-                    
-                    <SecurityNote>
-                      🔒 All payments are secure and encrypted
-                    </SecurityNote>
-                  </PaymentForm>
+                  <PaymentInfo>
+                    <SecurePaymentIcon>🔒</SecurePaymentIcon>
+                    <p>
+                      Your payment will be processed securely through Razorpay. 
+                      Click the button below to open the payment gateway.
+                    </p>
+                    <p>
+                      <strong>For testing:</strong> Use card number <code>4111 1111 1111 1111</code>, 
+                      any future expiry date, any 3-digit CVV, and password <code>1234</code> for successful payment.
+                    </p>
+                  </PaymentInfo>
+                  
+                  <PayButton 
+                    onClick={handleRazorpayPayment}
+                    disabled={paymentProcessing}
+                  >
+                    {paymentProcessing ? 'Processing...' : `Pay ₹${getSelectedPlan().price} Now`}
+                  </PayButton>
+                  
+                  <SecurityNote>
+                    All payments are secure and encrypted. Your card details are never stored on our servers.
+                  </SecurityNote>
                 </PaymentSection>
                 
                 <BackButton onClick={() => setStep(1)}>
@@ -484,36 +561,28 @@ const PaymentSection = styled.div`
   }
 `;
 
-const PaymentForm = styled.div`
-  background-color: #fff;
-`;
-
-const FormRow = styled.div`
-  display: grid;
-  grid-template-columns: ${props => props.cols || '1fr'};
-  gap: 15px;
+const PaymentInfo = styled.div`
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 6px;
   margin-bottom: 20px;
-`;
-
-const FormGroup = styled.div``;
-
-const Label = styled.label`
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
   
-  &:focus {
-    outline: none;
-    border-color: var(--primary-color, #cd232e);
+  p {
+    margin: 10px 0;
+    line-height: 1.5;
   }
+  
+  code {
+    background-color: #eee;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+  }
+`;
+
+const SecurePaymentIcon = styled.div`
+  font-size: 24px;
+  margin-bottom: 10px;
 `;
 
 const PayButton = styled.button`
@@ -583,6 +652,20 @@ const SuccessContainer = styled.div`
 const SuccessIcon = styled.div`
   font-size: 60px;
   color: #28a745;
+`;
+
+const PaymentDetails = styled.div`
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 20px auto;
+  max-width: 350px;
+  text-align: left;
+  
+  p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+  }
 `;
 
 const ActionButton = styled.button`

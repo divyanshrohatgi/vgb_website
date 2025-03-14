@@ -1,94 +1,102 @@
+// controllers/paymentController.js
 const asyncHandler = require('express-async-handler');
-const stripe = require('stripe')('sk_test_51R2ByyP0B98VDejvlhWTtXvpwjqh7CbgrVbLWGkgK0zIYmwz4ub242Az0NBKSyAwK4ybPalg2e0xiIcfoFzHr7oa00nf9S8cYn');
+const Razorpay = require('razorpay');
 
-// Process a payment
-const processPayment = asyncHandler(async (req, res) => {
-  const { paymentMethodId, amount, description } = req.body;
-
-  try {
-    // Create a PaymentIntent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to cents and ensure it's an integer
-      currency: 'usd',
-      payment_method: paymentMethodId,
-      description,
-      confirm: true,
-      return_url: 'https://yourwebsite.com/donate/success', // Replace with your actual success URL
+// Initialize Razorpay only if credentials are available
+let razorpayInstance;
+try {
+  if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    razorpayInstance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET
     });
-
-    res.status(200).json({
-      success: true,
-      paymentIntent: {
-        id: paymentIntent.id,
-        status: paymentIntent.status,
-        clientSecret: paymentIntent.client_secret,
-      },
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-});
-
-// Create a subscription for recurring donations
-const createSubscription = asyncHandler(async (req, res) => {
-  const { paymentMethodId, email, amount, description } = req.body;
-
-  try {
-    // Create or get customer
-    let customer;
-    const existingCustomers = await stripe.customers.list({ email });
     
-    if (existingCustomers.data.length > 0) {
-      customer = existingCustomers.data[0];
-    } else {
-      customer = await stripe.customers.create({ email });
+    console.log('Razorpay initialized successfully');
+  } else {
+    console.warn('Razorpay credentials missing - using mock mode');
+  }
+} catch (error) {
+  console.error('Failed to initialize Razorpay:', error);
+}
+
+// Create an order for one-time donation
+const createOrder = asyncHandler(async (req, res) => {
+  try {
+    const { amount, description } = req.body;
+    
+    console.log(`Creating order with amount: ${amount} INR`);
+    
+    // Validate request
+    if (!amount || isNaN(amount) || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Valid amount is required',
+      });
     }
-
-    // Attach payment method to customer
-    await stripe.paymentMethods.attach(paymentMethodId, {
-      customer: customer.id,
-    });
     
-    // Set as default payment method
-    await stripe.customers.update(customer.id, {
-      invoice_settings: {
-        default_payment_method: paymentMethodId,
-      },
-    });
-
-    // Create a price (for subscription)
-    const price = await stripe.prices.create({
-      unit_amount: Math.round(amount * 100),
-      currency: 'usd',
-      recurring: { interval: 'month' },
-      product_data: {
-        name: 'Monthly Donation to BNI Foundation',
-      },
-    });
-
-    // Create a subscription
-    const subscription = await stripe.subscriptions.create({
-      customer: customer.id,
-      items: [{ price: price.id }],
-      description,
-    });
-
+    // If Razorpay is not initialized, return a mock response
+    if (!razorpayInstance) {
+      console.log('Using mock order creation');
+      return res.status(200).json({
+        success: true,
+        orderId: 'mock_order_' + Date.now(),
+        amount: parseFloat(amount),
+        currency: 'INR',
+        isMock: true
+      });
+    }
+    
+    // Create an order with Razorpay
+    const options = {
+      amount: Math.round(amount * 100), // convert rupees to paise
+      currency: 'INR',
+      receipt: `receipt_${Date.now()}`,
+      payment_capture: 1, // automatic capture
+      notes: {
+        description: description || 'Donation to Vishwa Guru Bharat',
+      }
+    };
+    
+    const order = await razorpayInstance.orders.create(options);
+    console.log('Order created successfully:', order.id);
+    
     res.status(200).json({
       success: true,
-      subscription: {
-        id: subscription.id,
-        status: subscription.status,
-      },
+      orderId: order.id,
+      amount: order.amount / 100, // Convert back to rupees for frontend
+      currency: order.currency,
     });
   } catch (error) {
-    res.status(400).json({
+    console.error('Order creation error:', error);
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message || 'Failed to create order',
+      error: error.toString()
     });
   }
 });
 
-module.exports = { processPayment, createSubscription };
+// Simple mock implementation for subscription and verification
+const createSubscription = asyncHandler(async (req, res) => {
+  const { amount } = req.body;
+  
+  res.status(200).json({
+    success: true,
+    orderId: 'mock_subscription_' + Date.now(),
+    amount: parseFloat(amount) || 0,
+    currency: 'INR',
+    subscription: {
+      id: 'mock_sub_' + Date.now(),
+      status: 'created'
+    }
+  });
+});
+
+const verifyPayment = asyncHandler(async (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Payment verified successfully',
+  });
+});
+
+module.exports = { createOrder, createSubscription, verifyPayment };

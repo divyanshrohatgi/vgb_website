@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
   // Set axios defaults
   // Use your actual API base URL
-  axios.defaults.baseURL = 'http://localhost:5011';
+  axios.defaults.baseURL = 'http://localhost:5012';
 
   // Initialize auth state from localStorage on app load
   useEffect(() => {

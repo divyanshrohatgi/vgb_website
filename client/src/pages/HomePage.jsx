@@ -1,4 +1,3 @@
-// client/src/pages/HomePage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
@@ -265,6 +264,7 @@ const HomePage = () => {
           </InitiativeContent>
         </InitiativesSection>
         
+        {/* Updated "Preserving The 5 Elements" Section */}
         <ElementsSection className="animate-section" id="elements-section" visible={isVisible['elements-section']}>
           <SectionTitle>Preserving The 5 Elements</SectionTitle>
           <ElementsDescription>
@@ -373,7 +373,9 @@ const HomePage = () => {
   );
 };
 
+//
 // Animations
+//
 const fadeInUp = keyframes`
   from {
     opacity: 0;
@@ -430,7 +432,9 @@ const bounce = keyframes`
   }
 `;
 
+//
 // Styled Components
+//
 const HomeContainer = styled.div`
   padding-bottom: 0;
   overflow-x: hidden;
@@ -997,7 +1001,7 @@ const StatValue = styled.div`
   font-size: 1.8rem;
   font-weight: 700;
   color: #cd232e;
-  margin-bottom: 5px;
+margin-bottom: 5px;
 `;
 
 const StatLabel = styled.div`
@@ -1034,18 +1038,20 @@ const InitiativeImage = styled.img`
   }
 `;
 
+// Updated styled components for the "Preserving The 5 Elements" section
+
 const ElementsSection = styled.section`
   margin: 80px 0;
-  background-color: white;
-  border-radius: 15px;
-  padding: 50px 40px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff, #f9f9f9);
+  border-radius: 20px;
+  padding: 60px 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   opacity: ${props => props.visible ? 1 : 0};
   transform: translateY(${props => props.visible ? 0 : '30px'});
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  
+
   @media (max-width: 768px) {
-    padding: 40px 20px;
+    padding: 50px 20px;
   }
 `;
 
@@ -1056,6 +1062,7 @@ const ElementsDescription = styled.p`
   color: #555;
   line-height: 1.8;
   font-size: 1.1rem;
+  font-style: italic;
 `;
 
 const ElementsInfographic = styled.div`
@@ -1063,11 +1070,13 @@ const ElementsInfographic = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 40px;
 `;
 
 const ElementCenterCircle = styled.div`
-  width: 120px;
-  height: 120px;
+  position: relative;
+  width: 140px;
+  height: 140px;
   background-color: #cd232e;
   border-radius: 50%;
   display: flex;
@@ -1078,12 +1087,13 @@ const ElementCenterCircle = styled.div`
   margin-bottom: 50px;
   z-index: 2;
   box-shadow: 0 10px 20px rgba(205, 35, 46, 0.3);
-  
+  animation: ${pulse} 3s infinite;
+
   &:before {
     content: '';
     position: absolute;
-    width: 200px;
-    height: 200px;
+    width: 220px;
+    height: 220px;
     border-radius: 50%;
     border: 2px dashed rgba(205, 35, 46, 0.3);
     z-index: 1;
@@ -1091,35 +1101,36 @@ const ElementCenterCircle = styled.div`
 `;
 
 const ElementCenterIcon = styled.div`
-  font-size: 2.5rem;
+  font-size: 3rem;
   margin-bottom: 5px;
 `;
 
 const ElementCenterText = styled.div`
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
 `;
 
 const ElementsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
   width: 100%;
 `;
 
 const ElementCard = styled.div`
-  background-color: white;
+  background: #fff;
   border-radius: 15px;
   padding: 30px 25px;
   text-align: center;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
   z-index: 3;
-  
+
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -1133,12 +1144,19 @@ const ElementIcon = styled.div`
   margin: 0 auto 20px;
   font-size: 2rem;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+
+  ${ElementCard}:hover & {
+    transform: scale(1.05);
+  }
 `;
 
 const ElementName = styled.h3`
   color: #2b2928;
   font-size: 1.4rem;
   margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 `;
 
 const ElementDesc = styled.p`
