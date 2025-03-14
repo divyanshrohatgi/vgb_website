@@ -42,6 +42,50 @@ const userSchema = mongoose.Schema(
       required: false,
       default: '',
     },
+    // New membership fields
+    membershipStatus: {
+      type: String,
+      enum: ['none', 'pending', 'active', 'expired'],
+      default: 'none',
+    },
+    membershipType: {
+      type: String,
+      enum: ['', 'BASIC MEMBERSHIP', 'SILVER MEMBERSHIP', 'GOLD MEMBERSHIP'],
+      default: '',
+    },
+    membershipStartDate: {
+      type: Date,
+      default: null,
+    },
+    membershipEndDate: {
+      type: Date,
+      default: null,
+    },
+    paymentHistory: [
+      {
+        paymentId: {
+          type: String,
+          required: true,
+        },
+        amount: {
+          type: Number,
+          required: true,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+        membershipType: {
+          type: String,
+          required: true,
+        },
+        status: {
+          type: String,
+          enum: ['completed', 'failed', 'refunded'],
+          default: 'completed',
+        },
+      },
+    ],
   },
   {
     timestamps: true,

@@ -152,6 +152,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
         membershipStatus: user.membershipStatus,
         membershipType: user.membershipType,
         membershipStartDate: user.membershipStartDate,
+        membershipEndDate: user.membershipEndDate,
         isAdmin: user.isAdmin,
       });
     } else {
@@ -235,16 +236,37 @@ const updateMembershipStatus = asyncHandler(async (req, res) => {
       user.membershipType = req.body.membershipType || 'Standard';
       user.membershipStartDate = Date.now();
       user.membershipEndDate = req.body.membershipEndDate || null;
-      user.paymentId = req.body.paymentId || null;
+      
+      // Add payment to history if provided
+      if (req.body.paymentId && Array.isArray(user.paymentHistory)) {
+        user.paymentHistory.push({
+          paymentId: req.body.paymentId,
+          amount: req.body.amount || 0,
+          membershipType: req.body.membershipType || 'Standard',
+          status: 'completed'
+        });
+      }
 
       const updatedUser = await user.save();
+      
+      // Generate a new token that includes the updated membership status
+      const token = generateToken(updatedUser._id);
 
+      // Return the FULL user object with token
       res.json({
         _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        company: updatedUser.company,
+        profession: updatedUser.profession,
+        location: updatedUser.location,
+        phone: updatedUser.phone,
         membershipStatus: updatedUser.membershipStatus,
         membershipType: updatedUser.membershipType,
         membershipStartDate: updatedUser.membershipStartDate,
         membershipEndDate: updatedUser.membershipEndDate,
+        isAdmin: updatedUser.isAdmin,
+        token: token, // Include the new token
       });
     } else {
       res.status(404);

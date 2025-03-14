@@ -29,7 +29,7 @@ const MembershipPage = () => {
   
   const membershipPlans = [
     {
-      id: 'basic',
+      id: 'BASIC MEMBERSHIP',
       name: 'Basic Membership',
       price: 1100,
       period: 'quarterly',
@@ -41,7 +41,7 @@ const MembershipPage = () => {
       ],
     },
     {
-      id: 'silver',
+      id: 'SILVER MEMBERSHIP',
       name: 'Silver Membership',
       price: 2100,
       period: 'quarterly',
@@ -55,7 +55,7 @@ const MembershipPage = () => {
       recommended: true,
     },
     {
-      id: 'gold',
+      id: 'GOLD MEMBERSHIP',
       name: 'Gold Membership',
       price: 5100,
       period: 'quarterly',
@@ -133,13 +133,13 @@ const MembershipPage = () => {
             });
             
             // Update membership status in your app
-            const result = await updateMembership({
-              membershipType: plan.name,
-              membershipPlan: plan.id,
-              paymentId: response.razorpay_payment_id,
-              // Set end date based on period (quarterly = 3 months)
-              membershipEndDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-            });
+              const result = await updateMembership({
+                membershipType: plan.id, // Change to plan.id instead of plan.name
+                paymentId: response.razorpay_payment_id,
+                amount: plan.price, // Add amount for payment history
+                // Set end date based on period (quarterly = 3 months)
+                membershipEndDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+              });
             
             if (result.success) {
               setPaymentResult({
