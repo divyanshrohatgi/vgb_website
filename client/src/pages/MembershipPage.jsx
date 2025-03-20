@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaCheck, FaRegCheckCircle } from 'react-icons/fa';
+import { FaCheck, FaRegCheckCircle, FaCalendarAlt, FaRupeeSign } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
 import axios from 'axios';
 
@@ -31,34 +31,36 @@ const MembershipPage = () => {
     {
       id: 'BASIC MEMBERSHIP',
       name: 'Basic Membership',
-      price: 1100,
-      period: 'quarterly',
+      price: 365,
+      period: 'yearly',
       features: [
         'Access to online resources',
         'Quarterly newsletter',
         'Invitation to basic cultural events',
         'Digital certificate of membership',
+        'Members-only forum access',
       ],
     },
     {
       id: 'SILVER MEMBERSHIP',
       name: 'Silver Membership',
-      price: 2100,
-      period: 'quarterly',
+      price: 999,
+      period: 'yearly',
       features: [
         'All Basic membership benefits',
-        'Exclusive access to monthly webinars',
+        'Monthly webinars and workshops',
         'Vedic literature digital collection',
         'Discounted Sanskrit learning sessions',
         'Special invitations to cultural programs',
+        'Personalized spiritual guidance',
       ],
       recommended: true,
     },
     {
       id: 'GOLD MEMBERSHIP',
       name: 'Gold Membership',
-      price: 5100,
-      period: 'quarterly',
+      price: 1999,
+      period: 'yearly',
       features: [
         'All Silver membership benefits',
         'Personal spiritual guidance sessions',
@@ -66,6 +68,7 @@ const MembershipPage = () => {
         'Exclusive retreats and workshops',
         'Complete library of Vedic texts',
         'Name recognition on our donor wall',
+        'VIP invitations to all major programs',
       ],
     },
   ];
@@ -133,13 +136,13 @@ const MembershipPage = () => {
             });
             
             // Update membership status in your app
-              const result = await updateMembership({
-                membershipType: plan.id, // Change to plan.id instead of plan.name
-                paymentId: response.razorpay_payment_id,
-                amount: plan.price, // Add amount for payment history
-                // Set end date based on period (quarterly = 3 months)
-                membershipEndDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-              });
+            const result = await updateMembership({
+              membershipType: plan.id, // Use plan.id instead of plan.name
+              paymentId: response.razorpay_payment_id,
+              amount: plan.price, // Add amount for payment history
+              // Set end date based on period (yearly = 365 days)
+              membershipEndDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+            });
             
             if (result.success) {
               setPaymentResult({
@@ -268,6 +271,17 @@ const MembershipPage = () => {
                         ₹{plan.price}
                         <PlanPeriod>/{plan.period}</PlanPeriod>
                       </PlanPrice>
+                      
+                      {plan.id === 'BASIC MEMBERSHIP' && (
+                        <DailyValue>
+                          <FaRupeeSign /> 1 <span>per day</span>
+                        </DailyValue>
+                      )}
+                      
+                      <AnnualTag>
+                        <FaCalendarAlt /> Annual Membership
+                      </AnnualTag>
+                      
                       <PlanFeatures>
                         {plan.features.map((feature, index) => (
                           <FeatureItem key={index}>
@@ -445,7 +459,7 @@ const PlanName = styled.h3`
 const PlanPrice = styled.div`
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   color: var(--primary-color, #cd232e);
   display: flex;
   align-items: baseline;
@@ -456,6 +470,42 @@ const PlanPeriod = styled.span`
   font-weight: 400;
   color: #777;
   margin-left: 5px;
+`;
+
+const DailyValue = styled.div`
+  background-color: #f8f2e6;
+  color: #b88a48;
+  border: 1px dashed #d6b676;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 15px;
+  
+  svg {
+    margin-right: 2px;
+    font-size: 0.9rem;
+  }
+  
+  span {
+    font-size: 0.8rem;
+    margin-left: 4px;
+  }
+`;
+
+const AnnualTag = styled.div`
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  
+  svg {
+    margin-right: 6px;
+    color: #28a745;
+  }
 `;
 
 const PlanFeatures = styled.ul`

@@ -1,478 +1,480 @@
-// client/src/components/Header.jsx
-import { useState, useContext } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { FaBars, FaTimes, FaUser, FaHandHoldingHeart, FaTree, FaBookReader, FaOm} from 'react-icons/fa';
+import styled, { keyframes } from 'styled-components';
+import {
+  FaBars, FaTimes, FaUser, FaFacebookF, FaTwitter, FaInstagram, FaYoutube,
+  FaPhone, FaEnvelope, FaHandHoldingHeart, FaTree, FaStore, FaChevronDown,
+  FaOm, FaLeaf, FaWater, FaPrayingHands, FaBook, FaSun, FaSearch
+} from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
 
-const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { user, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
+/* Animations */
+const pulse = keyframes`
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+`;
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+const ripple = keyframes`
+  0% { width: 0; height: 0; opacity: 0.4; }
+  100% { width: 200%; height: 200%; opacity: 0; }
+`;
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-    setIsOpen(false);
-  };
-
-  return (
-    <HeaderContainer>
-      <TopHeader>
-        <div className="container">
-          <TopHeaderContent>
-            <SocialIcons>
-              <SocialIcon href="#"><i className="fab fa-facebook-f"></i></SocialIcon>
-              <SocialIcon href="#"><i className="fab fa-twitter"></i></SocialIcon>
-              <SocialIcon href="#"><i className="fab fa-instagram"></i></SocialIcon>
-              <SocialIcon href="#"><i className="fab fa-youtube"></i></SocialIcon>
-            </SocialIcons>
-            <ContactInfo>
-              <ContactItem><i className="fas fa-phone"></i> +91-9103544414</ContactItem>
-              <ContactItem><i className="fas fa-envelope"></i> info@vishwagurubharat.org</ContactItem>
-            </ContactInfo>
-          </TopHeaderContent>
-        </div>
-      </TopHeader>
-      
-      <MainHeader>
-        <div className="container">
-          <HeaderContent>
-            <Logo>
-              <Link to="/">
-                <img 
-                  src="https://web-assets.same.dev/335287695/52350043.png" 
-                  alt="Vishwa Guru Bharat Logo" 
-                />
-              </Link>
-            </Logo>
-
-            <NavMenu className={isOpen ? 'active' : ''}>
-              <NavItem>
-                <Link to="/experience" onClick={() => setIsOpen(false)}>
-                  <NavIcon><FaOm /></NavIcon>
-                  VGB Experience
-                </Link>
-              </NavItem>
-              <NavItem
-                className="dropdown"
-                onMouseEnter={() => setDropdownOpen(true)}
-                onMouseLeave={() => setDropdownOpen(false)}
-              >
-              <span>
-                <NavIcon><FaHandHoldingHeart /></NavIcon>
-                Initiatives
-              </span>
-              {dropdownOpen && (
-                <DropdownContent>
-                  <DropdownItem to="/gau" onClick={() => setDropdownOpen(false)}>Gau Seva</DropdownItem>
-                  <DropdownItem to="/ganga" onClick={() => setDropdownOpen(false)}>Ganga Conservation</DropdownItem>
-                  <DropdownItem to="/gayatri" onClick={() => setDropdownOpen(false)}>Gayatri Awareness</DropdownItem>
-                  <DropdownItem to="/gita" onClick={() => setDropdownOpen(false)}>Gita Teachings</DropdownItem>
-                  <DropdownItem to="/guru" onClick={() => setDropdownOpen(false)}>Guru Initiatives</DropdownItem>
-                </DropdownContent>
-              )}
-            </NavItem>
-              <NavItem>
-                <Link to="/community" onClick={() => setIsOpen(false)}>
-                  <NavIcon><FaTree /></NavIcon>
-                  Community
-                </Link>
-                </NavItem>
-                <NavItem>
-                <Link to="/about" onClick={() => setIsOpen(false)}>
-                  <NavIcon><FaBookReader /></NavIcon>
-                  About
-                </Link>
-              </NavItem>
-              <NavItem>
-                <Link to="/donate" onClick={() => setIsOpen(false)}>Donate</Link>
-              </NavItem>
-              {user && (
-                <NavItem className="mobile-only">
-                  <Link to="/profile" onClick={() => setIsOpen(false)}>My Profile</Link>
-                </NavItem>
-              )}
-              {user && (
-                <NavItem className="mobile-only">
-                  <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-                </NavItem>
-              )}
-              <MobileClose onClick={toggleMenu}>
-                <FaTimes />
-              </MobileClose>
-            </NavMenu>
-
-            <HeaderRight>
-              {user ? (
-                <UserMenu>
-                  <UserButton to="/profile">
-                    <FaUser />
-                    <span>My Profile</span>
-                  </UserButton>
-                  <LogoutLink onClick={handleLogout}>Logout</LogoutLink>
-                </UserMenu>
-              ) : (
-                <AuthButtons>
-                  <LoginButton to="/login">Sign In</LoginButton>
-                  <RegisterButton to="/register">Join Now</RegisterButton>
-                </AuthButtons>
-              )}
-              <MobileToggle onClick={toggleMenu}>
-                <FaBars />
-              </MobileToggle>
-            </HeaderRight>
-          </HeaderContent>
-        </div>
-      </MainHeader>
-      
-      {user && user.membershipStatus === 'pending' && (
-        <MembershipAlert>
-          <div className="container">
-            Complete your membership to access all features. 
-            <MembershipAlertLink to="/profile">Go to your profile</MembershipAlertLink>
-          </div>
-        </MembershipAlert>
-      )}
-    </HeaderContainer>
-  );
-};
-
-const HeaderContainer = styled.header`
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+/* Layout Components */
+const HeaderWrapper = styled.header`
   position: sticky;
   top: 0;
   z-index: 100;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 `;
 
-const TopHeader = styled.div`
-  background-color: #cd232e;
+const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+`;
+
+/* Top Bar */
+const TopBar = styled.div`
+  background: linear-gradient(90deg, #cd232e, #a91d28);
+  color: #fff;
   padding: 8px 0;
-  color: white;
 `;
 
-const TopHeaderContent = styled.div`
+const TopBarContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
   }
 `;
 
+/* Social Icons */
 const SocialIcons = styled.div`
   display: flex;
-  gap: 15px;
+  gap: 12px;
 `;
 
-const SocialIcon = styled.a`
-  color: white;
-  font-size: 16px;
-  transition: opacity 0.3s;
+const IconLink = styled.a`
+  color: #fff;
+  background: rgba(255,255,255,0.15);
+  width: 30px; 
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
   
   &:hover {
-    opacity: 0.8;
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
   }
 `;
 
+/* Contact Info */
 const ContactInfo = styled.div`
   display: flex;
   gap: 20px;
   
   @media (max-width: 768px) {
-    gap: 10px;
-    flex-direction: column;
-    text-align: center;
+    gap: 15px;
   }
-`;
-
-const ContactItem = styled.div`
-  font-size: 14px;
   
-  i {
-    margin-right: 5px;
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
   }
 `;
 
-const MainHeader = styled.div`
-  background-color: #fff;
-  padding: 15px 0;
-`;
-
-const HeaderContent = styled.div`
+const ContactItem = styled.a`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-`;
-
-const Logo = styled.div`
-  img {
-    height: 70px; /* Larger logo */
-    
-    @media (max-width: 768px) {
-      height: 50px;
-    }
+  font-size: 14px;
+  color: #fff;
+  text-decoration: none;
+  gap: 8px;
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 0.85;
   }
 `;
 
+/* Main Navigation */
+const MainNav = styled.div`
+  padding: 15px 0;
+  
+  @media (max-width: 768px) {
+    padding: 12px 0;
+  }
+`;
+
+const MainNavContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+/* Logo */
+const LogoWrapper = styled.div`
+  flex-shrink: 0;
+`;
+
+const LogoImg = styled.img`
+  height: 55px;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.03);
+  }
+  
+  @media (max-width: 768px) {
+    height: 45px;
+  }
+`;
+
+/* Navigation */
+const NavContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+`;
+
+/* Mobile Menu Overlay */
+const MobileOverlay = styled.div`
+  display: none;
+  
+  @media (max-width: 992px) {
+    display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+`;
+
+/* Navigation Menu */
 const NavMenu = styled.ul`
   display: flex;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 15px;
+  background: #f7f7f7;
+  border-radius: 25px;
   
   @media (max-width: 992px) {
     position: fixed;
     top: 0;
-    right: -100%;
-    width: 80%;
-    max-width: 400px;
+    right: ${({ isOpen }) => (isOpen ? '0' : '-100%')};
+    width: 280px;
     height: 100vh;
-    background-color: #fff;
     flex-direction: column;
-    padding: 80px 30px;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    padding: 60px 25px 25px;
+    border-radius: 0;
+    box-shadow: -5px 0 20px rgba(0,0,0,0.1);
     transition: right 0.3s ease;
     z-index: 1000;
-    
-    &.active {
-      right: 0;
-    }
-
-    .mobile-only {
-      display: block;
-    }
-  }
-
-  .mobile-only {
-    display: none;
-  }
-`;
-
-const NavIcon = styled.span`
-  display: inline-block;
-  margin-right: 8px;
-  font-size: 20px; /* Larger icon */
-  color: #cd232e;
-  vertical-align: middle;
-`;
-
-const NavItem = styled.li`
-  margin: 0 15px;
-  position: relative;
-  
-  a, span {
-    color: #2b2928;
-    font-weight: 500;
-    font-size: 16px;
-    cursor: pointer;
-    transition: color 0.3s;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    
-    &:hover {
-      color: #cd232e;
-    }
-  }
-  
-  &.dropdown {
-    &:hover {
-      > div {
-        display: block;
-      }
-    }
-  }
-  
-  @media (max-width: 992px) {
-    margin: 15px 0;
-    font-size: 18px;
-  }
-`;
-
-const DropdownContent = styled.div`
-  display: none;
-  position: absolute;
-  background-color: #fff;
-  min-width: 200px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  padding: 10px 0;
-  z-index: 1;
-  border-radius: 5px;
-  
-  a {
-    display: block;
-    padding: 10px 20px;
-    text-decoration: none;
-    
-    &:hover {
-      background-color: #f6f6f6;
-    }
-  }
-  
-  @media (max-width: 992px) {
-    position: static;
-    box-shadow: none;
-    padding: 10px 0 10px 20px;
-    
-    a {
-      padding: 8px 0;
-    }
-  }
-`;
-
-const HeaderRight = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const AuthButtons = styled.div`
-  display: flex;
-  align-items: center;
-  
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const LoginButton = styled(Link)`
-  color: #2b2928;
-  font-weight: 600;
-  padding: 10px 18px;
-  margin-right: 10px;
-  border-radius: 4px;
-  transition: all 0.3s;
-  text-decoration: none;
-  
-  &:hover {
-    color: #cd232e;
-    background-color: #f9f9f9;
-  }
-`;
-
-const RegisterButton = styled(Link)`
-  background-color: #cd232e;
-  color: #fff;
-  border-radius: 4px;
-  padding: 12px 22px;
-  font-weight: 600;
-  transition: background-color 0.3s;
-  text-decoration: none;
-  
-  &:hover {
-    background-color: #b01c26;
-  }
-`;
-
-const UserMenu = styled.div`
-  display: flex;
-  align-items: center;
-  
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const UserButton = styled(Link)`
-  display: flex;
-  align-items: center;
-  color: #2b2928;
-  font-weight: 600;
-  padding: 8px 15px;
-  border-radius: 4px;
-  transition: all 0.3s;
-  text-decoration: none;
-  
-  svg {
-    margin-right: 8px;
-    font-size: 20px;
-  }
-  
-  &:hover {
-    color: #cd232e;
-    background-color: #f9f9f9;
-  }
-`;
-
-const LogoutLink = styled.button`
-  background: none;
-  border: none;
-  color: #2b2928;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 8px 15px;
-  font-size: 1rem;
-  transition: color 0.3s;
-  
-  &:hover {
-    color: #cd232e;
-  }
-`;
-
-const LogoutButton = styled.button`
-  background: none;
-  border: none;
-  color: #2b2928;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
-  font-size: 1rem;
-  text-align: left;
-  transition: color 0.3s;
-  
-  &:hover {
-    color: #cd232e;
-  }
-`;
-
-const MobileToggle = styled.button`
-  display: none;
-  background: none;
-  border: none;
-  font-size: 28px; /* Larger icon */
-  color: #2b2928;
-  cursor: pointer;
-  
-  @media (max-width: 992px) {
-    display: block;
+    overflow-y: auto;
   }
 `;
 
 const MobileClose = styled.button`
   display: none;
-  background: none;
-  border: none;
-  font-size: 28px; /* Larger icon */
-  color: #2b2928;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  cursor: pointer;
   
   @media (max-width: 992px) {
     display: block;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
   }
 `;
 
-const MembershipAlert = styled.div`
-  background-color: #fff3cd;
-  color: #856404;
+const NavItem = styled.li`
+  position: relative;
+`;
+
+const NavLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  color: #333;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 15px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #cd232e;
+  }
+  
+  @media (max-width: 992px) {
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+  }
+`;
+
+const NavLinkSpan = styled.span`
+  display: flex;
+  align-items: center;
+  color: #333;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 15px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    color: #cd232e;
+  }
+  
+  @media (max-width: 992px) {
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+  }
+`;
+
+/* Dropdown */
+const DropdownContent = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  min-width: 220px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  border-radius: 8px;
   padding: 10px 0;
+  opacity: ${({ isVisible }) => (isVisible ? '1' : '0')};
+  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+  transform: ${({ isVisible }) => (isVisible ? 'translateY(0)' : 'translateY(10px)')};
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+  
+  @media (max-width: 992px) {
+    position: static;
+    box-shadow: none;
+    border-left: 2px solid #f0f0f0;
+    border-radius: 0;
+    margin: 0 0 10px 15px;
+    opacity: ${({ isVisible }) => (isVisible ? '1' : '0')};
+    max-height: ${({ isVisible }) => (isVisible ? '500px' : '0')};
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+  }
+`;
+
+const DropdownItem = styled(Link)`
+  display: flex;
+  align-items: center;
+  color: #333;
+  text-decoration: none;
+  padding: 10px 15px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #f9f9f9;
+    color: #cd232e;
+  }
+  
+  @media (max-width: 992px) {
+    padding: 12px 15px;
+  }
+`;
+
+const DropdownIcon = styled.span`
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: #cd232e;
+`;
+
+const ChevronIcon = styled(FaChevronDown)`
+  margin-left: 8px;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+  transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0)')};
+`;
+
+/* Mobile Toggle */
+const MobileToggle = styled.button`
+  display: none;
+  
+  @media (max-width: 992px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    padding: 8px;
+  }
+`;
+
+/* Auth Sections */
+const AuthDesktop = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  @media (max-width: 992px) {
+    display: none;
+  }
+`;
+
+const AuthMobile = styled.div`
+  display: none;
+  
+  @media (max-width: 992px) {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+`;
+
+/* Buttons */
+const ButtonLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  font-size: 15px;
+  color: #333;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #cd232e;
+    border-color: #cd232e;
+  }
+`;
+
+const LogoutButton = styled.button`
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  font-size: 15px;
+  color: #333;
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #cd232e;
+    border-color: #cd232e;
+  }
+`;
+
+const ProfileButton = styled(Link)`
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 15px;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #cd232e;
+  }
+`;
+
+const Avatar = styled.div`
+  width: 32px;
+  height: 32px;
+  background: #cd232e;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 8px;
+`;
+
+const DonateButton = styled(Link)`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  background: #cd232e;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 25px;
+  text-decoration: none;
+  overflow: hidden;
+  animation: ${pulse} 2.5s infinite;
+  box-shadow: 0 4px 10px rgba(205,35,46,0.25);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #b91d27;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(205,35,46,0.35);
+  }
+`;
+
+const DonateText = styled.span`
+  position: relative;
+  z-index: 1;
+`;
+
+/* Search */
+const SearchIcon = styled.div`
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: #cd232e;
+  }
+`;
+
+/* Alert Banner */
+const MembershipAlert = styled.div`
+  background: #fff9e6;
+  color: #7d6e32;
   text-align: center;
+  padding: 10px 0;
   font-size: 0.9rem;
 `;
 
-const MembershipAlertLink = styled(Link)`
+const MembershipLink = styled(Link)`
   color: #cd232e;
   font-weight: 600;
-  margin-left: 10px;
+  margin-left: 8px;
   text-decoration: none;
   
   &:hover {
@@ -480,18 +482,250 @@ const MembershipAlertLink = styled(Link)`
   }
 `;
 
+/* Header Component */
+const Header = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
-const DropdownItem = styled(Link)`
-  display: block;
-  padding: 10px 15px;
-  color: #333;
-  text-decoration: none;
-  font-weight: 500;
+  // Handle mouse enter/leave for desktop dropdown
+  const handleMouseEnter = () => {
+    if (window.innerWidth > 992) {
+      setDropdownOpen(true);
+    }
+  };
 
-  &:hover {
-    background-color: #f6f6f6;
-  }
-`;
+  const handleMouseLeave = () => {
+    if (window.innerWidth > 992) {
+      setDropdownOpen(false);
+    }
+  };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : 'visible';
+    return () => { document.body.style.overflow = 'visible'; };
+  }, [menuOpen]);
+
+  const handleToggleMenu = () => setMenuOpen(!menuOpen);
+
+  // Toggle dropdown for mobile
+  const handleDropdownToggle = (e) => {
+    e.preventDefault();
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+    setMenuOpen(false);
+  };
+
+  return (
+    <HeaderWrapper>
+      {/* Top Bar with Contact Info */}
+      <TopBar>
+        <Container>
+          <TopBarContent>
+            <SocialIcons>
+              <IconLink href="https://www.facebook.com/vishwagurubharattrust" aria-label="Facebook"><FaFacebookF /></IconLink>
+              <IconLink href="#" aria-label="Twitter"><FaTwitter /></IconLink>
+              <IconLink href="#" aria-label="Instagram"><FaInstagram /></IconLink>
+              <IconLink href="#" aria-label="YouTube"><FaYoutube /></IconLink>
+            </SocialIcons>
+            <ContactInfo>
+              <ContactItem href="tel:+919103544414">
+                <FaPhone />
+                +91-9103544414
+              </ContactItem>
+              <ContactItem href="mailto:info@vishwagurubharat.org">
+                <FaEnvelope />
+                info@vishwagurubharat.org
+              </ContactItem>
+            </ContactInfo>
+          </TopBarContent>
+        </Container>
+      </TopBar>
+
+      {/* Main Navigation */}
+      <MainNav>
+        <Container>
+          <MainNavContent>
+            {/* Logo */}
+            <LogoWrapper>
+              <Link to="/" onClick={() => setMenuOpen(false)}>
+                <LogoImg src="/vgblogo.png" alt="Vishwa Guru Bharat" />
+              </Link>
+            </LogoWrapper>
+
+            <NavContainer>
+              {/* Mobile Menu Overlay */}
+              <MobileOverlay isOpen={menuOpen} onClick={handleToggleMenu} />
+
+              {/* Navigation Menu */}
+              <NavMenu isOpen={menuOpen}>
+                <MobileClose onClick={handleToggleMenu}>
+                  <FaTimes />
+                </MobileClose>
+
+                <NavItem>
+                  <NavLink to="/about" onClick={() => setMenuOpen(false)}>
+                    <FaOm style={{ marginRight: '8px', color: '#cd232e' }} />
+                    About Us
+                  </NavLink>
+                </NavItem>
+
+                {/* Dropdown Menu */}
+                <NavItem 
+                  ref={dropdownRef} 
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <NavLinkSpan onClick={handleDropdownToggle}>
+                    <FaHandHoldingHeart style={{ marginRight: '8px', color: '#cd232e' }} />
+                    VGB Projects
+                    <ChevronIcon $isOpen={dropdownOpen} />
+                  </NavLinkSpan>
+                  
+                  <DropdownContent isVisible={dropdownOpen}>
+                    <DropdownItem to="/gau" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
+                      <DropdownIcon><FaLeaf /></DropdownIcon>
+                      Gau Seva
+                    </DropdownItem>
+                    <DropdownItem to="/ganga" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
+                      <DropdownIcon><FaWater /></DropdownIcon>
+                      Ganga Conservation
+                    </DropdownItem>
+                    <DropdownItem to="/gayatri" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
+                      <DropdownIcon><FaSun /></DropdownIcon>
+                      Gayatri Awareness
+                    </DropdownItem>
+                    <DropdownItem to="/gita" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
+                      <DropdownIcon><FaBook /></DropdownIcon>
+                      Gita Teachings
+                    </DropdownItem>
+                    <DropdownItem to="/guru" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
+                      <DropdownIcon><FaPrayingHands /></DropdownIcon>
+                      Guru Initiatives
+                    </DropdownItem>
+                  </DropdownContent>
+                </NavItem>
+
+                <NavItem>
+                  <NavLink to="/experience" onClick={() => setMenuOpen(false)}>
+                    <FaTree style={{ marginRight: '8px', color: '#cd232e' }} />
+                    Community Experience
+                  </NavLink>
+                </NavItem>
+
+                <NavItem>
+                <NavLink 
+                  to="/store" 
+                  onClick={() => setIsOpen(false)} 
+                  as="a" 
+                  href="https://imageworldz.online" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <FaStore style={{ marginRight: '8px', color: '#cd232e' }} />
+                  Community Store
+                </NavLink>
+              </NavItem>
+
+                {/* Mobile Auth */}
+                <AuthMobile>
+                  {user ? (
+                    <>
+                      <ProfileButton to="/profile" onClick={() => setMenuOpen(false)}>
+                        <Avatar>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</Avatar>
+                        My Profile
+                      </ProfileButton>
+                      <LogoutButton onClick={handleLogout}>
+                        <FaUser style={{ marginRight: '8px' }} />
+                        Logout
+                      </LogoutButton>
+                      <DonateButton to="/donate" onClick={() => setMenuOpen(false)}>
+                        <DonateText>DONATE</DonateText>
+                      </DonateButton>
+                    </>
+                  ) : (
+                    <>
+                      <ButtonLink to="/login" onClick={() => setMenuOpen(false)}>
+                        <FaUser style={{ marginRight: '8px' }} />
+                        SignUp/Login
+                      </ButtonLink>
+                      <DonateButton to="/donate" onClick={() => setMenuOpen(false)}>
+                        <DonateText>DONATE</DonateText>
+                      </DonateButton>
+                    </>
+                  )}
+                </AuthMobile>
+              </NavMenu>
+
+              {/* Desktop Auth */}
+              <AuthDesktop>
+                {user ? (
+                  <>
+                    <ProfileButton to="/profile">
+                      <Avatar>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</Avatar>
+                      My Profile
+                    </ProfileButton>
+                    <LogoutButton onClick={handleLogout}>
+                      <FaUser style={{ marginRight: '8px' }} />
+                      Logout
+                    </LogoutButton>
+                  </>
+                ) : (
+                  <ButtonLink to="/login">
+                    <FaUser style={{ marginRight: '8px' }} />
+                    SignUp/Login
+                  </ButtonLink>
+                )}
+              </AuthDesktop>
+
+              {/* Donate Button */}
+              <DonateButton to="/donate">
+                <DonateText>DONATE</DonateText>
+              </DonateButton>
+
+              {/* Search Icon */}
+              <SearchIcon>
+                <FaSearch />
+              </SearchIcon>
+
+              {/* Mobile Menu Toggle */}
+              <MobileToggle onClick={handleToggleMenu}>
+                <FaBars />
+              </MobileToggle>
+            </NavContainer>
+          </MainNavContent>
+        </Container>
+      </MainNav>
+
+      {/* Membership Alert */}
+      {user && user.membershipStatus === 'pending' && (
+        <MembershipAlert>
+          <Container>
+            Complete your membership to access all features.
+            <MembershipLink to="/profile">Go to your profile</MembershipLink>
+          </Container>
+        </MembershipAlert>
+      )}
+    </HeaderWrapper>
+  );
+};
 
 export default Header;

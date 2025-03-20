@@ -47,7 +47,7 @@ const LoginPage = () => {
       <div className="container">
         <LoginWrapper>
           <LoginHeader>
-            <LoginLogo src="https://web-assets.same.dev/4078305203/3980109376.png" alt="BNI Logo" />
+            <LoginLogo src="/vgb-logo.png" alt="Vishwa Guru Bharat Logo" />
             <LoginTitle>Member Login</LoginTitle>
           </LoginHeader>
           
@@ -113,13 +113,13 @@ const LoginHeader = styled.div`
 `;
 
 const LoginLogo = styled.img`
-  max-width: 120px;
+  max-width: 150px;
   margin-bottom: 20px;
 `;
 
 const LoginTitle = styled.h1`
   font-size: 1.8rem;
-  color: var(--secondary-color);
+  color: var(--secondary-color, #2b2928);
 `;
 
 const ErrorMessage = styled.div`
@@ -143,7 +143,7 @@ const FormLabel = styled.label`
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: var(--secondary-color);
+  color: var(--secondary-color, #2b2928);
 `;
 
 const FormInput = styled.input`
@@ -155,7 +155,7 @@ const FormInput = styled.input`
   transition: border-color 0.3s;
   
   &:focus {
-    border-color: var(--primary-color);
+    border-color: var(--primary-color, #cd232e);
     outline: none;
   }
 `;
@@ -163,7 +163,7 @@ const FormInput = styled.input`
 const ForgotPassword = styled(Link)`
   display: block;
   text-align: right;
-  color: var(--primary-color);
+  color: var(--primary-color, #cd232e);
   margin-bottom: 20px;
   font-size: 0.9rem;
   text-decoration: none;
@@ -175,7 +175,7 @@ const ForgotPassword = styled(Link)`
 
 const SubmitButton = styled.button`
   width: 100%;
-  background-color: var(--primary-color);
+  background-color: var(--primary-color, #cd232e);
   color: #fff;
   font-weight: 600;
   padding: 12px;
@@ -202,7 +202,7 @@ const RegisterText = styled.span`
 `;
 
 const RegisterLink = styled(Link)`
-  color: var(--primary-color);
+  color: var(--primary-color, #cd232e);
   font-weight: 600;
   text-decoration: none;
   

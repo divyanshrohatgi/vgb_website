@@ -1,4 +1,3 @@
-// client/src/pages/RegisterPage.jsx
 import { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -97,7 +96,7 @@ const RegisterPage = () => {
       <div className="container">
         <RegisterWrapper>
           <RegisterHeader>
-            <RegisterLogo src="https://web-assets.same.dev/4078305203/3980109376.png" alt="BNI Logo" />
+            <RegisterLogo src="/vgb-logo.png" alt="Vishwa Guru Bharat Logo" />
             <RegisterTitle>Create Account</RegisterTitle>
           </RegisterHeader>
 
@@ -257,13 +256,13 @@ const RegisterHeader = styled.div`
 `;
 
 const RegisterLogo = styled.img`
-  max-width: 120px;
+  max-width: 150px;
   margin-bottom: 20px;
 `;
 
 const RegisterTitle = styled.h1`
   font-size: 1.8rem;
-  color: var(--secondary-color);
+  color: var(--secondary-color, #2b2928);
 `;
 
 const ErrorMessage = styled.div`
@@ -302,7 +301,7 @@ const FormLabel = styled.label`
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: var(--secondary-color);
+  color: var(--secondary-color, #2b2928);
 `;
 
 const FormInput = styled.input`
@@ -314,7 +313,7 @@ const FormInput = styled.input`
   transition: border-color 0.3s;
 
   &:focus {
-    border-color: var(--primary-color);
+    border-color: var(--primary-color, #cd232e);
     outline: none;
   }
 `;
@@ -326,7 +325,7 @@ const TermsText = styled.p`
 `;
 
 const TermsLink = styled(Link)`
-  color: var(--primary-color);
+  color: var(--primary-color, #cd232e);
   margin: 0 5px;
   text-decoration: none;
 
@@ -337,7 +336,7 @@ const TermsLink = styled(Link)`
 
 const SubmitButton = styled.button`
   width: 100%;
-  background-color: var(--primary-color);
+  background-color: var(--primary-color, #cd232e);
   color: #fff;
   font-weight: 600;
   padding: 12px;
@@ -364,7 +363,7 @@ const LoginText = styled.span`
 `;
 
 const LoginLink = styled(Link)`
-  color: var(--primary-color);
+  color: var(--primary-color, #cd232e);
   font-weight: 600;
   text-decoration: none;
 

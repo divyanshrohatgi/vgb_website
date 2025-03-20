@@ -1,4 +1,3 @@
-// server/index.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -86,10 +85,8 @@ app.listen(PORT, () => {
 // Handle uncaught exceptions to prevent server crashes
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
-  // Don't exit - let the server continue
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Don't exit - let the server continue
 });

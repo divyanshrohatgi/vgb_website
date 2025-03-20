@@ -6,7 +6,7 @@ const NotFoundPage = () => {
     <NotFoundContainer>
       <div className="container">
         <NotFoundContent>
-          <NotFoundImage src="https://web-assets.same.dev/4078305203/3980109376.png" alt="BNI Logo" />
+          <NotFoundImage src="/vgblogo.png" alt="VGB Logo" />
           <NotFoundTitle>404</NotFoundTitle>
           <NotFoundText>Oops! The page you're looking for cannot be found.</NotFoundText>
           <NotFoundDescription>

@@ -38,7 +38,7 @@ const HomePage = () => {
   const initiatives = {
     gau: {
       title: "Gau (Animal Protection)",
-      icon: <FaHandHoldingHeart />,
+      icon: "🐄",
       description: "Our Gau initiative focuses on saving all animals, particularly cows which are sacred in Vedic culture. We work on preventing animal cruelty, promoting ethical treatment, and creating shelters for abandoned animals.",
       stats: [
         { value: "50+", label: "Animal Shelters" },
@@ -49,7 +49,7 @@ const HomePage = () => {
     },
     ganga: {
       title: "Ganga (Water Conservation)",
-      icon: <FaTree />,
+      icon: "🌊",
       description: "The Ganga initiative aims to save water sources, create water resources, and eliminate water crisis. We organize river cleanup drives, install rainwater harvesting systems, and educate communities about water conservation.",
       stats: [
         { value: "100+", label: "Water Bodies Revived" },
@@ -71,7 +71,7 @@ const HomePage = () => {
     },
     gita: {
       title: "Gita (Ancient Wisdom)",
-      icon: <FaBookReader />,
+      icon: "📖",
       description: "Our Gita initiative promotes ancient texts like the Bhagavad Gita, Vedas, and Puranas that teach us how to live harmoniously in society. We organize discourses, publish translations, and create modern applications of ancient wisdom.",
       stats: [
         { value: "500+", label: "Knowledge Sessions" },
@@ -82,7 +82,7 @@ const HomePage = () => {
     },
     guru: {
       title: "Guru (Knowledge Sharing)",
-      icon: <FaOm />,
+      icon: "🧎🏽",
       description: "The Guru initiative honors the tradition of knowledge sharing. We connect spiritual leaders, scholars, and practitioners to share their wisdom with the world, maintaining the ancient guru-shishya tradition in a modern context.",
       stats: [
         { value: "100+", label: "Spiritual Leaders" },
@@ -274,37 +274,37 @@ const HomePage = () => {
           <ElementsInfographic>
             <ElementCenterCircle>
               <ElementCenterIcon>🌍</ElementCenterIcon>
-              <ElementCenterText>5 Elements</ElementCenterText>
+              <ElementCenterText>पंचतत्व</ElementCenterText>
             </ElementCenterCircle>
             
             <ElementsGrid>
               <ElementCard>
                 <ElementIcon style={{backgroundColor: '#AED9E0'}}>💨</ElementIcon>
-                <ElementName>Air</ElementName>
+                <ElementName>वायु (Air)</ElementName>
                 <ElementDesc>Combating air pollution through tree plantation, awareness campaigns, and sustainable practices</ElementDesc>
               </ElementCard>
               
               <ElementCard>
                 <ElementIcon style={{backgroundColor: '#B8B8D1'}}>✨</ElementIcon>
-                <ElementName>Ether (Space)</ElementName>
+                <ElementName>आकाश (Space)</ElementName>
                 <ElementDesc>Reducing noise pollution and electromagnetic contamination to preserve mental peace</ElementDesc>
               </ElementCard>
               
               <ElementCard>
                 <ElementIcon style={{backgroundColor: '#DDB892'}}>🌍</ElementIcon>
-                <ElementName>Earth</ElementName>
+                <ElementName>पृथ्वी (Earth)</ElementName>
                 <ElementDesc>Fighting soil degradation, promoting organic farming, and preventing deforestation</ElementDesc>
               </ElementCard>
               
               <ElementCard>
                 <ElementIcon style={{backgroundColor: '#5EADF0'}}>💧</ElementIcon>
-                <ElementName>Water</ElementName>
+                <ElementName>जल (Water)</ElementName>
                 <ElementDesc>Preserving water bodies, promoting rainwater harvesting, and preventing water pollution</ElementDesc>
               </ElementCard>
               
               <ElementCard>
                 <ElementIcon style={{backgroundColor: '#F5CAC3'}}>🔥</ElementIcon>
-                <ElementName>Fire</ElementName>
+                <ElementName>अग्नि (Fire)</ElementName>
                 <ElementDesc>Promoting sustainable energy, reducing fossil fuel dependency, and harnessing solar power</ElementDesc>
               </ElementCard>
             </ElementsGrid>
