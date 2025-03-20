@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 import {
   FaBars, FaTimes, FaUser, FaFacebookF, FaTwitter, FaInstagram, FaYoutube,
   FaPhone, FaEnvelope, FaHandHoldingHeart, FaTree, FaStore, FaChevronDown,
-  FaOm, FaLeaf, FaWater, FaPrayingHands, FaBook, FaSun, FaSearch
+  FaOm, FaLeaf, FaWater, FaPrayingHands, FaBook, FaSun, FaSearch, FaSignOutAlt
 } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
 
@@ -45,7 +45,7 @@ const TopBarContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 8px;
@@ -61,14 +61,14 @@ const SocialIcons = styled.div`
 const IconLink = styled.a`
   color: #fff;
   background: rgba(255,255,255,0.15);
-  width: 30px; 
+  width: 30px;
   height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background: rgba(255,255,255,0.25);
     transform: translateY(-2px);
@@ -79,11 +79,11 @@ const IconLink = styled.a`
 const ContactInfo = styled.div`
   display: flex;
   gap: 20px;
-  
+
   @media (max-width: 768px) {
     gap: 15px;
   }
-  
+
   @media (max-width: 480px) {
     flex-direction: column;
     gap: 8px;
@@ -99,7 +99,7 @@ const ContactItem = styled.a`
   text-decoration: none;
   gap: 8px;
   transition: opacity 0.2s ease;
-  
+
   &:hover {
     opacity: 0.85;
   }
@@ -108,7 +108,7 @@ const ContactItem = styled.a`
 /* Main Navigation */
 const MainNav = styled.div`
   padding: 15px 0;
-  
+
   @media (max-width: 768px) {
     padding: 12px 0;
   }
@@ -128,11 +128,11 @@ const LogoWrapper = styled.div`
 const LogoImg = styled.img`
   height: 55px;
   transition: transform 0.3s ease;
-  
+
   &:hover {
     transform: scale(1.03);
   }
-  
+
   @media (max-width: 768px) {
     height: 45px;
   }
@@ -148,7 +148,7 @@ const NavContainer = styled.div`
 /* Mobile Menu Overlay */
 const MobileOverlay = styled.div`
   display: none;
-  
+
   @media (max-width: 992px) {
     display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
     position: fixed;
@@ -169,7 +169,7 @@ const NavMenu = styled.ul`
   padding: 0 15px;
   background: #f7f7f7;
   border-radius: 25px;
-  
+
   @media (max-width: 992px) {
     position: fixed;
     top: 0;
@@ -189,7 +189,7 @@ const NavMenu = styled.ul`
 
 const MobileClose = styled.button`
   display: none;
-  
+
   @media (max-width: 992px) {
     display: block;
     position: absolute;
@@ -216,11 +216,11 @@ const NavLink = styled(Link)`
   font-weight: 500;
   padding: 10px 15px;
   transition: all 0.2s ease;
-  
+
   &:hover {
     color: #cd232e;
   }
-  
+
   @media (max-width: 992px) {
     padding: 14px 0;
     border-bottom: 1px solid #f0f0f0;
@@ -238,11 +238,11 @@ const NavLinkSpan = styled.span`
   padding: 10px 15px;
   transition: all 0.2s ease;
   cursor: pointer;
-  
+
   &:hover {
     color: #cd232e;
   }
-  
+
   @media (max-width: 992px) {
     padding: 14px 0;
     border-bottom: 1px solid #f0f0f0;
@@ -265,7 +265,7 @@ const DropdownContent = styled.div`
   transform: ${({ isVisible }) => (isVisible ? 'translateY(0)' : 'translateY(10px)')};
   transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
   z-index: 10;
-  
+
   @media (max-width: 992px) {
     position: static;
     box-shadow: none;
@@ -286,12 +286,12 @@ const DropdownItem = styled(Link)`
   text-decoration: none;
   padding: 10px 15px;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background: #f9f9f9;
     color: #cd232e;
   }
-  
+
   @media (max-width: 992px) {
     padding: 12px 15px;
   }
@@ -319,7 +319,7 @@ const ChevronIcon = styled(FaChevronDown)`
 /* Mobile Toggle */
 const MobileToggle = styled.button`
   display: none;
-  
+
   @media (max-width: 992px) {
     display: flex;
     align-items: center;
@@ -338,7 +338,9 @@ const AuthDesktop = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  
+  margin-left: 5px;
+  min-width: 110px; /* Ensures consistent width regardless of content */
+
   @media (max-width: 992px) {
     display: none;
   }
@@ -346,7 +348,7 @@ const AuthDesktop = styled.div`
 
 const AuthMobile = styled.div`
   display: none;
-  
+
   @media (max-width: 992px) {
     display: flex;
     flex-direction: column;
@@ -369,10 +371,16 @@ const ButtonLink = styled(Link)`
   border-radius: 6px;
   text-decoration: none;
   transition: all 0.2s ease;
-  
+  white-space: nowrap;
+
   &:hover {
     color: #cd232e;
     border-color: #cd232e;
+  }
+
+  @media (max-width: 992px) {
+    justify-content: center;
+    width: 100%;
   }
 `;
 
@@ -387,10 +395,16 @@ const LogoutButton = styled.button`
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+  white-space: nowrap;
+
   &:hover {
     color: #cd232e;
     border-color: #cd232e;
+  }
+
+  @media (max-width: 992px) {
+    justify-content: center;
+    width: 100%;
   }
 `;
 
@@ -402,9 +416,18 @@ const ProfileButton = styled(Link)`
   color: #333;
   text-decoration: none;
   transition: all 0.2s ease;
-  
+  white-space: nowrap;
+
   &:hover {
     color: #cd232e;
+  }
+
+  @media (max-width: 992px) {
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
   }
 `;
 
@@ -419,6 +442,7 @@ const Avatar = styled.div`
   justify-content: center;
   font-weight: bold;
   margin-right: 8px;
+  flex-shrink: 0;
 `;
 
 const DonateButton = styled(Link)`
@@ -437,11 +461,17 @@ const DonateButton = styled(Link)`
   animation: ${pulse} 2.5s infinite;
   box-shadow: 0 4px 10px rgba(205,35,46,0.25);
   transition: all 0.2s ease;
-  
+  white-space: nowrap;
+
   &:hover {
     background: #b91d27;
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(205,35,46,0.35);
+  }
+
+  @media (max-width: 992px) {
+    width: 100%;
+    justify-content: center;
   }
 `;
 
@@ -456,7 +486,8 @@ const SearchIcon = styled.div`
   color: #333;
   cursor: pointer;
   transition: color 0.2s ease;
-  
+  margin-left: 5px;
+
   &:hover {
     color: #cd232e;
   }
@@ -476,7 +507,7 @@ const MembershipLink = styled(Link)`
   font-weight: 600;
   margin-left: 8px;
   text-decoration: none;
-  
+
   &:hover {
     text-decoration: underline;
   }
@@ -589,8 +620,8 @@ const Header = () => {
                 </NavItem>
 
                 {/* Dropdown Menu */}
-                <NavItem 
-                  ref={dropdownRef} 
+                <NavItem
+                  ref={dropdownRef}
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
                 >
@@ -599,7 +630,7 @@ const Header = () => {
                     VGB Projects
                     <ChevronIcon $isOpen={dropdownOpen} />
                   </NavLinkSpan>
-                  
+
                   <DropdownContent isVisible={dropdownOpen}>
                     <DropdownItem to="/gau" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
                       <DropdownIcon><FaLeaf /></DropdownIcon>
@@ -632,18 +663,17 @@ const Header = () => {
                 </NavItem>
 
                 <NavItem>
-                <NavLink 
-                  to="/store" 
-                  onClick={() => setIsOpen(false)} 
-                  as="a" 
-                  href="https://imageworldz.online" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <FaStore style={{ marginRight: '8px', color: '#cd232e' }} />
-                  Community Store
-                </NavLink>
-              </NavItem>
+                  <NavLink
+                    as="a"
+                    href="https://imageworldz.online"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <FaStore style={{ marginRight: '8px', color: '#cd232e' }} />
+                    Community Store
+                  </NavLink>
+                </NavItem>
 
                 {/* Mobile Auth */}
                 <AuthMobile>
@@ -653,13 +683,13 @@ const Header = () => {
                         <Avatar>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</Avatar>
                         My Profile
                       </ProfileButton>
-                      <LogoutButton onClick={handleLogout}>
-                        <FaUser style={{ marginRight: '8px' }} />
-                        Logout
-                      </LogoutButton>
                       <DonateButton to="/donate" onClick={() => setMenuOpen(false)}>
                         <DonateText>DONATE</DonateText>
                       </DonateButton>
+                      <LogoutButton onClick={handleLogout}>
+                        <FaSignOutAlt style={{ marginRight: '8px' }} />
+                        Logout
+                      </LogoutButton>
                     </>
                   ) : (
                     <>
@@ -678,20 +708,14 @@ const Header = () => {
               {/* Desktop Auth */}
               <AuthDesktop>
                 {user ? (
-                  <>
-                    <ProfileButton to="/profile">
-                      <Avatar>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</Avatar>
-                      My Profile
-                    </ProfileButton>
-                    <LogoutButton onClick={handleLogout}>
-                      <FaUser style={{ marginRight: '8px' }} />
-                      Logout
-                    </LogoutButton>
-                  </>
+                  <ProfileButton to="/profile">
+                    <Avatar>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</Avatar>
+                    Profile
+                  </ProfileButton>
                 ) : (
                   <ButtonLink to="/login">
                     <FaUser style={{ marginRight: '8px' }} />
-                    SignUp/Login
+                    Login
                   </ButtonLink>
                 )}
               </AuthDesktop>
@@ -701,13 +725,20 @@ const Header = () => {
                 <DonateText>DONATE</DonateText>
               </DonateButton>
 
+              {/* Desktop Logout (Only when logged in) */}
+              {user && (
+                <LogoutButton onClick={handleLogout} style={{ marginLeft: '5px' }}>
+                  <FaSignOutAlt style={{ marginRight: '5px' }} />
+                </LogoutButton>
+              )}
+
               {/* Search Icon */}
               <SearchIcon>
                 <FaSearch />
               </SearchIcon>
 
               {/* Mobile Menu Toggle */}
-              <MobileToggle onClick={handleToggleMenu}>
+              <MobileToggle onClick={handleToggleMenu} aria-label="Toggle menu">
                 <FaBars />
               </MobileToggle>
             </NavContainer>
