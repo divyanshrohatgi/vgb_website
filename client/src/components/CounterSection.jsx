@@ -1,4 +1,3 @@
-// client/src/components/CounterSection.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
@@ -9,54 +8,54 @@ const CounterSection = () => {
     volunteers: 0,
     projects: 0
   });
-  
+
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
-  
+
   const targets = {
     years: 31,
     departments: 108,
     volunteers: 1000,
     projects: 500
   };
-  
+
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
         setIsVisible(true);
       }
     }, { threshold: 0.2 });
-    
+
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
-    
+
     return () => {
       if (sectionRef.current) {
         observer.unobserve(sectionRef.current);
       }
     };
   }, []);
-  
+
   useEffect(() => {
     if (!isVisible) return;
-    
+
     const duration = 2000; // 2 seconds
     const steps = 50;
     const interval = duration / steps;
-    
+
     const countersIncrement = {
       years: targets.years / steps,
       departments: targets.departments / steps,
       volunteers: targets.volunteers / steps,
       projects: targets.projects / steps
     };
-    
+
     let currentStep = 0;
-    
+
     const timer = setInterval(() => {
       currentStep++;
-      
+
       if (currentStep <= steps) {
         setCounters({
           years: Math.min(Math.round(countersIncrement.years * currentStep), targets.years),
@@ -68,104 +67,141 @@ const CounterSection = () => {
         clearInterval(timer);
       }
     }, interval);
-    
+
     return () => clearInterval(timer);
   }, [isVisible]);
-  
+
   return (
-    <CounterContainer ref={sectionRef}>
-      <CounterOverlay>
-        <div className="container">
-          <CounterTitle>Our Impact Since 1992</CounterTitle>
-          
-          <CounterGrid>
-            <CounterItem>
-              <CounterValue>{counters.years}+</CounterValue>
-              <CounterLabel>Years of Service</CounterLabel>
-            </CounterItem>
-            
-            <CounterItem>
-              <CounterValue>{counters.departments}</CounterValue>
-              <CounterLabel>Active Departments</CounterLabel>
-            </CounterItem>
-            
-            <CounterItem>
-              <CounterValue>{counters.volunteers}+</CounterValue>
-              <CounterLabel>Dedicated Volunteers</CounterLabel>
-            </CounterItem>
-            
-            <CounterItem>
-              <CounterValue>{counters.projects}+</CounterValue>
-              <CounterLabel>Successful Projects</CounterLabel>
-            </CounterItem>
-          </CounterGrid>
-        </div>
-      </CounterOverlay>
-    </CounterContainer>
+    <SectionWrapper ref={sectionRef}>
+      <Background>
+        <Container>
+          <Title>Our Impact Since 1992</Title>
+
+          <CounterWrapper>
+            <CounterBox>
+              <Number>{counters.years}</Number>
+              <Plus>+</Plus>
+              <Label>Years of Service</Label>
+            </CounterBox>
+
+            <CounterBox>
+              <Number>{counters.departments}</Number>
+              <Label>Active Departments</Label>
+            </CounterBox>
+
+            <CounterBox>
+              <Number>{counters.volunteers}</Number>
+              <Plus>+</Plus>
+              <Label>Dedicated Volunteers</Label>
+            </CounterBox>
+
+            <CounterBox>
+              <Number>{counters.projects}</Number>
+              <Plus>+</Plus>
+              <Label>Successful Projects</Label>
+            </CounterBox>
+          </CounterWrapper>
+        </Container>
+      </Background>
+    </SectionWrapper>
   );
 };
 
-// Styled Components
-const CounterContainer = styled.section`
-  height: 300px;
-  background-image: url('https://web-assets.same.dev/1591743426/2260428846.png');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+// Simple mobile-first styled components
+const SectionWrapper = styled.section`
+  margin: 40px 0;
   position: relative;
-  display: flex;
-  align-items: center;
-  margin: 80px 0;
 `;
 
-const CounterOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
+const Background = styled.div`
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+              url('https://web-assets.same.dev/1591743426/2260428846.png') center/cover no-repeat;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
+  padding: 50px 0;
 `;
 
-const CounterTitle = styled.h2`
+const Container = styled.div`
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const Title = styled.h2`
   color: white;
+  text-align: center;
   font-size: 2rem;
-  text-align: center;
   margin-bottom: 40px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-`;
 
-const CounterGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
   @media (max-width: 576px) {
-    grid-template-columns: 1fr;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
   }
 `;
 
-const CounterItem = styled.div`
-  text-align: center;
-  color: white;
+const CounterWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+
+  @media (max-width: 768px) {
+    gap: 20px;
+  }
 `;
 
-const CounterValue = styled.div`
+const CounterBox = styled.div`
+  flex: 1;
+  min-width: 140px;
+  max-width: 250px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+
+  @media (max-width: 576px) {
+    flex-basis: calc(50% - 20px);
+    min-width: 120px;
+  }
+`;
+
+const Number = styled.div`
+  color: #cd232e;
   font-size: 3rem;
   font-weight: 700;
-  margin-bottom: 10px;
-  color: #cd232e;
+  line-height: 1;
+  display: inline-block;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+
+  @media (max-width: 576px) {
+    font-size: 2rem;
+  }
 `;
 
-const CounterLabel = styled.div`
-  font-size: 1.1rem;
+const Plus = styled.span`
+  color: #cd232e;
+  font-size: 1.8rem;
+  font-weight: 700;
+  display: inline-block;
+  margin-left: 2px;
+  vertical-align: super;
+
+  @media (max-width: 576px) {
+    font-size: 1.5rem;
+  }
+`;
+
+const Label = styled.div`
+  color: white;
+  font-size: 1rem;
+  margin-top: 10px;
   font-weight: 500;
+
+  @media (max-width: 576px) {
+    font-size: 0.9rem;
+    margin-top: 5px;
+  }
 `;
 
 export default CounterSection;

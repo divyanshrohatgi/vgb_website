@@ -794,6 +794,7 @@ const MissionSection = styled.section`
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 `;
 
+// Mission and Vision Cards
 const MissionVisionCards = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -802,6 +803,7 @@ const MissionVisionCards = styled.div`
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 `;
 
@@ -819,6 +821,11 @@ const MissionCard = styled.div`
   &:hover {
     transform: translateY(-10px);
   }
+  
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 200px;
+  }
 `;
 
 const VisionCard = styled.div`
@@ -835,6 +842,11 @@ const VisionCard = styled.div`
   &:hover {
     transform: translateY(-10px);
   }
+  
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 200px;
+  }
 `;
 
 const MissionCardOverlay = styled.div`
@@ -848,10 +860,33 @@ const MissionCardOverlay = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  
+  @media (max-width: 768px) {
+    position: relative;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.85) 100%);
+    padding: 20px;
+    height: auto;
+  }
 `;
 
-const VisionCardOverlay = styled(MissionCardOverlay)`
+const VisionCardOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 100%);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  
+  @media (max-width: 768px) {
+    position: relative;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.85) 100%);
+    padding: 20px;
+    height: auto;
+  }
 `;
 
 const CardTitle = styled.h3`
@@ -859,6 +894,11 @@ const CardTitle = styled.h3`
   font-size: 2rem;
   margin-bottom: 15px;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  
+  @media (max-width: 768px) {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
 `;
 
 const CardContent = styled.p`
@@ -866,6 +906,12 @@ const CardContent = styled.p`
   line-height: 1.6;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   font-size: 1.1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    line-height: 1.5;
+    text-shadow: none;
+  }
 `;
 
 const InitiativesSection = styled.section`
