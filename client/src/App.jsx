@@ -19,6 +19,7 @@ import DonationPage from './pages/DonationPage';
 import MembershipPage from './pages/MembershipPage';
 import NotFoundPage from './pages/NotFoundPage';
 import EventsPage from './pages/EventsPage';
+import TeamPage from './pages/TeamPage';
 
 // New subpages for different sections
 import GauPage from './pages/initiatives/GauPage';
@@ -46,6 +47,8 @@ function App() {
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/donate" element={<DonationPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/team" element={<TeamPage />} />
+              
 
               {/* Authentication Pages */}
               <Route path="/login" element={<LoginPage />} />
@@ -65,7 +68,7 @@ function App() {
               <Route path="/events" element={<EventsPage />} />
 
               {/* Fallback for invalid routes */}
-              <Route path="*" element={<NotFoundPage />} />
+              <Route path="/No" element={<NotFoundPage />} />
             </Routes>
           </main>
           <Footer />
