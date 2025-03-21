@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { FaRegCheckCircle } from 'react-icons/fa';
+import axios from 'axios'; // Add this import
 import RazorpayPaymentForm from '../components/RazorpayPaymentForm';
 
 const DonationPage = () => {
@@ -15,6 +16,7 @@ const DonationPage = () => {
     company: ''
   });
   const [paymentResult, setPaymentResult] = useState(null);
+  const [receiptSent, setReceiptSent] = useState(false);
 
   const predefinedAmounts = [1000, 2100, 5100, 11000, 21000, 51000];
 
@@ -42,11 +44,32 @@ const DonationPage = () => {
   const handlePaymentSuccess = (paymentData) => {
     console.log('Payment successful', paymentData);
     setPaymentResult(paymentData);
-    setStep(3);
-    window.scrollTo(0, 0);
     
-    // You could also send a server request here to record the successful donation
-    // in your database or trigger an email confirmation
+    // Send API request to send donation receipt
+    const amount = getCurrentAmount();
+    console.log('Sending donation receipt request with amount:', amount);
+    
+    axios.post('/api/users/donation', {
+      name: `${donorInfo.firstName} ${donorInfo.lastName}`,
+      email: donorInfo.email,
+      amount: amount,
+      paymentId: paymentData.paymentId || paymentData.razorpay_payment_id,
+      paymentMethod: 'Razorpay',
+      notes: donorInfo.company ? `Company: ${donorInfo.company}` : ''
+    })
+    .then(response => {
+      console.log('Donation processed, receipt will be sent:', response.data);
+      setReceiptSent(true);
+    })
+    .catch(error => {
+      console.error('Failed to process donation receipt:', error);
+      setReceiptSent(false);
+    })
+    .finally(() => {
+      // Set success state regardless of receipt sending status
+      setStep(3);
+      window.scrollTo(0, 0);
+    });
   };
 
   const handlePaymentError = (error) => {
@@ -72,6 +95,7 @@ const DonationPage = () => {
       company: ''
     });
     setPaymentResult(null);
+    setReceiptSent(false);
     setStep(1);
   };
 
@@ -108,10 +132,14 @@ const DonationPage = () => {
               Your generous contribution of ₹{getCurrentAmount()} {isRecurring ? 'monthly' : ''}
               helps support Vishwa Guru Bharat's mission around the world.
             </p>
-            <p>We've sent a confirmation email to {donorInfo.email}.</p>
+            <p>
+              {receiptSent 
+                ? `We've sent a confirmation email to ${donorInfo.email}.` 
+                : `A donation receipt will be emailed to ${donorInfo.email} shortly.`}
+            </p>
             {paymentResult && (
               <PaymentDetails>
-                <p>Payment ID: {paymentResult.paymentId}</p>
+                <p>Payment ID: {paymentResult.paymentId || paymentResult.razorpay_payment_id}</p>
                 <p>Payment Status: Successful</p>
               </PaymentDetails>
             )}

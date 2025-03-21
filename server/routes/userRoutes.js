@@ -12,6 +12,7 @@ const {
   forgotPassword,
   verifyResetToken,
   resetPassword,
+  processDonation // Make sure this is imported
 } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -23,6 +24,7 @@ router.post('/resend-otp', resendOTP);
 router.post('/forgot-password', forgotPassword);
 router.get('/reset-password/:token', verifyResetToken);
 router.post('/reset-password/:token', resetPassword);
+router.post('/donation', processDonation); // Make sure this route is added
 
 // Protected routes
 router.route('/profile')

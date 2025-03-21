@@ -7,9 +7,11 @@ const {
   sendOTPEmail, 
   sendMembershipConfirmationEmail,
   sendPasswordResetEmail,
-  sendPasswordChangedEmail 
+  sendPasswordChangedEmail,
+  sendDonationReceiptEmail // New import
 } = require('../utils/emailService');
 const crypto = require('crypto');
+
 // @desc    Register a new user (with email verification)
 // @route   POST /api/users
 // @access  Public
@@ -520,7 +522,6 @@ const updateMembershipStatus = asyncHandler(async (req, res) => {
     });
   }
 });
-
 // @desc    Handle forgot password request
 // @route   POST /api/users/forgot-password
 // @access  Public
@@ -705,6 +706,79 @@ const resetPassword = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Process donation and send receipt
+// @route   POST /api/users/donation
+// @access  Public
+const processDonation = asyncHandler(async (req, res) => {
+  try {
+    const { 
+      name, 
+      email, 
+      amount, 
+      paymentId, 
+      paymentMethod, 
+      notes 
+    } = req.body;
+    
+    if (!email || !amount || !paymentId) {
+      res.status(400);
+      throw new Error('Email, amount, and payment ID are required');
+    }
+    
+    console.log('Processing donation:', {
+      email,
+      amount,
+      paymentId
+    });
+    
+    // Find user by email (if they exist)
+    const user = await User.findOne({ email });
+    
+    // Generate receipt number
+    const receiptNumber = `DON-${Date.now().toString().slice(-6)}`;
+    
+    // Store donation in database if you have a donation model
+    // If you don't have a donation model yet, you can still send the receipt
+    
+    // Create donation data for receipt
+    const donationData = {
+      name: name || (user ? user.name : 'Supporter'),
+      amount: parseFloat(amount),
+      paymentId,
+      paymentMethod: paymentMethod || 'Online Payment',
+      date: new Date(),
+      receiptNumber,
+      taxId: 'YOUR-TAX-ID' // Your organization's tax ID
+    };
+    
+    // Send receipt email
+    try {
+      await sendDonationReceiptEmail(email, donationData);
+      console.log('Donation receipt email sent to:', email);
+    } catch (emailError) {
+      console.error('Failed to send donation receipt email:', emailError);
+      // Continue even if email fails - don't block the donation
+    }
+    
+    // Return success response
+    res.status(200).json({
+      success: true,
+      message: 'Thank you for your donation. A receipt has been sent to your email.',
+      receiptNumber,
+      amount
+    });
+  } catch (error) {
+    console.error('Error in processDonation:', error);
+    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    res.status(statusCode);
+    res.json({
+      success: false,
+      message: error.message || 'Failed to process donation',
+      stack: process.env.NODE_ENV === 'production' ? null : error.stack
+    });
+  }
+});
+
 module.exports = {
   registerUser,
   authUser,
@@ -715,5 +789,6 @@ module.exports = {
   updateMembershipStatus,
   forgotPassword,
   verifyResetToken,
-  resetPassword
+  resetPassword,
+  processDonation
 };

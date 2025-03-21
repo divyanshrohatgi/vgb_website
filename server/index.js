@@ -104,6 +104,46 @@ app.get('/test-email', async (req, res) => {
   }
 });
 
+// Test donation email endpoint
+app.get('/test-donation-email', async (req, res) => {
+  try {
+    const { sendDonationReceiptEmail } = require('./utils/emailService');
+    const testEmail = req.query.email || 'test@example.com';
+    
+    console.log('Attempting to send test donation receipt email to:', testEmail);
+    
+    const donationData = {
+      name: 'Test Donor',
+      amount: 1000,
+      paymentId: 'test-payment-' + Date.now(),
+      paymentMethod: 'Credit Card',
+      date: new Date(),
+      receiptNumber: 'DON-' + Date.now().toString().slice(-6),
+      taxId: 'ABCDE1234F'
+    };
+    
+    const result = await sendDonationReceiptEmail(testEmail, donationData);
+    
+    console.log('Donation test email sent result:', result);
+    
+    res.json({
+      success: true,
+      message: 'Test donation receipt email sent successfully! Check your inbox (and spam folder)',
+      emailDetails: {
+        to: testEmail,
+        donationData
+      }
+    });
+  } catch (error) {
+    console.error('Error sending test donation email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send test donation email',
+      error: error.message
+    });
+  }
+});
+
 // Email configuration check endpoint
 app.get('/email-config', (req, res) => {
   res.json({
@@ -113,37 +153,6 @@ app.get('/email-config', (req, res) => {
   });
 });
 
-// Error middleware
-app.use(notFound);
-app.use(errorHandler);
-
-const PORT = process.env.PORT || 5012;
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Test the API at: http://localhost:${PORT}/`);
-  console.log(`Payment routes available at: http://localhost:${PORT}/api/payments/test`);
-  console.log(`Email verification routes available at: http://localhost:${PORT}/api/users/verify-email`);
-  console.log(`Test email sending at: http://localhost:${PORT}/test-email?email=your-email@example.com`);
-  console.log('Razorpay config:', {
-    keyExists: !!process.env.RAZORPAY_KEY_ID,
-    secretExists: !!process.env.RAZORPAY_KEY_SECRET
-  });
-  console.log('Email config:', {
-    userExists: !!process.env.EMAIL_USER,
-    passExists: !!process.env.EMAIL_PASS
-  });
-});
-
-// Handle uncaught exceptions to prevent server crashes
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
 // Debug route to test verify-email directly
 app.post('/debug-verify-email', async (req, res) => {
   console.log('Debug verify-email endpoint hit with body:', req.body);
@@ -181,6 +190,7 @@ app.post('/debug-verify-email', async (req, res) => {
     });
   }
 });
+
 // Test HTTP method compatibility
 app.all('/test-method', (req, res) => {
   res.json({
@@ -190,4 +200,37 @@ app.all('/test-method', (req, res) => {
     body: req.body,
     query: req.query
   });
+});
+
+// Error middleware must come after all routes
+app.use(notFound);
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 5012;
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Test the API at: http://localhost:${PORT}/`);
+  console.log(`Payment routes available at: http://localhost:${PORT}/api/payments/test`);
+  console.log(`Email verification routes available at: http://localhost:${PORT}/api/users/verify-email`);
+  console.log(`Test email sending at: http://localhost:${PORT}/test-email?email=your-email@example.com`);
+  console.log(`Test donation email at: http://localhost:${PORT}/test-donation-email?email=your-email@example.com`);
+  console.log('Razorpay config:', {
+    keyExists: !!process.env.RAZORPAY_KEY_ID,
+    secretExists: !!process.env.RAZORPAY_KEY_SECRET
+  });
+  console.log('Email config:', {
+    userExists: !!process.env.EMAIL_USER,
+    passExists: !!process.env.EMAIL_PASS
+  });
+});
+
+// Handle uncaught exceptions to prevent server crashes
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
