@@ -120,13 +120,13 @@ const Footer = () => {
                   </ContactText>
                 </ContactItem>
               </ContactList>
-              <NewsletterBox>
+              {/* <NewsletterBox>
                 <NewsletterTitle>Subscribe to our newsletter</NewsletterTitle>
                 <NewsletterForm>
                   <NewsletterInput type="email" placeholder="Your email address" />
                   <NewsletterButton type="submit">Subscribe</NewsletterButton>
                 </NewsletterForm>
-              </NewsletterBox>
+              </NewsletterBox> */}
             </FooterSection>
           </FooterContent>
         </Container>

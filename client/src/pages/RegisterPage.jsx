@@ -1,3 +1,4 @@
+// client/src/pages/RegisterPage.jsx
 import { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -79,8 +80,15 @@ const RegisterPage = () => {
       console.log('Registration result:', result);
       
       if (result.success) {
-        console.log('Registration successful, redirecting to profile');
-        navigate('/profile');
+        if (result.requiresVerification) {
+          // Redirect to verification page if OTP verification is required
+          console.log('Email verification required, redirecting to verification page');
+          navigate('/verify-email');
+        } else {
+          // Direct login if no verification needed (fallback)
+          console.log('Registration successful, redirecting to profile');
+          navigate('/profile');
+        }
       } else {
         console.log('Registration failed:', result.message);
         setFormError(result.message || 'Registration failed. Please try again.');

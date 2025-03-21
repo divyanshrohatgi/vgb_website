@@ -1,3 +1,4 @@
+// server/models/userModel.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -16,6 +17,12 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
     company: {
       type: String,
       required: true,
@@ -26,40 +33,43 @@ const userSchema = mongoose.Schema(
     },
     location: {
       type: String,
-      required: false,
+      default: '',
     },
     phone: {
       type: String,
-      required: false,
+      default: '',
+    },
+    membershipStatus: {
+      type: String,
+      enum: ['pending', 'active', 'expired'],
+      default: 'pending',
+    },
+    membershipType: {
+      type: String,
+      enum: ['BASIC MEMBERSHIP', 'SILVER MEMBERSHIP', 'GOLD MEMBERSHIP'],
+      default: 'BASIC MEMBERSHIP', // CHANGED THIS TO MATCH THE ENUM
+    },
+    membershipStartDate: {
+      type: Date,
+    },
+    membershipEndDate: {
+      type: Date,
     },
     isAdmin: {
       type: Boolean,
       required: true,
       default: false,
     },
-    profileImage: {
-      type: String,
-      required: false,
-      default: '',
+    // Email verification fields
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
     },
-    // New membership fields
-    membershipStatus: {
+    emailVerificationOTP: {
       type: String,
-      enum: ['none', 'pending', 'active', 'expired'],
-      default: 'none',
     },
-    membershipType: {
-      type: String,
-      enum: ['', 'BASIC MEMBERSHIP', 'SILVER MEMBERSHIP', 'GOLD MEMBERSHIP'],
-      default: '',
-    },
-    membershipStartDate: {
+    emailVerificationOTPExpires: {
       type: Date,
-      default: null,
-    },
-    membershipEndDate: {
-      type: Date,
-      default: null,
     },
     paymentHistory: [
       {
@@ -71,18 +81,18 @@ const userSchema = mongoose.Schema(
           type: Number,
           required: true,
         },
-        date: {
-          type: Date,
-          default: Date.now,
-        },
         membershipType: {
           type: String,
           required: true,
         },
         status: {
           type: String,
-          enum: ['completed', 'failed', 'refunded'],
-          default: 'completed',
+          required: true,
+          default: 'pending',
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
         },
       },
     ],
@@ -92,12 +102,12 @@ const userSchema = mongoose.Schema(
   }
 );
 
-// Method to match passwords
+// Match user entered password to hashed password in database
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Middleware to encrypt password before saving
+// Encrypt password using bcrypt
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();

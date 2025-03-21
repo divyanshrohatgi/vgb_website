@@ -732,10 +732,10 @@ const Header = () => {
                 </LogoutButton>
               )}
 
-              {/* Search Icon */}
+              {/* Search Icon
               <SearchIcon>
                 <FaSearch />
-              </SearchIcon>
+              </SearchIcon> */}
 
               {/* Mobile Menu Toggle */}
               <MobileToggle onClick={handleToggleMenu} aria-label="Toggle menu">

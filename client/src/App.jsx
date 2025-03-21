@@ -1,5 +1,6 @@
 // client/src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import VerifyEmail from './components/VerifyEmail';
 import { AuthProvider } from './context/AuthContext';
 import ScrollToTop from './ScrollToTop';
 
@@ -20,6 +21,9 @@ import MembershipPage from './pages/MembershipPage';
 import NotFoundPage from './pages/NotFoundPage';
 import EventsPage from './pages/EventsPage';
 import TeamPage from './pages/TeamPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+
 
 // New subpages for different sections
 import GauPage from './pages/initiatives/GauPage';
@@ -48,6 +52,7 @@ function App() {
               <Route path="/donate" element={<DonationPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/team" element={<TeamPage />} />
+
               
 
               {/* Authentication Pages */}
@@ -55,6 +60,9 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/membership" element={<MembershipPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+
 
               {/* Initiative Pages */}
               <Route path="/gau" element={<GauPage />} />
@@ -63,6 +71,8 @@ function App() {
               <Route path="/gita" element={<GitaPage />} />
               <Route path="/guru" element={<GuruPage />} />
               <Route path="/5elements" element={<ElementsPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
 
               {/* Community Subpages */}
               <Route path="/events" element={<EventsPage />} />
@@ -77,5 +87,4 @@ function App() {
     </AuthProvider>
   );
 }
-
 export default App;

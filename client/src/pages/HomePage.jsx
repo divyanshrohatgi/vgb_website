@@ -361,9 +361,9 @@ const HomePage = () => {
                 harmonious, sustainable world guided by timeless wisdom.
               </CTADescription>
               <CTAButtons>
-                <PrimaryCTAButton to="/donate">Make a Donation</PrimaryCTAButton>
-                <SecondaryCTAButton to="/volunteer">Become a Volunteer</SecondaryCTAButton>
-              </CTAButtons>
+              <PrimaryCTAButton to="/donate">Make a Donation</PrimaryCTAButton>
+              <SecondaryCTAButton to="/register">Become a Pratinidhi</SecondaryCTAButton>
+            </CTAButtons>
             </CTAContent>
             <CTAImage src="https://web-assets.same.dev/2691685965/1462887440.png" alt="Join Vishwa Guru Bharat" />
           </CTAContainer>

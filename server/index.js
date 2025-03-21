@@ -30,6 +30,14 @@ try {
     console.warn('WARNING: JWT_SECRET is not defined in environment variables');
     // Don't exit - just warn
   }
+  
+  // Check email configuration
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.warn('WARNING: Email configuration (EMAIL_USER, EMAIL_PASS) is not set or incomplete');
+    console.warn('Email verification will not work without proper email configuration');
+  } else {
+    console.log('Email configuration found');
+  }
 
   // Connect to MongoDB - only if needed and not for payments testing
   if (process.env.MONGO_URI) {
@@ -65,6 +73,46 @@ app.post('/test-payment', (req, res) => {
   });
 });
 
+// Test email sending endpoint
+app.get('/test-email', async (req, res) => {
+  try {
+    const { sendOTPEmail } = require('./utils/emailService');
+    const testEmail = req.query.email || 'test@example.com';
+    const testOTP = '123456';
+    
+    console.log('Attempting to send test email to:', testEmail);
+    
+    const result = await sendOTPEmail(testEmail, testOTP);
+    
+    console.log('Email sent result:', result);
+    
+    res.json({
+      success: true,
+      message: 'Test email sent successfully! Check your inbox (and spam folder)',
+      emailDetails: {
+        to: testEmail,
+        otp: testOTP
+      }
+    });
+  } catch (error) {
+    console.error('Error sending test email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send test email',
+      error: error.message
+    });
+  }
+});
+
+// Email configuration check endpoint
+app.get('/email-config', (req, res) => {
+  res.json({
+    emailUser: process.env.EMAIL_USER ? 'Configured' : 'Missing',
+    emailPass: process.env.EMAIL_PASS ? 'Configured' : 'Missing',
+    nodemailerInstalled: typeof require('nodemailer') === 'function' ? 'Yes' : 'No'
+  });
+});
+
 // Error middleware
 app.use(notFound);
 app.use(errorHandler);
@@ -76,9 +124,15 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Test the API at: http://localhost:${PORT}/`);
   console.log(`Payment routes available at: http://localhost:${PORT}/api/payments/test`);
+  console.log(`Email verification routes available at: http://localhost:${PORT}/api/users/verify-email`);
+  console.log(`Test email sending at: http://localhost:${PORT}/test-email?email=your-email@example.com`);
   console.log('Razorpay config:', {
     keyExists: !!process.env.RAZORPAY_KEY_ID,
     secretExists: !!process.env.RAZORPAY_KEY_SECRET
+  });
+  console.log('Email config:', {
+    userExists: !!process.env.EMAIL_USER,
+    passExists: !!process.env.EMAIL_PASS
   });
 });
 
@@ -89,4 +143,51 @@ process.on('uncaughtException', (error) => {
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+// Debug route to test verify-email directly
+app.post('/debug-verify-email', async (req, res) => {
+  console.log('Debug verify-email endpoint hit with body:', req.body);
+  try {
+    const { verifyEmail } = require('./controllers/userController');
+    // Create a mock request and response
+    const mockReq = {
+      body: req.body
+    };
+    const mockRes = {
+      status: function(code) {
+        console.log('Status code:', code);
+        this.statusCode = code;
+        return this;
+      },
+      json: function(data) {
+        console.log('Response data:', data);
+        res.status(this.statusCode || 200).json({
+          debug: true,
+          originalResponse: data,
+          receivedBody: req.body
+        });
+      }
+    };
+    
+    // Call the verification function
+    await verifyEmail(mockReq, mockRes);
+  } catch (error) {
+    console.error('Error in debug verify endpoint:', error);
+    res.status(500).json({
+      debug: true,
+      error: error.message,
+      stack: error.stack,
+      receivedBody: req.body
+    });
+  }
+});
+// Test HTTP method compatibility
+app.all('/test-method', (req, res) => {
+  res.json({
+    message: 'Method test successful',
+    method: req.method,
+    headers: req.headers,
+    body: req.body,
+    query: req.query
+  });
 });
