@@ -1,5 +1,13 @@
 // server/utils/emailService.js
 const nodemailer = require('nodemailer');
+const path = require('path');
+
+// Define a logo attachment for inline embedding using the local file in client/public
+const logoAttachment = {
+  filename: 'vgb-logo.png',
+  path: path.join(__dirname, '../../client/public/vgb-logo.png'),
+  cid: 'vgb-logo'
+};
 
 // Configure nodemailer with Gmail settings
 const transporter = nodemailer.createTransport({
@@ -34,7 +42,7 @@ const sendOTPEmail = async (email, otp) => {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://vishwagurubharat.org/vgb-logo.png" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
+            <img src="cid:vgb-logo" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
             <h2 style="color: #cd232e;">Verify Your Email</h2>
           </div>
           
@@ -56,7 +64,8 @@ const sendOTPEmail = async (email, otp) => {
             </p>
           </div>
         </div>
-      `
+      `,
+      attachments: [logoAttachment]
     };
 
     console.log('Attempting to send OTP email...');
@@ -111,7 +120,7 @@ const sendMembershipConfirmationEmail = async (email, user) => {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://vishwagurubharat.org/vgb-logo.png" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
+            <img src="cid:vgb-logo" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
             <h2 style="color: #cd232e;">Membership Confirmation</h2>
           </div>
           
@@ -122,7 +131,7 @@ const sendMembershipConfirmationEmail = async (email, user) => {
           <!-- Digital Membership Card -->
           <div style="margin: 30px 0; background: linear-gradient(135deg, ${cardColor}, #2b2928); border-radius: 10px; overflow: hidden; color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);">
             <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
-              <img src="https://vishwagurubharat.org/vgb-logo.png" alt="VGB" style="height: 50px; filter: brightness(0) invert(1);">
+              <img src="cid:vgb-logo" alt="VGB" style="height: 50px; filter: brightness(0) invert(1);">
               <div style="text-align: right; font-size: 18px; font-weight: bold;">${user.membershipType}</div>
             </div>
             
@@ -171,14 +180,10 @@ const sendMembershipConfirmationEmail = async (email, user) => {
           <div style="margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
             <p style="color: #666; margin-bottom: 10px;">Vishwa Guru Bharat</p>
             <a href="https://vishwagurubharat.org" style="color: #cd232e; text-decoration: none;">vishwagurubharat.org</a>
-            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
-              <a href="https://facebook.com/vishwagurubharat" style="color: #3b5998;"><img src="https://img.icons8.com/color/48/000000/facebook-new.png" width="24" height="24" alt="Facebook"></a>
-              <a href="https://twitter.com/vishwagurubharat" style="color: #1da1f2;"><img src="https://img.icons8.com/color/48/000000/twitter.png" width="24" height="24" alt="Twitter"></a>
-              <a href="https://instagram.com/vishwagurubharat" style="color: #e1306c;"><img src="https://img.icons8.com/color/48/000000/instagram-new.png" width="24" height="24" alt="Instagram"></a>
-            </div>
           </div>
         </div>
-      `
+      `,
+      attachments: [logoAttachment]
     };
 
     console.log('Attempting to send membership confirmation email...');
@@ -209,7 +214,7 @@ const sendPasswordResetEmail = async (email, name, resetUrl) => {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://vishwagurubharat.org/vgb-logo.png" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
+            <img src="cid:vgb-logo" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
             <h2 style="color: #cd232e;">Reset Your Password</h2>
           </div>
           
@@ -236,7 +241,8 @@ const sendPasswordResetEmail = async (email, name, resetUrl) => {
             <a href="https://vishwagurubharat.org" style="color: #cd232e; text-decoration: none;">vishwagurubharat.org</a>
           </div>
         </div>
-      `
+      `,
+      attachments: [logoAttachment]
     };
 
     console.log('Attempting to send password reset email...');
@@ -266,7 +272,7 @@ const sendPasswordChangedEmail = async (email, name) => {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://vishwagurubharat.org/vgb-logo.png" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
+            <img src="cid:vgb-logo" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
             <h2 style="color: #cd232e;">Password Changed Successfully</h2>
           </div>
           
@@ -286,7 +292,8 @@ const sendPasswordChangedEmail = async (email, name) => {
             <a href="https://vishwagurubharat.org" style="color: #cd232e; text-decoration: none;">vishwagurubharat.org</a>
           </div>
         </div>
-      `
+      `,
+      attachments: [logoAttachment]
     };
 
     console.log('Attempting to send password changed email...');
@@ -330,7 +337,7 @@ const sendDonationReceiptEmail = async (email, donationData) => {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://vishwagurubharat.org/vgb-logo.png" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
+            <img src="cid:vgb-logo" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
             <h2 style="color: #cd232e;">Donation Receipt</h2>
           </div>
           
@@ -369,7 +376,6 @@ const sendDonationReceiptEmail = async (email, donationData) => {
             </table>
           </div>
           
-          <div style="border: 1px dashed #ccc; padding: 15px; margin: 25px 0; text-align: center; background-color:
           <div style="border: 1px dashed #ccc; padding: 15px; margin: 25px 0; text-align: center; background-color: #f9f9f9;">
             <p style="margin: 0; color: #666; font-style: italic;">Vishwa Guru Bharat is a registered non-profit organization. Your contribution may be tax-deductible as allowed by law.</p>
             <p style="margin: 5px 0 0; color: #666; font-style: italic; font-size: 14px;">Tax ID: ${donationData.taxId || 'ABCDE1234F'}</p>
@@ -389,13 +395,14 @@ const sendDonationReceiptEmail = async (email, donationData) => {
             <p style="color: #666; margin-bottom: 10px;">Vishwa Guru Bharat</p>
             <a href="https://vishwagurubharat.org" style="color: #cd232e; text-decoration: none;">vishwagurubharat.org</a>
             <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
-              <a href="https://facebook.com/vishwagurubharat" style="color: #3b5998;"><img src="https://img.icons8.com/color/48/000000/facebook-new.png" width="24" height="24" alt="Facebook"></a>
-              <a href="https://twitter.com/vishwagurubharat" style="color: #1da1f2;"><img src="https://img.icons8.com/color/48/000000/twitter.png" width="24" height="24" alt="Twitter"></a>
-              <a href="https://instagram.com/vishwagurubharat" style="color: #e1306c;"><img src="https://img.icons8.com/color/48/000000/instagram-new.png" width="24" height="24" alt="Instagram"></a>
+              <a href="https://facebook.com/vishwagurubharat" style="color: #3b5998;"><img src="cid:vgb-logo" width="24" height="24" alt="Facebook"></a>
+              <a href="https://twitter.com/vishwagurubharat" style="color: #1da1f2;"><img src="cid:vgb-logo" width="24" height="24" alt="Twitter"></a>
+              <a href="https://instagram.com/vishwagurubharat" style="color: #e1306c;"><img src="cid:vgb-logo" width="24" height="24" alt="Instagram"></a>
             </div>
           </div>
         </div>
-      `
+      `,
+      attachments: [logoAttachment]
     };
 
     console.log('Attempting to send donation receipt email...');
