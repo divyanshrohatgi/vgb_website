@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { FaCheck } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
-import membershipBenefits from '../constants/membershipBenefits';
+import {membershipBenefits} from '../constants/membershipBenefits';
 
 const MembershipDetailsPage = () => {
   const { user, loading } = useContext(AuthContext);
