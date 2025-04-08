@@ -1,6 +1,200 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaLinkedinIn, FaTwitter, FaEnvelope, FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
+import { FaLinkedinIn, FaEnvelope, FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
+
+// Data
+const leadershipData = [
+  {
+    id: 1,
+    name: "Shri C.S Thakur",
+    position: "Founder",
+    image: "https://scontent.fdel3-1.fna.fbcdn.net/v/t39.30808-6/357764439_591007253161119_749019385525702839_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=AGaRdtPl5PoQ7kNvgFF9Xo6&_nc_oc=AdmkpVGuCBz7b9AWA72NvsCP79Y4dHpls6iGgdjaM56n6aRyAjo4iRZVz3gOcvocuhY&_nc_zt=23&_nc_ht=scontent.fdel3-1.fna&_nc_gid=0QNTZ9khKMpw_CQ9pFxXLg&oh=00_AYHILzySxPqPd1kQ8MUtolrvtNKyb_w9fddVRO470fep2g&oe=67E2E0D0",
+    bio: "With over 30 years of experience in Vedic studies and spiritual practice, Shri C.S Thakur has dedicated his life to preserving and promoting India's ancient wisdom. He holds a Ph.D. in Sanskrit and has authored numerous books on Vedic philosophy.",
+    quote: "Our work is not just about preserving tradition, but about making ancient wisdom relevant to solve today's most pressing challenges.",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "rajendra@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 2,
+    name: "Smt. Rupali Dutta",
+    position: "Founder and President",
+    image: "https://scontent.fdel3-1.fna.fbcdn.net/v/t39.30808-6/482062142_970873021844672_5897488387761409284_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_ohc=EoevHa5OsbYQ7kNvgFWxHXd&_nc_oc=Admx78YdzT8thiw1eYeFdPXxXPLkUcT-PrDyehTeynHWIGSuD47rzKCNjymD54N7rjw&_nc_zt=23&_nc_ht=scontent.fdel3-1.fna&_nc_gid=Wvad51fkEJpA1PP1nx9M3w&oh=00_AYF3dScn8NBOAz2ZhIu78Nvo3YSWwcMIAdlxeid7DQZssw&oe=67E2DB8F",
+    bio: "Smt. Rupali Dutta combines her background in environmental science with deep knowledge of Vedic environmental principles. She leads our sustainability initiatives and has been instrumental in developing our 5 Elements conservation program.",
+    quote: "Ancient India understood the delicate balance of nature millennia before modern environmentalism. We must revive this wisdom for our planet's future.",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "ananya@vishwagurubharat.org"
+    }
+  }
+];
+
+const teamData = [
+  {
+    id: 1,
+    name: "Shri Sarvdaman Sharma",
+    position: "Trustee",
+    image: "https://vishwagurubharat.org/img/ShriSarvdaman.jpg",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "arjun@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 2,
+    name: "Shri Dr. Anil Kumar Padha",
+    position: "Trustee",
+    image: "https://vishwagurubharat.org/img/anil2.jpeg",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "priya@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 3,
+    name: "Shri Rajat Vashisht",
+    position: "General Secretary Org",
+    image: "https://vishwagurubharat.org/img/shriRajatji.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "vikram@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 4,
+    name: "Padma Shri Dr. Vishwamurthy Shastri",
+    position: "Patron",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "meera@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 5,
+    name: "Shri Acharya Agnivrat Jee",
+    position: "Director General",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "lakshmi@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 6,
+    name: "Shri Hitesh Chandel",
+    position: "Secretary General",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "lakshmi@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 7,
+    name: "Shri Vishal Kapahi",
+    position: "Director General Jammu & Kashmir",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "lakshmi@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 8,
+    name: "Shri Dhamecha Arvind Retilal",
+    position: "National Vice President",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "lakshmi@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 9,
+    name: "Shri S.K. Muraleei",
+    position: "National Secretary",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "lakshmi@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 10,
+    name: "Smt Rita Kalra",
+    position: "Director Women Empowerment",
+    image: "https://vishwagurubharat.org/img/shriritakalra.jpg",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "lakshmi@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 11,
+    name: "Shri Parmar ketanbhai Valjibhai",
+    position: "Gujarat State President",
+    image: "https://vishwagurubharat.org/img/ShriParmar.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "lakshmi@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 12,
+    name: "Smt Dr. Shefali Sharma",
+    position: "Director of Women Education",
+    image: "https://vishwagurubharat.org/img/smtshefalisharma.jpg",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "lakshmi@vishwagurubharat.org"
+    }
+  }
+];
+
+const developersData = [
+  {
+    id: 1,
+    name: "Divyansh Rohatgi",
+    position: "Full Stack Developer",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "divyansh@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 2,
+    name: "Parth Jain",
+    position: "Full Stack Developer",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "parth@vishwagurubharat.org"
+    }
+  },
+  {
+    id: 3,
+    name: "Michael Brown",
+    position: "Backend Engineer",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "michael@vishwagurubharat.org"
+    },
+  },
+  {
+    id: 3,
+    name: "Michael Brown",
+    position: "Backend Engineer",
+    image: "https://web-assets.same.dev/335287695/52350043.png",
+    social: {
+      linkedin: "https://linkedin.com",
+      email: "michael@vishwagurubharat.org"
+    }
+  }
+];
 
 const TeamPage = () => {
   return (
@@ -27,71 +221,31 @@ const TeamPage = () => {
           </SectionDescription>
 
           <LeadershipGrid>
-            {/* Founder */}
-            <LeaderCard>
-              <LeaderImageWrapper>
-                <LeaderImage src="https://scontent.fdel3-1.fna.fbcdn.net/v/t39.30808-6/357764439_591007253161119_749019385525702839_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=AGaRdtPl5PoQ7kNvgFF9Xo6&_nc_oc=AdmkpVGuCBz7b9AWA72NvsCP79Y4dHpls6iGgdjaM56n6aRyAjo4iRZVz3gOcvocuhY&_nc_zt=23&_nc_ht=scontent.fdel3-1.fna&_nc_gid=0QNTZ9khKMpw_CQ9pFxXLg&oh=00_AYHILzySxPqPd1kQ8MUtolrvtNKyb_w9fddVRO470fep2g&oe=67E2E0D0" alt="Dr. Rajendra Prasad" />
-              </LeaderImageWrapper>
-              <LeaderInfo>
-                <LeaderName>Shri C.S Thakur</LeaderName>
-                <LeaderPosition>Founder</LeaderPosition>
-                <LeaderBio>
-                  With over 30 years of experience in Vedic studies and spiritual practice, Shri C.S Thakur has dedicated his life
-                  to preserving and promoting India's ancient wisdom. He holds a Ph.D. in Sanskrit and has authored numerous
-                  books on Vedic philosophy.
-                </LeaderBio>
-                <SocialLinks>
-                  <SocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </SocialLink>
-                  <SocialLink href="https://twitter.com" target="_blank" aria-label="Twitter">
-                    <FaTwitter />
-                  </SocialLink>
-                  <SocialLink href="mailto:rajendra@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </SocialLink>
-                </SocialLinks>
-                <LeaderQuote>
-                  <QuoteIconLeft><FaQuoteLeft /></QuoteIconLeft>
-                  Our work is not just about preserving tradition, but about making ancient wisdom relevant
-                  to solve today's most pressing challenges.
-                  <QuoteIconRight><FaQuoteRight /></QuoteIconRight>
-                </LeaderQuote>
-              </LeaderInfo>
-            </LeaderCard>
-
-            {/* Vice President */}
-            <LeaderCard>
-              <LeaderImageWrapper>
-                <LeaderImage src="https://scontent.fdel3-1.fna.fbcdn.net/v/t39.30808-6/482062142_970873021844672_5897488387761409284_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_ohc=EoevHa5OsbYQ7kNvgFWxHXd&_nc_oc=Admx78YdzT8thiw1eYeFdPXxXPLkUcT-PrDyehTeynHWIGSuD47rzKCNjymD54N7rjw&_nc_zt=23&_nc_ht=scontent.fdel3-1.fna&_nc_gid=Wvad51fkEJpA1PP1nx9M3w&oh=00_AYF3dScn8NBOAz2ZhIu78Nvo3YSWwcMIAdlxeid7DQZssw&oe=67E2DB8F" alt="Dr. Ananya Sharma" />
-              </LeaderImageWrapper>
-              <LeaderInfo>
-                <LeaderName>Smt. Rupali Dutta </LeaderName>
-                <LeaderPosition>Founder and President</LeaderPosition>
-                <LeaderBio>
-                  Smt. Rupali Dutta combines her background in environmental science with deep knowledge of Vedic environmental
-                  principles. She leads our sustainability initiatives and has been instrumental in developing our
-                  5 Elements conservation program.
-                </LeaderBio>
-                <SocialLinks>
-                  <SocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </SocialLink>
-                  <SocialLink href="https://twitter.com" target="_blank" aria-label="Twitter">
-                    <FaTwitter />
-                  </SocialLink>
-                  <SocialLink href="mailto:ananya@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </SocialLink>
-                </SocialLinks>
-                <LeaderQuote>
-                  <QuoteIconLeft><FaQuoteLeft /></QuoteIconLeft>
-                  Ancient India understood the delicate balance of nature millennia before modern environmentalism.
-                  We must revive this wisdom for our planet's future.
-                  <QuoteIconRight><FaQuoteRight /></QuoteIconRight>
-                </LeaderQuote>
-              </LeaderInfo>
-            </LeaderCard>
+            {leadershipData.map((leader) => (
+              <LeaderCard key={leader.id}>
+                <LeaderImageWrapper>
+                  <LeaderImage src={leader.image} alt={leader.name} />
+                </LeaderImageWrapper>
+                <LeaderInfo>
+                  <LeaderName>{leader.name}</LeaderName>
+                  <LeaderPosition>{leader.position}</LeaderPosition>
+                  <LeaderBio>{leader.bio}</LeaderBio>
+                  <SocialLinks>
+                    <SocialLink href={leader.social.linkedin} target="_blank" aria-label="LinkedIn">
+                      <FaLinkedinIn />
+                    </SocialLink>
+                    <SocialLink href={`mailto:${leader.social.email}`} aria-label="Email">
+                      <FaEnvelope />
+                    </SocialLink>
+                  </SocialLinks>
+                  <LeaderQuote>
+                    <QuoteIconLeft><FaQuoteLeft /></QuoteIconLeft>
+                    {leader.quote}
+                    <QuoteIconRight><FaQuoteRight /></QuoteIconRight>
+                  </LeaderQuote>
+                </LeaderInfo>
+              </LeaderCard>
+            ))}
           </LeadershipGrid>
         </Container>
       </SectionContainer>
@@ -106,204 +260,28 @@ const TeamPage = () => {
           </SectionDescription>
 
           <TeamGrid>
-            <TeamMember>
-              <TeamMemberImage src="https://vishwagurubharat.org/img/ShriSarvdaman.jpg" alt="Arjun Mehta" />
-              <TeamMemberInfo>
-                <TeamMemberName>Shri Sarvdaman Sharma</TeamMemberName>
-                <TeamMemberPosition>Trustee</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:arjun@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://vishwagurubharat.org/img/anil2.jpeg" alt="Priya Patel" />
-              <TeamMemberInfo>
-                <TeamMemberName>Shri Dr. Anil Kumar Padha</TeamMemberName>
-                <TeamMemberPosition>Trustee</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:priya@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://vishwagurubharat.org/img/shriRajatji.png" alt="Dr. Vikram Singh" />
-              <TeamMemberInfo>
-                <TeamMemberName>Shri Rajat Vashisht</TeamMemberName>
-                <TeamMemberPosition>General Seceratory Org</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:vikram@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://web-assets.same.dev/335287695/52350043.png" alt="Meera Agarwal" />
-              <TeamMemberInfo>
-                <TeamMemberName>Padma Shri Dr. Vishwamurthy Shastri</TeamMemberName>
-                <TeamMemberPosition>Patron</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:meera@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-
-            <TeamMember>
-              <TeamMemberImage src="https://web-assets.same.dev/335287695/52350043.png" alt="Lakshmi Krishnan" />
-              <TeamMemberInfo>
-                <TeamMemberName>Shri Acharya Agnivrat Jee</TeamMemberName>
-                <TeamMemberPosition>Director General</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://web-assets.same.dev/335287695/52350043.png" alt="Lakshmi Krishnan" />
-              <TeamMemberInfo>
-                <TeamMemberName>Shri Hitesh Chandel</TeamMemberName>
-                <TeamMemberPosition>Secretary General</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://web-assets.same.dev/335287695/52350043.png" alt="Lakshmi Krishnan" />
-              <TeamMemberInfo>
-                <TeamMemberName>Shri Vishal Kapahi</TeamMemberName>
-                <TeamMemberPosition>Director General Jammu & Kashmir</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://web-assets.same.dev/335287695/52350043.png" alt="Lakshmi Krishnan" />
-              <TeamMemberInfo>
-                <TeamMemberName>Shri Dhamecha Arvind Retilal</TeamMemberName>
-                <TeamMemberPosition>National Vice President</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://web-assets.same.dev/335287695/52350043.png" alt="Lakshmi Krishnan" />
-              <TeamMemberInfo>
-                <TeamMemberName>Shri S .K. Muraleei</TeamMemberName>
-                <TeamMemberPosition>National Secretary</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://vishwagurubharat.org/img/shriritakalra.jpg" alt="Lakshmi Krishnan" />
-              <TeamMemberInfo>
-                <TeamMemberName>Smt Rita Kalra</TeamMemberName>
-                <TeamMemberPosition>Director Women Empowerment</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://vishwagurubharat.org/img/ShriParmar.png" alt="Lakshmi Krishnan" />
-              <TeamMemberInfo>
-                <TeamMemberName>Shri Parmar ketanbhai Valjibhai</TeamMemberName>
-                <TeamMemberPosition>Gujarat State President</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
-
-            <TeamMember>
-              <TeamMemberImage src="https://vishwagurubharat.org/img/smtshefalisharma.jpg" alt="Lakshmi Krishnan" />
-              <TeamMemberInfo>
-                <TeamMemberName>Smt Dr. Shefali Sharma</TeamMemberName>
-                <TeamMemberPosition>Director of Women Education</TeamMemberPosition>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </TeamMemberInfo>
-            </TeamMember>
+            {teamData.map((member) => (
+              <TeamMember key={member.id}>
+                <TeamMemberImage src={member.image} alt={member.name} />
+                <TeamMemberInfo>
+                  <TeamMemberName>{member.name}</TeamMemberName>
+                  <TeamMemberPosition>{member.position}</TeamMemberPosition>
+                  <TeamMemberSocial>
+                    <TeamSocialLink href={member.social.linkedin} target="_blank" aria-label="LinkedIn">
+                      <FaLinkedinIn />
+                    </TeamSocialLink>
+                    <TeamSocialLink href={`mailto:${member.social.email}`} aria-label="Email">
+                      <FaEnvelope />
+                    </TeamSocialLink>
+                  </TeamMemberSocial>
+                </TeamMemberInfo>
+              </TeamMember>
+            ))}
           </TeamGrid>
         </Container>
       </SectionContainer>
-      
 
-      {/* Advisory */}
+      {/* Developers Section */}
       <SectionContainer>
         <Container>
           <SectionTitle>Developer's Section</SectionTitle>
@@ -312,66 +290,25 @@ const TeamPage = () => {
             and robust functionality in all our projects.
           </SectionDescription>
 
-          <AdvisorsGrid>
-            <AdvisorCard>
-              <AdvisorImage src="https://web-assets.same.dev/335287695/52350043.png" alt="John Doe" />
-              <AdvisorInfo>
-                <AdvisorName>Divyansh Rohatgi</AdvisorName>
-                <AdvisorSpecialty>Full Stack Developer</AdvisorSpecialty>
-                <AdvisorBio>
-                 Divyansh ensures our applications are user-friendly and visually appealing with intuitive designs.
-                </AdvisorBio>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </AdvisorInfo>
-            </AdvisorCard>
-
-            <AdvisorCard>
-              <AdvisorImage src="https://web-assets.same.dev/335287695/52350043.png" alt="Jane Smith" />
-              <AdvisorInfo>
-                <AdvisorName>Parth Jain</AdvisorName>
-                <AdvisorSpecialty>Full Stack Developer</AdvisorSpecialty>
-                <AdvisorBio>
-                  Parth ensures our applications are user-friendly and visually appealing with intuitive designs.
-                </AdvisorBio>
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </AdvisorInfo>
-            </AdvisorCard>
-
-            <AdvisorCard>
-              <AdvisorImage src="https://web-assets.same.dev/335287695/52350043.png" alt="Michael Brown" />
-              <AdvisorInfo>
-                <AdvisorName>Michael Brown</AdvisorName>
-                <AdvisorSpecialty>Backend Engineer</AdvisorSpecialty>
-                <AdvisorBio>
-                  Michael ensures our applications are user-friendly and visually appealing with intuitive designs.
-
-                </AdvisorBio>
-
-                <TeamMemberSocial>
-                  <TeamSocialLink href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
-                    <FaLinkedinIn />
-                  </TeamSocialLink>
-                  <TeamSocialLink href="mailto:lakshmi@vishwagurubharat.org" aria-label="Email">
-                    <FaEnvelope />
-                  </TeamSocialLink>
-                </TeamMemberSocial>
-              </AdvisorInfo>
-            </AdvisorCard>
-          </AdvisorsGrid>
+          <TeamGrid>
+            {developersData.map((developer) => (
+              <TeamMember key={developer.id}>
+                <TeamMemberImage src={developer.image} alt={developer.name} />
+                <TeamMemberInfo>
+                  <TeamMemberName>{developer.name}</TeamMemberName>
+                  <TeamMemberPosition>{developer.position}</TeamMemberPosition>
+                  <TeamMemberSocial>
+                    <TeamSocialLink href={developer.social.linkedin} target="_blank" aria-label="LinkedIn">
+                      <FaLinkedinIn />
+                    </TeamSocialLink>
+                    <TeamSocialLink href={`mailto:${developer.social.email}`} aria-label="Email">
+                      <FaEnvelope />
+                    </TeamSocialLink>
+                  </TeamMemberSocial>
+                </TeamMemberInfo>
+              </TeamMember>
+            ))}
+          </TeamGrid>
         </Container>
       </SectionContainer>
 
@@ -516,6 +453,7 @@ const LeaderCard = styled.div`
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 2px solid #cd232e;
 
   @media (max-width: 992px) {
     flex-direction: column;
@@ -625,20 +563,20 @@ const QuoteIconRight = styled.span`
 // Core Team Section Styles
 const TeamGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 30px;
 
   @media (min-width: 1200px) {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 `;
 
 const TeamMember = styled.div`
   background-color: white;
   border-radius: 10px;
-  overflow: hidden;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   transition: all 0.3s;
+  border: 2px solid #cd232e;
 
   &:hover {
     transform: translateY(-10px);
@@ -647,13 +585,18 @@ const TeamMember = styled.div`
 `;
 
 const TeamMemberImage = styled.img`
-  width: 100%;
-  height: 300px;
+  width: 80%;
+  height: 220px;
   object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #cd232e;
+  margin: 20px auto 20px;
+  display: block;
+
 `;
 
 const TeamMemberInfo = styled.div`
-  padding: 20px;
+  padding: 5px;
   text-align: center;
 `;
 
@@ -664,15 +607,17 @@ const TeamMemberName = styled.h3`
 `;
 
 const TeamMemberPosition = styled.p`
-  color: #666;
+  color: #cd232e;
   margin-bottom: 15px;
   font-size: 0.95rem;
+  font-weight: 500;
 `;
 
 const TeamMemberSocial = styled.div`
   display: flex;
   justify-content: center;
-  gap: 15px;
+  margin: 15px;
+  gap:15px;
 `;
 
 const TeamSocialLink = styled.a`
@@ -690,72 +635,6 @@ const TeamSocialLink = styled.a`
     background-color: #cd232e;
     color: white;
   }
-`;
-
-// Advisors Section Styles
-const AdvisorsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 30px;
-
-  @media (max-width: 576px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const AdvisorCard = styled.div`
-  display: flex;
-  gap: 20px;
-  background-color: white;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  }
-
-  @media (max-width: 576px) {
-    flex-direction: column;
-    text-align: center;
-  }
-`;
-
-const AdvisorImage = styled.img`
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-
-  @media (max-width: 576px) {
-    margin: 0 auto;
-  }
-`;
-
-const AdvisorInfo = styled.div`
-  flex: 1;
-`;
-
-const AdvisorName = styled.h3`
-  font-size: 1.2rem;
-  margin-bottom: 5px;
-  color: #2b2928;
-`;
-
-const AdvisorSpecialty = styled.p`
-  color: #cd232e;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-  font-weight: 500;
-`;
-
-const AdvisorBio = styled.p`
-  color: #666;
-  font-size: 0.95rem;
-  line-height: 1.6;
 `;
 
 // Join Us Section Styles

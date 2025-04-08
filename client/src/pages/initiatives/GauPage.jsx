@@ -1,8 +1,112 @@
 // client/src/pages/initiatives/GauPage.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FaArrowRight, FaOm, FaBookReader, FaTree, FaChevronDown } from 'react-icons/fa';
 import styled from 'styled-components';
 
 const GauPage = () => {
+  const [activeTab, setActiveTab] = useState('gau');
+  const [isVisible, setIsVisible] = useState({});
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('.animate-section');
+      sections.forEach(section => {
+        const sectionTop = section.getBoundingClientRect().top;
+        const sectionId = section.id;
+        if (sectionTop < window.innerHeight * 0.75) {
+          setIsVisible(prev => ({ ...prev, [sectionId]: true }));
+        }
+      });
+    };
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initially
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Initiatives data remains unchanged
+  const gauInitiatives = {
+    'gau-raksha': {
+      title: 'Gau Raksha',
+      description: [
+        'Protection and conservation of indigenous cow breeds through legal advocacy and community awareness programs.',
+        'Prevention of cruelty and illegal trafficking by working with law enforcement and local communities.',
+        'Establishment of emergency rescue networks across rural and urban areas.',
+        'Documentation and preservation of native breeds through genetic mapping.'
+      ],
+      stats: [
+        { value: "120+", label: "Rescues This Year" },
+        { value: "15", label: "Legal Cases Filed" },
+        { value: "32", label: "Villages Protected" }
+      ]
+    },
+    'gau-paalan': {
+      title: 'Gau Paalan',
+      description: [
+        'Comprehensive care programs in gaushalas including veterinary services and nutritional planning.',
+        'Training programs for caretakers on modern yet traditional cow rearing techniques.',
+        'Community adoption programs connecting donors with specific cows for sponsorship.',
+        'Research initiatives on indigenous feeding practices and their health benefits.'
+      ],
+      stats: [
+        { value: "45", label: "Gaushalas Supported" },
+        { value: "2,500+", label: "Cows Cared For" },
+        { value: "180", label: "Trained Caretakers" }
+      ]
+    },
+    'gau-samvardhan': {
+      title: 'Gau Samvardhan',
+      description: [
+        'Genetic preservation programs maintaining purity of indigenous breeds like Gir, Sahiwal, and Red Sindhi.',
+        'Scientific breeding programs combining traditional knowledge with modern veterinary science.',
+        'Documentation of lineage and characteristics of native breeds across India.',
+        'Community awareness programs about the economic and ecological benefits of native breeds.'
+      ],
+      stats: [
+        { value: "12", label: "Native Breeds Preserved" },
+        { value: "8", label: "Research Papers Published" },
+        { value: "75", label: "Participating Villages" }
+      ]
+    },
+    'gau-aushadhi': {
+      title: 'Gau Aushadhi',
+      description: [
+        'Research on Panchgavya (five cow products) and their medicinal applications.',
+        'Collaboration with Ayurvedic practitioners to validate traditional remedies.',
+        'Production of organic medicines, cosmetics, and agricultural inputs from cow products.',
+        'Education programs about the scientific basis of cow-based medicines.'
+      ],
+      stats: [
+        { value: "28", label: "Medicinal Products" },
+        { value: "15", label: "Ayurvedic Partnerships" },
+        { value: "3", label: "Research Grants" }
+      ]
+    }
+  };
+
+  // New: Ongoing Projects data for Gau Initiative
+  const gauProjects = [
+    {
+      name: 'Dhriti Gau Shala',
+      location: 'Yellahanka, Bangalore',
+      startDate: '06 April 2025',
+      projectCost: '₹1,00,000/Month',
+      projectRevenue: '₹55,000/Month',
+      donationNeeded: '₹95,000/Month',
+      gauVanshCount: 79
+    },
+    {
+      name: 'Gau Suraksha Kendra',
+      location: 'Nagpur, Maharashtra',
+      startDate: '12 June 2025',
+      projectCost: '₹80,000/Month',
+      projectRevenue: '₹40,000/Month',
+      donationNeeded: '₹40,000/Month',
+      gauVanshCount: 54
+    },
+    // You can add more projects here...
+  ];
+
   return (
     <PageContainer>
       <HeroBanner>
@@ -25,7 +129,62 @@ const GauPage = () => {
               Through education, advocacy, and direct action, we work to create a world where all living beings are treated with respect and dignity, in accordance with ancient Vedic principles.
             </p>
           </ContentText>
-          
+
+          <InitiativesSection className="animate-section" id="initiatives-section" $visible={isVisible['initiatives-section']}>
+            <InitiativesList>
+              {Object.entries(gauInitiatives).map(([key, initiative]) => (
+                <InitiativeItem 
+                  key={key}
+                  $active={activeTab === key}
+                  onClick={() => setActiveTab(activeTab === key ? null : key)}
+                >
+                  <InitiativeHeader>
+                    <InitiativeName>{initiative.title}</InitiativeName>
+                    <FaChevronDown className={`chevron ${activeTab === key ? 'active' : ''}`} />
+                  </InitiativeHeader>
+                  {activeTab === key && (
+                    <InitiativeContent>
+                      <InitiativeDescription>
+                        {initiative.description.map((para, index) => (
+                          <p key={index}>{para}</p>
+                        ))}
+                      </InitiativeDescription>
+                      <InitiativeStats>
+                        {initiative.stats.map((stat, index) => (
+                          <StatItem key={index}>
+                            <StatValue>{stat.value}</StatValue>
+                            <StatLabel>{stat.label}</StatLabel>
+                          </StatItem>
+                        ))}
+                      </InitiativeStats>
+                    </InitiativeContent>
+                  )}
+                </InitiativeItem>
+              ))}
+            </InitiativesList>
+          </InitiativesSection>
+
+          {/* New Ongoing Projects Section */}
+          <ProjectsSection className="animate-section" id="ongoing-projects-section" $visible={isVisible['ongoing-projects-section']}>
+            <ProjectsSectionTitle>Ongoing Projects</ProjectsSectionTitle>
+            <ProjectsGrid>
+              {gauProjects.map((project, index) => (
+                <ProjectCard key={index}>
+                  <ProjectTitle>{project.name}</ProjectTitle>
+                  <ProjectLocation>{project.location}</ProjectLocation>
+                  <ProjectStartDate>Start Date: {project.startDate}</ProjectStartDate>
+                  <ProjectInfo>
+                    <p><strong>Expected Cost:</strong> {project.projectCost}</p>
+                    <p><strong>Revenue:</strong> {project.projectRevenue}</p>
+                    <p><strong>Donation Needed:</strong> {project.donationNeeded}</p>
+                    <p><strong>No. of Gau Vansh:</strong> {project.gauVanshCount}</p>
+                  </ProjectInfo>
+                  <ExploreButton href="/donate">Explore &amp; Donate</ExploreButton>
+                </ProjectCard>
+              ))}
+            </ProjectsGrid>
+          </ProjectsSection>
+
           <KeyAreas>
             <AreaTitle>Key Focus Areas</AreaTitle>
             <AreaGrid>
@@ -54,7 +213,9 @@ const GauPage = () => {
           
           <GetInvolved>
             <InvolvedTitle>How You Can Help</InvolvedTitle>
-            <p>Join us in our mission to protect and honor animals, particularly cows, which hold a special place in India's cultural and spiritual heritage.</p>
+            <p>
+              Join us in our mission to protect and honor animals, particularly cows, which hold a special place in India's cultural and spiritual heritage.
+            </p>
             <ActionButtons>
               <ActionButton to="/donate">Make a Donation</ActionButton>
               <ActionButton to="/volunteer">Volunteer</ActionButton>
@@ -67,7 +228,10 @@ const GauPage = () => {
   );
 };
 
-// Styled Components
+export default GauPage;
+
+/* ---------- Styled Components ---------- */
+
 const PageContainer = styled.div`
   padding-bottom: 60px;
 `;
@@ -161,6 +325,98 @@ const ContentText = styled.div`
   }
 `;
 
+/* New Ongoing Projects Section */
+const ProjectsSection = styled.section.attrs(({ $visible }) => ({
+  style: {
+    opacity: $visible ? 1 : 0,
+    transform: `translateY(${$visible ? '0' : '20px'})`
+  }
+}))`
+  margin-top: 50px;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+`;
+
+const ProjectsSectionTitle = styled.h3`
+  font-size: 1.8rem;
+  color: #cd232e;
+  margin-bottom: 20px;
+  position: relative;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: #cd232e;
+  }
+`;
+
+const ProjectsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+`;
+
+const ProjectCard = styled.div`
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 20px;
+  transition: transform 0.3s;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+  }
+`;
+
+const ProjectTitle = styled.h4`
+  font-size: 1.2rem;
+  color: #2b2928;
+  margin-bottom: 5px;
+`;
+
+const ProjectLocation = styled.p`
+  font-size: 0.95rem;
+  color: #777;
+  margin-bottom: 10px;
+`;
+
+const ProjectStartDate = styled.p`
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 20px;
+`;
+
+const ProjectInfo = styled.div`
+  margin-bottom: 20px;
+  
+  p {
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 5px;
+  }
+`;
+
+const ExploreButton = styled.a`
+  display: inline-block;
+  background-color: #cd232e;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  
+  &:hover {
+    background-color: #b01c26;
+  }
+`;
+
+/* Key Areas Section */
 const KeyAreas = styled.div`
   margin: 40px 0;
 `;
@@ -211,6 +467,7 @@ const AreaDescription = styled.p`
   line-height: 1.6;
 `;
 
+/* Get Involved Section */
 const GetInvolved = styled.div`
   background-color: #f9f9f9;
   border-radius: 10px;
@@ -255,4 +512,114 @@ const ActionButton = styled.a`
   }
 `;
 
-export default GauPage;
+/* Initiatives Section Styles */
+const InitiativesSection = styled.section.attrs(({ $visible }) => ({
+  style: {
+    opacity: $visible ? 1 : 0,
+    transform: `translateY(${$visible ? '0' : '20px'})`
+  }
+}))`
+  margin: 60px 0;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+`;
+
+const InitiativesList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 30px;
+`;
+
+const InitiativeItem = styled.div.attrs(props => ({
+  $active: props.$active
+}))`
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border-left: 4px solid ${props => props.$active ? '#cd232e' : 'transparent'};
+  
+  &:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const InitiativeHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .chevron {
+    transition: transform 0.3s;
+    color: #666;
+    
+    &.active {
+      transform: rotate(180deg);
+      color: #cd232e;
+    }
+  }
+`;
+
+const InitiativeName = styled.h4`
+  font-size: 1.2rem;
+  color: #2b2928;
+  margin: 0;
+`;
+
+const InitiativeContent = styled.div`
+  padding: 0 20px 20px 20px;
+  border-top: 1px solid #eee;
+`;
+
+const InitiativeDescription = styled.div`
+  p {
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 15px;
+    
+    &:last-child {
+      margin-bottom: 25px;
+    }
+  }
+`;
+
+const InitiativeStats = styled.div`
+  display: flex;
+  gap: 15px;
+  margin: 25px 0;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const StatItem = styled.div`
+  flex: 1;
+  min-width: 120px;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 3px solid #cd232e;
+`;
+
+const StatValue = styled.div`
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #cd232e;
+  margin-bottom: 5px;
+`;
+
+const StatLabel = styled.div`
+  font-size: 0.9rem;
+  color: #666;
+`;
+
