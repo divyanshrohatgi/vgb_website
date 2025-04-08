@@ -266,6 +266,10 @@ const ProfilePage = () => {
                       </MembershipButton>
                     </>
                   )}
+                  {/* New Redirect Button */}
+                  <RedirectButton onClick={() => navigate('/membership-details')}>
+                    View Membership Details
+                  </RedirectButton>
                 </MembershipSection>
               </ProfileInfo>
             </ProfileDetails>
@@ -275,6 +279,8 @@ const ProfilePage = () => {
     </ProfileContainer>
   );
 };
+
+export default ProfilePage;
 
 const ProfileContainer = styled.div`
   padding: 60px 0;
@@ -602,4 +608,19 @@ const MembershipButton = styled.button`
   }
 `;
 
-export default ProfilePage;
+/* New Redirect Button */
+const RedirectButton = styled.button`
+  background-color: #cd232e;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 20px;
+  
+  &:hover {
+    background-color: #b01c26;
+  }
+`;

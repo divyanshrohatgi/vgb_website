@@ -5,7 +5,7 @@ import axios from 'axios';
 // Create configured axios instance with baseURL from environment variables
 const api = axios.create({
   // Use absolute URL instead of relying on environment variables
-  baseURL: 'http://localhost:5012',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5012',
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json'

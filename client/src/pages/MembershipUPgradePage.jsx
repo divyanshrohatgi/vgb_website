@@ -1,46 +1,53 @@
-// client/src/pages/MembershipPage.jsx
+// client/src/pages/MembershipUpgradePage.jsx
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaCheck, FaRegCheckCircle, FaCalendarAlt, FaRupeeSign } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
 import axios from 'axios';
-import { membershipPlans } from '../constants/membershipBenefits';
+// Import membership data from the shared constant file
+import { membershipPlans} from '../constants/membershipBenefits';
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5012';
 
-const MembershipPage = () => {
+
+const MembershipUpgradePage = () => {
   const { user, loading, updateMembership } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
+  // Determine current plan from the user membershipType
+  const currentPlan = membershipPlans.find(p => p.id === user?.membershipType) || membershipPlans[0];
+
+  // Allow upgrades only to plans with a higher price than current plan
+  const eligiblePlans = membershipPlans.filter(p => p.price > currentPlan.price);
+
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [step, setStep] = useState(1); // 1: Plan selection, 2: Payment, 3: Success
+  const [step, setStep] = useState(1); // 1: Upgrade selection, 2: Payment, 3: Success
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
   const [paymentResult, setPaymentResult] = useState(null);
-  
+
   // Redirect if not logged in
   useEffect(() => {
     if (!loading && !user) {
       navigate('/login');
     }
-    
-    // If user already has active membership, redirect to profile
-    if (user && user.membershipStatus === 'active') {
+    // If no upgrade is applicable (e.g. already on highest plan), redirect back to profile
+    if (user && eligiblePlans.length === 0) {
       navigate('/profile');
     }
-  }, [user, loading, navigate]);
-  
+  }, [user, loading, navigate, eligiblePlans.length]);
+
   const handlePlanSelect = (planId) => {
     setSelectedPlan(planId);
   };
-  
+
   const handleContinueToPayment = () => {
     if (selectedPlan) {
       setStep(2);
       window.scrollTo(0, 0);
     }
   };
-  
+
   const handleRazorpayPayment = async () => {
     if (!selectedPlan) return;
     
@@ -49,12 +56,12 @@ const MembershipPage = () => {
     
     try {
       // Get the selected plan details
-      const plan = membershipPlans.find(p => p.id === selectedPlan);
+      const plan = eligiblePlans.find(p => p.id === selectedPlan);
       
       // Create order with Razorpay through your backend
       const response = await axios.post(`${baseURL}/api/payments/create-order`, {
         amount: plan.price,
-        description: `${plan.name} - ${plan.period} membership`,
+        description: `${plan.name} - ${plan.period} membership upgrade`,
         email: user?.email,
         firstName: user?.firstName || user?.name,
         lastName: user?.lastName || '',
@@ -64,40 +71,36 @@ const MembershipPage = () => {
           membershipName: plan.name,
         }
       });
-      
       const { data } = response;
       
       if (!data.success || !data.orderId) {
         throw new Error(data.message || 'Failed to create order');
       }
       
-      console.log('Order created successfully:', data.orderId);
-      
       // Configure Razorpay options
       const options = {
         key: 'rzp_test_bToxqx9jfCqd57', // Your Razorpay test key
-        amount: data.amount * 100, // in paise
+        amount: data.amount * 100, // amount in paise
         currency: data.currency || 'INR',
         name: 'Vishwa Guru Bharat Foundation',
         description: `${plan.name} - ${plan.period}`,
         image: '/vgb-logo.png',
         order_id: data.orderId,
         handler: async function(response) {
-          // Payment successful - verify on the backend
           try {
-            // Call your backend to verify the payment
+            // Verify payment on the backend
             await axios.post(`${baseURL}/api/payments/verify-payment`, {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature
-            });
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              });
             
-            // Update membership status in your app
+            // Update membership details in the user's profile
             const result = await updateMembership({
-              membershipType: plan.id, // Use plan.id instead of plan.name
+              membershipType: plan.id,
               paymentId: response.razorpay_payment_id,
-              amount: plan.price, // Add amount for payment history
-              // Set end date based on period (yearly = 365 days)
+              amount: plan.price,
+              membershipStartDate: new Date(), // Upgraded membership start now
               membershipEndDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
             });
             
@@ -141,7 +144,6 @@ const MembershipPage = () => {
         }
       };
       
-      // Initialize Razorpay
       const rzp = new window.Razorpay(options);
       
       rzp.on('payment.failed', function(response) {
@@ -157,11 +159,11 @@ const MembershipPage = () => {
       setPaymentProcessing(false);
     }
   };
-  
+
   const getSelectedPlan = () => {
-    return membershipPlans.find(p => p.id === selectedPlan) || {};
+    return eligiblePlans.find(p => p.id === selectedPlan) || {};
   };
-  
+
   if (loading) {
     return (
       <Container>
@@ -176,10 +178,10 @@ const MembershipPage = () => {
     <Container>
       <div className="container">
         <PageHeader>
-          <h1>Become a Vishwa Guru Bharat Member</h1>
+          <h1>Upgrade Your Membership</h1>
           <p>
-            Join our community dedicated to preserving and promoting India's ancient Vedic wisdom and Sanatan culture.
-            Your membership supports our mission and grants you access to exclusive resources and events.
+            Your current membership is <strong>{currentPlan.name}</strong>.
+            Select a plan to upgrade and enjoy additional benefits.
           </p>
         </PageHeader>
         
@@ -188,22 +190,15 @@ const MembershipPage = () => {
             <SuccessIcon>
               <FaRegCheckCircle />
             </SuccessIcon>
-            <h2>Welcome to the Vishwa Guru Bharat Family!</h2>
+            <h2>Congratulations!</h2>
             <p>
-              Your membership has been successfully activated. You now have access to all 
-              the benefits of your {getSelectedPlan().name} plan.
+              Your membership has been successfully upgraded to {getSelectedPlan().name}.
             </p>
-            <p>
-              We've sent a confirmation email to your registered email address with details
-              about your membership benefits and upcoming events.
-            </p>
-            {paymentResult && (
-              <PaymentDetails>
-                <p><strong>Payment ID:</strong> {paymentResult.paymentId}</p>
-                <p><strong>Order ID:</strong> {paymentResult.orderId}</p>
-                <p><strong>Amount Paid:</strong> ₹{paymentResult.amount}</p>
-              </PaymentDetails>
-            )}
+            <PaymentDetails>
+              <p><strong>Payment ID:</strong> {paymentResult.paymentId}</p>
+              <p><strong>Order ID:</strong> {paymentResult.orderId}</p>
+              <p><strong>Amount Paid:</strong> ₹{paymentResult.amount}</p>
+            </PaymentDetails>
             <ActionButton onClick={() => navigate('/profile')}>
               Go to Your Profile
             </ActionButton>
@@ -212,10 +207,10 @@ const MembershipPage = () => {
           <Content>
             {step === 1 ? (
               <div>
-                <SectionTitle>Select Your Membership Plan</SectionTitle>
+                <SectionTitle>Select Your Upgrade Plan</SectionTitle>
                 
                 <PlansContainer>
-                  {membershipPlans.map((plan) => (
+                  {eligiblePlans.map((plan) => (
                     <PlanCard 
                       key={plan.id} 
                       selected={selectedPlan === plan.id}
@@ -266,12 +261,12 @@ const MembershipPage = () => {
               </div>
             ) : (
               <div>
-                <SectionTitle>Complete Your Membership Payment</SectionTitle>
+                <SectionTitle>Complete Your Upgrade Payment</SectionTitle>
                 
                 <OrderSummary>
                   <h3>Order Summary</h3>
                   <SummaryRow>
-                    <span>Membership Plan:</span>
+                    <span>New Membership Plan:</span>
                     <span>{getSelectedPlan().name}</span>
                   </SummaryRow>
                   <SummaryRow>
@@ -325,6 +320,9 @@ const MembershipPage = () => {
     </Container>
   );
 };
+
+export default MembershipUpgradePage;
+
 /* ---------- Styled Components ---------- */
 
 const Container = styled.div`
@@ -693,4 +691,3 @@ const ActionButton = styled.button`
   }
 `;
 
-export default MembershipPage;

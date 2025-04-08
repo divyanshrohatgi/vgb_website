@@ -23,6 +23,9 @@ import EventsPage from './pages/EventsPage';
 import TeamPage from './pages/TeamPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import MembershipDetailsPage from './pages/MembershipDetailsPage';
+import MembershipUpgradePage from './pages/MembershipUPgradePage';
+
 
 // Initiative Pages
 import GauPage from './pages/initiatives/GauPage';
@@ -64,6 +67,9 @@ function App() {
               <Route path="/donate" element={<DonationPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/team" element={<TeamPage />} />
+              <Route path="/membership-details" element={<MembershipDetailsPage />} />
+              <Route path="/membership-upgrade" element={<MembershipUpgradePage />} />
+              
 
               {/* Authentication Pages */}
               <Route path="/login" element={<LoginPage />} />
