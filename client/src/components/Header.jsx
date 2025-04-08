@@ -4,7 +4,9 @@ import styled, { keyframes } from 'styled-components';
 import {
   FaBars, FaTimes, FaUser, FaFacebookF, FaTwitter, FaInstagram, FaYoutube,
   FaPhone, FaEnvelope, FaHandHoldingHeart, FaTree, FaStore, FaChevronDown,
-  FaOm, FaLeaf, FaWater, FaPrayingHands, FaBook, FaSun, FaSearch, FaSignOutAlt
+  FaOm, FaLeaf, FaWater, FaPrayingHands, FaBook, FaSun, FaSearch, FaSignOutAlt,
+  /* Added these extra icons for About dropdown items */
+  FaEye, FaSitemap, FaCalendarAlt, FaUserFriends
 } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
 
@@ -480,7 +482,7 @@ const DonateText = styled.span`
   z-index: 1;
 `;
 
-/* Search */
+/* Search 
 const SearchIcon = styled.div`
   font-size: 18px;
   color: #333;
@@ -492,6 +494,7 @@ const SearchIcon = styled.div`
     color: #cd232e;
   }
 `;
+*/
 
 /* Alert Banner */
 const MembershipAlert = styled.div`
@@ -516,29 +519,52 @@ const MembershipLink = styled(Link)`
 /* Header Component */
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // VGB Projects dropdown
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { user, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
-  // Handle mouse enter/leave for desktop dropdown
+  // 1) NEW state + ref for About dropdown
+  const [dropdownOpenAbout, setDropdownOpenAbout] = useState(false);
+  const dropdownRefAbout = useRef(null);
+
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // ----------- VGB Projects Mouse Enter/Leave -----------
   const handleMouseEnter = () => {
     if (window.innerWidth > 992) {
       setDropdownOpen(true);
     }
   };
-
   const handleMouseLeave = () => {
     if (window.innerWidth > 992) {
       setDropdownOpen(false);
     }
   };
 
-  // Close dropdown when clicking outside
+  // ----------- About Mouse Enter/Leave -----------
+  const handleMouseEnterAbout = () => {
+    if (window.innerWidth > 992) {
+      setDropdownOpenAbout(true);
+    }
+  };
+  const handleMouseLeaveAbout = () => {
+    if (window.innerWidth > 992) {
+      setDropdownOpenAbout(false);
+    }
+  };
+
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
+      // For VGB Projects
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
+      }
+      // For About
+      if (dropdownRefAbout.current && !dropdownRefAbout.current.contains(e.target)) {
+        setDropdownOpenAbout(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -548,15 +574,23 @@ const Header = () => {
   // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : 'visible';
-    return () => { document.body.style.overflow = 'visible'; };
+    return () => {
+      document.body.style.overflow = 'visible';
+    };
   }, [menuOpen]);
 
   const handleToggleMenu = () => setMenuOpen(!menuOpen);
 
-  // Toggle dropdown for mobile
+  // Toggle for mobile
   const handleDropdownToggle = (e) => {
     e.preventDefault();
     setDropdownOpen(!dropdownOpen);
+  };
+
+  // 2) NEW toggle for About (mobile)
+  const handleDropdownToggleAbout = (e) => {
+    e.preventDefault();
+    setDropdownOpenAbout(!dropdownOpenAbout);
   };
 
   const handleLogout = () => {
@@ -572,10 +606,21 @@ const Header = () => {
         <Container>
           <TopBarContent>
             <SocialIcons>
-              <IconLink href="https://www.facebook.com/vishwagurubharattrust" aria-label="Facebook"><FaFacebookF /></IconLink>
-              <IconLink href="#" aria-label="Twitter"><FaTwitter /></IconLink>
-              <IconLink href="#" aria-label="Instagram"><FaInstagram /></IconLink>
-              <IconLink href="#" aria-label="YouTube"><FaYoutube /></IconLink>
+              <IconLink
+                href="https://www.facebook.com/vishwagurubharattrust"
+                aria-label="Facebook"
+              >
+                <FaFacebookF />
+              </IconLink>
+              <IconLink href="#" aria-label="Twitter">
+                <FaTwitter />
+              </IconLink>
+              <IconLink href="#" aria-label="Instagram">
+                <FaInstagram />
+              </IconLink>
+              <IconLink href="#" aria-label="YouTube">
+                <FaYoutube />
+              </IconLink>
             </SocialIcons>
             <ContactInfo>
               <ContactItem href="tel:+919103544414">
@@ -612,14 +657,86 @@ const Header = () => {
                   <FaTimes />
                 </MobileClose>
 
-                <NavItem>
-                  <NavLink to="/about" onClick={() => setMenuOpen(false)}>
+                {/* 3) REPLACED the single About item with a dropdown */}
+                <NavItem
+                  ref={dropdownRefAbout}
+                  onMouseEnter={handleMouseEnterAbout}
+                  onMouseLeave={handleMouseLeaveAbout}
+                >
+                  <NavLinkSpan onClick={handleDropdownToggleAbout}>
                     <FaOm style={{ marginRight: '8px', color: '#cd232e' }} />
                     About Us
-                  </NavLink>
+                    <ChevronIcon $isOpen={dropdownOpenAbout} />
+                  </NavLinkSpan>
+                  <DropdownContent isVisible={dropdownOpenAbout}>
+                    <DropdownItem
+                      to="/about/vision-mission"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpenAbout(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaEye />
+                      </DropdownIcon>
+                      Vision &amp; Mission
+                    </DropdownItem>
+
+                    <DropdownItem
+                      to="/about/sankalp"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpenAbout(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaPrayingHands />
+                      </DropdownIcon>
+                      Sankalp
+                    </DropdownItem>
+
+                    <DropdownItem
+                      to="/about/boards-departments"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpenAbout(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaSitemap />
+                      </DropdownIcon>
+                      Boards &amp; Departments
+                    </DropdownItem>
+
+                    <DropdownItem
+                      to="/about/EventCalendar"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpenAbout(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaCalendarAlt />
+                      </DropdownIcon>
+                      Event Calendar
+                    </DropdownItem>
+
+                    <DropdownItem
+                      to="/about/whos-who"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpenAbout(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaUserFriends />
+                      </DropdownIcon>
+                      Who's Who
+                    </DropdownItem>
+                  </DropdownContent>
                 </NavItem>
 
-                {/* Dropdown Menu */}
+                {/* VGB Projects (unchanged) */}
                 <NavItem
                   ref={dropdownRef}
                   onMouseEnter={handleMouseEnter}
@@ -632,24 +749,64 @@ const Header = () => {
                   </NavLinkSpan>
 
                   <DropdownContent isVisible={dropdownOpen}>
-                    <DropdownItem to="/gau" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
-                      <DropdownIcon><FaLeaf /></DropdownIcon>
+                    <DropdownItem
+                      to="/gau"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaLeaf />
+                      </DropdownIcon>
                       Gau Seva
                     </DropdownItem>
-                    <DropdownItem to="/ganga" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
-                      <DropdownIcon><FaWater /></DropdownIcon>
+                    <DropdownItem
+                      to="/ganga"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaWater />
+                      </DropdownIcon>
                       Ganga Conservation
                     </DropdownItem>
-                    <DropdownItem to="/gayatri" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
-                      <DropdownIcon><FaSun /></DropdownIcon>
+                    <DropdownItem
+                      to="/gayatri"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaSun />
+                      </DropdownIcon>
                       Gayatri Awareness
                     </DropdownItem>
-                    <DropdownItem to="/gita" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
-                      <DropdownIcon><FaBook /></DropdownIcon>
+                    <DropdownItem
+                      to="/gita"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaBook />
+                      </DropdownIcon>
                       Gita Teachings
                     </DropdownItem>
-                    <DropdownItem to="/guru" onClick={() => { setMenuOpen(false); setDropdownOpen(false); }}>
-                      <DropdownIcon><FaPrayingHands /></DropdownIcon>
+                    <DropdownItem
+                      to="/guru"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      <DropdownIcon>
+                        <FaPrayingHands />
+                      </DropdownIcon>
                       Guru Initiatives
                     </DropdownItem>
                   </DropdownContent>
@@ -671,7 +828,7 @@ const Header = () => {
                     onClick={() => setMenuOpen(false)}
                   >
                     <FaStore style={{ marginRight: '8px', color: '#cd232e' }} />
-                    Community Store
+                    Arogya Store
                   </NavLink>
                 </NavItem>
 
@@ -680,7 +837,9 @@ const Header = () => {
                   {user ? (
                     <>
                       <ProfileButton to="/profile" onClick={() => setMenuOpen(false)}>
-                        <Avatar>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</Avatar>
+                        <Avatar>
+                          {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                        </Avatar>
                         My Profile
                       </ProfileButton>
                       <DonateButton to="/donate" onClick={() => setMenuOpen(false)}>
@@ -709,7 +868,9 @@ const Header = () => {
               <AuthDesktop>
                 {user ? (
                   <ProfileButton to="/profile">
-                    <Avatar>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</Avatar>
+                    <Avatar>
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </Avatar>
                     Profile
                   </ProfileButton>
                 ) : (
@@ -732,7 +893,7 @@ const Header = () => {
                 </LogoutButton>
               )}
 
-              {/* Search Icon
+              {/* Search icon (commented out in your code)
               <SearchIcon>
                 <FaSearch />
               </SearchIcon> */}
@@ -760,3 +921,4 @@ const Header = () => {
 };
 
 export default Header;
+

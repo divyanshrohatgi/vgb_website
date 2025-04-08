@@ -1,7 +1,7 @@
 // client/src/pages/AboutPage.jsx
 import React from 'react';
 import styled from 'styled-components';
-import VGBBanner from '../components/VGBBanner';
+import VGBBanner from '../../components/VGBBanner';
 
 const AboutPage = () => {
   return (

@@ -8,9 +8,9 @@ import ScrollToTop from './ScrollToTop';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-// Pages
+// Main Pages
 import HomePage from './pages/HomePage';
-import AboutPage from './pages/AboutPage';
+import AboutPage from './pages/about/AboutPage';
 import ExperiencePage from './pages/ExperiencePage';
 import CommunityPage from './pages/CommunityPage';
 import LoginPage from './pages/LoginPage';
@@ -24,8 +24,7 @@ import TeamPage from './pages/TeamPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 
-
-// New subpages for different sections
+// Initiative Pages
 import GauPage from './pages/initiatives/GauPage';
 import GangaPage from './pages/initiatives/GangaPage';
 import GayatriPage from './pages/initiatives/GayatriPage';
@@ -34,6 +33,13 @@ import GuruPage from './pages/initiatives/GuruPage';
 import ElementsPage from './pages/elements/ElementsPage';
 
 import ContactPage from './pages/ContactPage';
+
+// Import About subpages (adjust the paths if needed)
+// import VisionMissionPage from './pages/about/AboutPage';
+import SankalpPage from './pages/about/SankalpPage';
+import BoardsDepartmentsPage from './pages/about/BoardsDepartmentsPage';
+import EventCalendarPage from './pages/about/EventCalendarPage';
+// import WhosWhoPage from './pages/about/WhosWhoPage';
 
 function App() {
   return (
@@ -47,13 +53,17 @@ function App() {
               {/* Main Pages */}
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
+              {/* About Subpages */}
+              <Route path="/about/vision-mission" element={<AboutPage />} />
+              <Route path="/about/sankalp" element={<SankalpPage />} />
+              <Route path="/about/boards-departments" element={<BoardsDepartmentsPage />} />
+              <Route path="/about/event-calendar" element={<EventCalendarPage />} />
+              <Route path="/about/whos-who" element={<TeamPage />} />
               <Route path="/experience" element={<ExperiencePage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/donate" element={<DonationPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/team" element={<TeamPage />} />
-
-              
 
               {/* Authentication Pages */}
               <Route path="/login" element={<LoginPage />} />
@@ -63,7 +73,6 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-
               {/* Initiative Pages */}
               <Route path="/gau" element={<GauPage />} />
               <Route path="/ganga" element={<GangaPage />} />
@@ -71,7 +80,6 @@ function App() {
               <Route path="/gita" element={<GitaPage />} />
               <Route path="/guru" element={<GuruPage />} />
               <Route path="/5elements" element={<ElementsPage />} />
-              <Route path="/register" element={<RegisterPage />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
 
               {/* Community Subpages */}
@@ -87,4 +95,5 @@ function App() {
     </AuthProvider>
   );
 }
+
 export default App;
