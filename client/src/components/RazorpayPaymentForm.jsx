@@ -28,24 +28,27 @@ const RazorpayPaymentForm = ({
       setScriptLoaded(true);
       console.log('Razorpay script already loaded');
     } else {
-      console.log('Checking for Razorpay script...');
-      // Script should already be in index.html, but let's check anyway
-      const checkScript = setInterval(() => {
-        if (window.Razorpay) {
-          console.log('Razorpay script found');
-          setScriptLoaded(true);
-          clearInterval(checkScript);
-        }
-      }, 500);
+      console.log('Loading Razorpay script...');
+      
+      // Load the script dynamically since it may not be properly loading from index.html
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => {
+        console.log('Razorpay script loaded successfully');
+        setScriptLoaded(true);
+      };
+      script.onerror = () => {
+        console.error('Failed to load Razorpay script');
+        setPaymentError("Failed to load payment gateway. Please refresh and try again.");
+      };
+      document.body.appendChild(script);
 
-      // Clear interval after 10 seconds to prevent memory leaks
-      setTimeout(() => {
-        clearInterval(checkScript);
-        if (!window.Razorpay) {
-          console.error('Razorpay script not found after timeout');
-          setPaymentError("Razorpay SDK not loaded. Please refresh the page and try again.");
+      return () => {
+        if (document.body.contains(script)) {
+          document.body.removeChild(script);
         }
-      }, 10000);
+      };
     }
 
     // Test backend connection
@@ -59,15 +62,28 @@ const RazorpayPaymentForm = ({
       });
   }, []);
 
+  // Debug: Log Razorpay key to verify it's available
+  useEffect(() => {
+    const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+    console.log('Razorpay Key available:', razorpayKey ? 'Yes' : 'No');
+    // Don't log the actual key for security reasons
+  }, []);
+
   const handlePayment = async (event) => {
     event.preventDefault();
     setIsProcessing(true);
     setPaymentError(null);
 
     try {
-      // Ensure the Razorpay script is loaded
+      // Double check Razorpay is loaded
       if (!window.Razorpay) {
         throw new Error("Razorpay SDK not loaded. Please refresh the page and try again.");
+      }
+
+      // Verify we have the key
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+      if (!razorpayKey) {
+        throw new Error("Payment configuration is missing. Please contact support.");
       }
 
       // Create a description based on donation type
@@ -85,20 +101,7 @@ const RazorpayPaymentForm = ({
       
       console.log('Calling API endpoint:', endpoint);
       
-      // For testing: try the test endpoint first
-      let response;
-      try {
-        response = await api.post('/api/payments/test-create-order', { 
-          amount: amount,
-          description,
-        });
-        console.log('Test endpoint response:', response.data);
-      } catch (testError) {
-        console.warn('Test endpoint failed, trying real endpoint:', testError);
-      }
-      
-      // Now try the real endpoint
-      response = await api.post(endpoint, { 
+      const response = await api.post(endpoint, { 
         amount: amount,
         description,
         email: donorInfo?.email,
@@ -116,11 +119,13 @@ const RazorpayPaymentForm = ({
 
       console.log('Order created successfully:', data.orderId);
 
-      // Step 2: Configure Razorpay options
+      // Step 2: Configure Razorpay options - with explicit debugging for key
+      console.log('Initializing Razorpay with key:', razorpayKey.substring(0, 4) + '...');
+      
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Use environment variable
+        key: razorpayKey,
         amount: data.amount * 100, // in paise
-        currency: data.currency,
+        currency: data.currency || currency,
         name: 'Vishwa Guru Bharat Foundation',
         description: description,
         image: '/vgb-logo.png', // Your logo
@@ -131,7 +136,16 @@ const RazorpayPaymentForm = ({
           api.post('/api/payments/verify-payment', {
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature
+            razorpay_signature: response.razorpay_signature,
+            email: donorInfo?.email,
+            name: donorInfo ? `${donorInfo.firstName} ${donorInfo.lastName}` : '',
+            amount: amount,
+            notes: {
+              firstName: donorInfo?.firstName,
+              lastName: donorInfo?.lastName,
+              email: donorInfo?.email,
+              donationType: donorInfo?.isRecurring ? 'Monthly' : 'One-time'
+            }
           })
           .then(() => {
             // Payment verification successful
@@ -175,18 +189,29 @@ const RazorpayPaymentForm = ({
         }
       };
 
-      // Step 3: Open Razorpay Checkout
-      const rzp = new window.Razorpay(options);
+      // Step 3: Open Razorpay Checkout with better error handling
+      try {
+        console.log('Creating Razorpay instance with options:', {
+          ...options,
+          key: options.key.substring(0, 4) + '...' // Log partial key for security
+        });
+        
+        const rzp = new window.Razorpay(options);
 
-      rzp.on('payment.failed', function(response) {
-        console.error('Payment failed:', response);
-        const error = response.error || {};
-        setPaymentError(error.description || 'Payment failed');
-        if (onError) onError(error.description || 'Payment failed');
-        setIsProcessing(false);
-      });
+        rzp.on('payment.failed', function(response) {
+          console.error('Payment failed:', response);
+          const error = response.error || {};
+          setPaymentError(error.description || 'Payment failed');
+          if (onError) onError(error.description || 'Payment failed');
+          setIsProcessing(false);
+        });
 
-      rzp.open();
+        console.log('Opening Razorpay payment modal');
+        rzp.open();
+      } catch (rzpError) {
+        console.error('Error initializing Razorpay:', rzpError);
+        throw new Error(`Razorpay initialization failed: ${rzpError.message}`);
+      }
     } catch (error) {
       console.error('Payment error:', error);
       setPaymentError(error.message || 'An unexpected error occurred');
