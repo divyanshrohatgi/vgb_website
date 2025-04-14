@@ -4,7 +4,6 @@ import axios from 'axios';
 
 // Create configured axios instance with baseURL from environment variables
 const api = axios.create({
-  // Use absolute URL instead of relying on environment variables
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5012',
   timeout: 15000,
   headers: {
@@ -119,7 +118,7 @@ const RazorpayPaymentForm = ({
 
       // Step 2: Configure Razorpay options
       const options = {
-        key: 'rzp_test_bToxqx9jfCqd57', // Hardcoded for reliability
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Use environment variable
         amount: data.amount * 100, // in paise
         currency: data.currency,
         name: 'Vishwa Guru Bharat Foundation',

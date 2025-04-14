@@ -171,11 +171,6 @@ const sendMembershipConfirmationEmail = async (email, user) => {
           <div style="margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
             <p style="color: #666; margin-bottom: 10px;">Vishwa Guru Bharat</p>
             <a href="https://vishwagurubharat.org" style="color: #cd232e; text-decoration: none;">vishwagurubharat.org</a>
-            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
-              <a href="https://facebook.com/vishwagurubharat" style="color: #3b5998;"><img src="https://img.icons8.com/color/48/000000/facebook-new.png" width="24" height="24" alt="Facebook"></a>
-              <a href="https://twitter.com/vishwagurubharat" style="color: #1da1f2;"><img src="https://img.icons8.com/color/48/000000/twitter.png" width="24" height="24" alt="Twitter"></a>
-              <a href="https://instagram.com/vishwagurubharat" style="color: #e1306c;"><img src="https://img.icons8.com/color/48/000000/instagram-new.png" width="24" height="24" alt="Instagram"></a>
-            </div>
           </div>
         </div>
       `
@@ -314,7 +309,7 @@ const formatDate = (date) => {
 };
 
 /**
- * Send a donation confirmation email with receipt
+ * Send a donation receipt email
  * @param {string} email - Donor's email address
  * @param {object} donationData - Object containing donation details
  * @returns {Promise} - Resolves when email is sent
@@ -330,7 +325,7 @@ const sendDonationReceiptEmail = async (email, donationData) => {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://github.com/divyanshrohatgi/vgb_website/blob/main/client/public/vgb-logo.png" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
+            <img src="https://vishwagurubharat.org/vgb-logo.png" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
             <h2 style="color: #cd232e;">Donation Receipt</h2>
           </div>
           
@@ -348,7 +343,11 @@ const sendDonationReceiptEmail = async (email, donationData) => {
               </tr>
               <tr>
                 <td style="padding: 8px 0; border-bottom: 1px solid #ddd; color: #666;">Date</td>
-                <td style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right;">${formatDate(donationData.date || new Date())}</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right;">${new Date(donationData.date || new Date()).toLocaleDateString('en-US', { 
+                  day: 'numeric', 
+                  month: 'short', 
+                  year: 'numeric' 
+                })}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; border-bottom: 1px solid #ddd; color: #666;">Donor Name</td>
@@ -369,7 +368,6 @@ const sendDonationReceiptEmail = async (email, donationData) => {
             </table>
           </div>
           
-          <div style="border: 1px dashed #ccc; padding: 15px; margin: 25px 0; text-align: center; background-color:
           <div style="border: 1px dashed #ccc; padding: 15px; margin: 25px 0; text-align: center; background-color: #f9f9f9;">
             <p style="margin: 0; color: #666; font-style: italic;">Vishwa Guru Bharat is a registered non-profit organization. Your contribution may be tax-deductible as allowed by law.</p>
             <p style="margin: 5px 0 0; color: #666; font-style: italic; font-size: 14px;">Tax ID: ${donationData.taxId || 'ABCDE1234F'}</p>
@@ -388,11 +386,6 @@ const sendDonationReceiptEmail = async (email, donationData) => {
           <div style="margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
             <p style="color: #666; margin-bottom: 10px;">Vishwa Guru Bharat</p>
             <a href="https://vishwagurubharat.org" style="color: #cd232e; text-decoration: none;">vishwagurubharat.org</a>
-            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
-              <a href="https://facebook.com/vishwagurubharat" style="color: #3b5998;"><img src="https://img.icons8.com/color/48/000000/facebook-new.png" width="24" height="24" alt="Facebook"></a>
-              <a href="https://twitter.com/vishwagurubharat" style="color: #1da1f2;"><img src="https://img.icons8.com/color/48/000000/twitter.png" width="24" height="24" alt="Twitter"></a>
-              <a href="https://instagram.com/vishwagurubharat" style="color: #e1306c;"><img src="https://img.icons8.com/color/48/000000/instagram-new.png" width="24" height="24" alt="Instagram"></a>
-            </div>
           </div>
         </div>
       `
@@ -408,11 +401,82 @@ const sendDonationReceiptEmail = async (email, donationData) => {
   }
 };
 
-// Export all email functions
+/**
+ * Send contact form email
+ * @param {Object} data - Contact form data
+ * @returns {Promise} - Resolves when email is sent
+ */
+const sendContactEmail = async (data) => {
+  try {
+    console.log('Sending contact form email...');
+    
+    const mailOptions = {
+      from: `"Vishwa Guru Bharat" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER,
+      replyTo: data.email, // Add Reply-To header
+      subject: `New Contact Form Submission: ${data.subject}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://vishwagurubharat.org/vgb-logo.png" alt="Vishwa Guru Bharat Logo" style="max-width: 150px;">
+            <h2 style="color: #cd232e;">Message from Website Visitor</h2>
+          </div>
+          
+          <div style="background-color: #f8f8f8; border-radius: 8px; padding: 20px; margin: 25px 0;">
+            <h3 style="color: #2b2928; margin-top: 0;">Contact Details</h3>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd; color: #666;">Name</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right;">${data.name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd; color: #666;">Email</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right;">
+                  <a href="mailto:${data.email}" style="color: #cd232e; text-decoration: none;">${data.email}</a>
+                </td>
+              </tr>
+              ${data.phone ? `
+                <tr>
+                  <td style="padding: 8px 0; border-bottom: 1px solid #ddd; color: #666;">Phone</td>
+                  <td style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right;">${data.phone}</td>
+                </tr>
+              ` : ''}
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd; color: #666;">Subject</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd; text-align: right;">${data.subject}</td>
+              </tr>
+            </table>
+          </div>
+          
+          <div style="margin: 25px 0;">
+            <h3 style="color: #2b2928; margin-top: 0;">Message</h3>
+            <p style="color: #666; line-height: 1.6;">${data.message}</p>
+          </div>
+          
+          <div style="margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
+            <p style="color: #666; margin-bottom: 10px;">Vishwa Guru Bharat</p>
+            <a href="https://vishwagurubharat.org" style="color: #cd232e; text-decoration: none;">vishwagurubharat.org</a>
+          </div>
+        </div>
+      `
+    };
+
+    console.log('Attempting to send contact email...');
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Contact email sent successfully:', info.response);
+    return info;
+  } catch (error) {
+    console.error('Error sending contact email:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   sendOTPEmail,
   sendMembershipConfirmationEmail,
   sendPasswordResetEmail,
   sendPasswordChangedEmail,
-  sendDonationReceiptEmail
+  sendDonationReceiptEmail,
+  sendContactEmail
 };

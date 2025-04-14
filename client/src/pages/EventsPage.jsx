@@ -222,8 +222,7 @@ const RegisterButton = styled.a`
   }
 `;
 
-const SubscribeSection = styled.section`
-  background-color: #f9f9f9;
+const SubscribeSection = styled.section`  background-color: #f9f9f9;
   padding: 50px;
   border-radius: 10px;
   text-align: center;
@@ -289,3 +288,4 @@ const SubscribeButton = styled.button`
 `;
 
 export default EventsPage;
+

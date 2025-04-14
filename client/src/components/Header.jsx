@@ -23,11 +23,18 @@ const ripple = keyframes`
 
 /* Layout Components */
 const HeaderWrapper = styled.header`
-  position: sticky;
-  top: 0;
-  z-index: 100;
   background: #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+  @media (max-width: 768px) {
+    position: fixed;
+    top: ${({ hideTopBar }) => hideTopBar ? '0' : '40px'};
+    left: 0;
+    right: 0;
+    transition: top 0.3s ease;
+  }
 `;
 
 const Container = styled.div`
@@ -41,6 +48,17 @@ const TopBar = styled.div`
   background: linear-gradient(90deg, #cd232e, #a91d28);
   color: #fff;
   padding: 8px 0;
+  width: 100%;
+  z-index: 1001;
+  transition: transform 0.3s ease;
+
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    transform: ${({ hideOnScroll }) => hideOnScroll ? 'translateY(-100%)' : 'translateY(0)'};
+  }
 `;
 
 const TopBarContent = styled.div`
@@ -519,6 +537,8 @@ const MembershipLink = styled(Link)`
 /* Header Component */
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hideTopBar, setHideTopBar] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   // VGB Projects dropdown
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -579,6 +599,29 @@ const Header = () => {
     };
   }, [menuOpen]);
 
+  // Add scroll handler for TopBar - only for mobile
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerWidth <= 768) {
+        const currentScrollY = window.scrollY;
+        
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          setHideTopBar(true);
+        } else {
+          setHideTopBar(false);
+        }
+        
+        setLastScrollY(currentScrollY);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
+
   const handleToggleMenu = () => setMenuOpen(!menuOpen);
 
   // Toggle for mobile
@@ -600,9 +643,8 @@ const Header = () => {
   };
 
   return (
-    <HeaderWrapper>
-      {/* Top Bar with Contact Info */}
-      <TopBar>
+    <>
+      <TopBar hideOnScroll={hideTopBar}>
         <Container>
           <TopBarContent>
             <SocialIcons>
@@ -635,290 +677,294 @@ const Header = () => {
           </TopBarContent>
         </Container>
       </TopBar>
-
-      {/* Main Navigation */}
-      <MainNav>
-        <Container>
-          <MainNavContent>
-            {/* Logo */}
-            <LogoWrapper>
-              <Link to="/" onClick={() => setMenuOpen(false)}>
-                <LogoImg src="/vgblogo.png" alt="Vishwa Guru Bharat" />
-              </Link>
-            </LogoWrapper>
-
-            <NavContainer>
-              {/* Mobile Menu Overlay */}
-              <MobileOverlay isOpen={menuOpen} onClick={handleToggleMenu} />
-
-              {/* Navigation Menu */}
-              <NavMenu isOpen={menuOpen}>
-                <MobileClose onClick={handleToggleMenu}>
-                  <FaTimes />
-                </MobileClose>
-
-                {/* 3) REPLACED the single About item with a dropdown */}
-                <NavItem
-                  ref={dropdownRefAbout}
-                  onMouseEnter={handleMouseEnterAbout}
-                  onMouseLeave={handleMouseLeaveAbout}
-                >
-                  <NavLinkSpan onClick={handleDropdownToggleAbout}>
-                    <FaOm style={{ marginRight: '8px', color: '#cd232e' }} />
-                    About Us
-                    <ChevronIcon $isOpen={dropdownOpenAbout} />
-                  </NavLinkSpan>
-                  <DropdownContent isVisible={dropdownOpenAbout}>
-                    <DropdownItem
-                      to="/about/vision-mission"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpenAbout(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaEye />
-                      </DropdownIcon>
-                      Vision &amp; Mission
-                    </DropdownItem>
-
-                    <DropdownItem
-                      to="/about/sankalp"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpenAbout(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaPrayingHands />
-                      </DropdownIcon>
-                      Sankalp
-                    </DropdownItem>
-
-                    <DropdownItem
-                      to="/about/boards-departments"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpenAbout(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaSitemap />
-                      </DropdownIcon>
-                      Boards &amp; Departments
-                    </DropdownItem>
-
-                    <DropdownItem
-                      to="/about/EventCalendar"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpenAbout(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaCalendarAlt />
-                      </DropdownIcon>
-                      Event Calendar
-                    </DropdownItem>
-
-                    <DropdownItem
-                      to="/about/whos-who"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpenAbout(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaUserFriends />
-                      </DropdownIcon>
-                      Who's Who
-                    </DropdownItem>
-                  </DropdownContent>
-                </NavItem>
-
-                {/* VGB Projects (unchanged) */}
-                <NavItem
-                  ref={dropdownRef}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <NavLinkSpan onClick={handleDropdownToggle}>
-                    <FaHandHoldingHeart style={{ marginRight: '8px', color: '#cd232e' }} />
-                    VGB Projects
-                    <ChevronIcon $isOpen={dropdownOpen} />
-                  </NavLinkSpan>
-
-                  <DropdownContent isVisible={dropdownOpen}>
-                    <DropdownItem
-                      to="/gau"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaLeaf />
-                      </DropdownIcon>
-                      Gau Seva
-                    </DropdownItem>
-                    <DropdownItem
-                      to="/ganga"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaWater />
-                      </DropdownIcon>
-                      Ganga Conservation
-                    </DropdownItem>
-                    <DropdownItem
-                      to="/gayatri"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaSun />
-                      </DropdownIcon>
-                      Gayatri Awareness
-                    </DropdownItem>
-                    <DropdownItem
-                      to="/gita"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaBook />
-                      </DropdownIcon>
-                      Gita Teachings
-                    </DropdownItem>
-                    <DropdownItem
-                      to="/guru"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      <DropdownIcon>
-                        <FaPrayingHands />
-                      </DropdownIcon>
-                      Guru Initiatives
-                    </DropdownItem>
-                  </DropdownContent>
-                </NavItem>
-
-                <NavItem>
-                  <NavLink to="/experience" onClick={() => setMenuOpen(false)}>
-                    <FaTree style={{ marginRight: '8px', color: '#cd232e' }} />
-                    Community Experience
-                  </NavLink>
-                </NavItem>
-
-                <NavItem>
-                  <NavLink
-                    as="a"
-                    href="https://imageworldz.online"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <FaStore style={{ marginRight: '8px', color: '#cd232e' }} />
-                    Arogya Store
-                  </NavLink>
-                </NavItem>
-
-                {/* Mobile Auth */}
-                <AuthMobile>
-                  {user ? (
-                    <>
-                      <ProfileButton to="/profile" onClick={() => setMenuOpen(false)}>
-                        <Avatar>
-                          {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                        </Avatar>
-                        My Profile
-                      </ProfileButton>
-                      <DonateButton to="/donate" onClick={() => setMenuOpen(false)}>
-                        <DonateText>DONATE</DonateText>
-                      </DonateButton>
-                      <LogoutButton onClick={handleLogout}>
-                        <FaSignOutAlt style={{ marginRight: '8px' }} />
-                        Logout
-                      </LogoutButton>
-                    </>
-                  ) : (
-                    <>
-                      <ButtonLink to="/login" onClick={() => setMenuOpen(false)}>
-                        <FaUser style={{ marginRight: '8px' }} />
-                        SignUp/Login
-                      </ButtonLink>
-                      <DonateButton to="/donate" onClick={() => setMenuOpen(false)}>
-                        <DonateText>DONATE</DonateText>
-                      </DonateButton>
-                    </>
-                  )}
-                </AuthMobile>
-              </NavMenu>
-
-              {/* Desktop Auth */}
-              <AuthDesktop>
-                {user ? (
-                  <ProfileButton to="/profile">
-                    <Avatar>
-                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                    </Avatar>
-                    Profile
-                  </ProfileButton>
-                ) : (
-                  <ButtonLink to="/login">
-                    <FaUser style={{ marginRight: '8px' }} />
-                    Login
-                  </ButtonLink>
-                )}
-              </AuthDesktop>
-
-              {/* Donate Button */}
-              <DonateButton to="/donate">
-                <DonateText>DONATE</DonateText>
-              </DonateButton>
-
-              {/* Desktop Logout (Only when logged in) */}
-              {user && (
-                <LogoutButton onClick={handleLogout} style={{ marginLeft: '5px' }}>
-                  <FaSignOutAlt style={{ marginRight: '5px' }} />
-                </LogoutButton>
-              )}
-
-              {/* Search icon (commented out in your code)
-              <SearchIcon>
-                <FaSearch />
-              </SearchIcon> */}
-
-              {/* Mobile Menu Toggle */}
-              <MobileToggle onClick={handleToggleMenu} aria-label="Toggle menu">
-                <FaBars />
-              </MobileToggle>
-            </NavContainer>
-          </MainNavContent>
-        </Container>
-      </MainNav>
-
-      {/* Membership Alert */}
-      {user && user.membershipStatus === 'pending' && (
-        <MembershipAlert>
+      <HeaderWrapper hideTopBar={hideTopBar}>
+        {/* Main Navigation */}
+        <MainNav>
           <Container>
-            Complete your membership to access all features.
-            <MembershipLink to="/profile">Go to your profile</MembershipLink>
+            <MainNavContent>
+              {/* Logo */}
+              <LogoWrapper>
+                <Link to="/" onClick={() => setMenuOpen(false)}>
+                  <LogoImg src="/vgblogo.png" alt="Vishwa Guru Bharat" />
+                </Link>
+              </LogoWrapper>
+
+              <NavContainer>
+                {/* Mobile Menu Overlay */}
+                <MobileOverlay isOpen={menuOpen} onClick={handleToggleMenu} />
+
+                {/* Navigation Menu */}
+                <NavMenu isOpen={menuOpen}>
+                  <MobileClose onClick={handleToggleMenu}>
+                    <FaTimes />
+                  </MobileClose>
+
+                  {/* 3) REPLACED the single About item with a dropdown */}
+                  <NavItem
+                    ref={dropdownRefAbout}
+                    onMouseEnter={handleMouseEnterAbout}
+                    onMouseLeave={handleMouseLeaveAbout}
+                  >
+                    <NavLinkSpan onClick={handleDropdownToggleAbout}>
+                      <FaOm style={{ marginRight: '8px', color: '#cd232e' }} />
+                      About Us
+                      <ChevronIcon $isOpen={dropdownOpenAbout} />
+                    </NavLinkSpan>
+                    <DropdownContent isVisible={dropdownOpenAbout}>
+                      <DropdownItem
+                        to="/about/vision-mission"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpenAbout(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaEye />
+                        </DropdownIcon>
+                        Vision &amp; Mission
+                      </DropdownItem>
+
+                      <DropdownItem
+                        to="/about/sankalp"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpenAbout(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaPrayingHands />
+                        </DropdownIcon>
+                        Sankalp
+                      </DropdownItem>
+
+                      <DropdownItem
+                        to="/about/boards-departments"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpenAbout(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaSitemap />
+                        </DropdownIcon>
+                        Boards &amp; Departments
+                      </DropdownItem>
+
+                      <DropdownItem
+                        to="/about/EventCalendar"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpenAbout(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaCalendarAlt />
+                        </DropdownIcon>
+                        Event Calendar
+                      </DropdownItem>
+
+                      <DropdownItem
+                        to="/about/whos-who"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpenAbout(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaUserFriends />
+                        </DropdownIcon>
+                        Who's Who
+                      </DropdownItem>
+                    </DropdownContent>
+                  </NavItem>
+
+                  {/* VGB Projects (unchanged) */}
+                  <NavItem
+                    ref={dropdownRef}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <NavLinkSpan onClick={handleDropdownToggle}>
+                      <FaHandHoldingHeart style={{ marginRight: '8px', color: '#cd232e' }} />
+                      VGB Projects
+                      <ChevronIcon $isOpen={dropdownOpen} />
+                    </NavLinkSpan>
+
+                    <DropdownContent isVisible={dropdownOpen}>
+                      <DropdownItem
+                        to="/gau"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpen(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaLeaf />
+                        </DropdownIcon>
+                        Gau Seva
+                      </DropdownItem>
+                      <DropdownItem
+                        to="/ganga"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpen(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaWater />
+                        </DropdownIcon>
+                        Ganga Conservation
+                      </DropdownItem>
+                      <DropdownItem
+                        to="/gayatri"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpen(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaSun />
+                        </DropdownIcon>
+                        Gayatri Awareness
+                      </DropdownItem>
+                      <DropdownItem
+                        to="/gita"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpen(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaBook />
+                        </DropdownIcon>
+                        Gita Teachings
+                      </DropdownItem>
+                      <DropdownItem
+                        to="/guru"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setDropdownOpen(false);
+                        }}
+                      >
+                        <DropdownIcon>
+                          <FaPrayingHands />
+                        </DropdownIcon>
+                        Guru Initiatives
+                      </DropdownItem>
+                    </DropdownContent>
+                  </NavItem>
+
+                  <NavItem>
+                    <NavLink to="/experience" onClick={() => setMenuOpen(false)}>
+                      <FaTree style={{ marginRight: '8px', color: '#cd232e' }} />
+                      Strategic Alliance
+                    </NavLink>
+                  </NavItem>
+
+                  <NavItem>
+                    <NavLink
+                      as="a"
+                      href="https://imageworldz.online"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <FaStore style={{ marginRight: '8px', color: '#cd232e' }} />
+                      Arogya Store
+                    </NavLink>
+                  </NavItem>
+
+                  {/* Mobile Auth */}
+                  <AuthMobile>
+                    {user ? (
+                      <>
+                        <ProfileButton to="/profile" onClick={() => setMenuOpen(false)}>
+                          <Avatar>
+                            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                          </Avatar>
+                          My Profile
+                        </ProfileButton>
+                        <DonateButton to="/donate" onClick={() => setMenuOpen(false)}>
+                          <DonateText>DONATE</DonateText>
+                        </DonateButton>
+                        <LogoutButton onClick={handleLogout}>
+                          <FaSignOutAlt style={{ marginRight: '8px' }} />
+                          Logout
+                        </LogoutButton>
+                      </>
+                    ) : (
+                      <>
+                        <ButtonLink to="/login" onClick={() => setMenuOpen(false)}>
+                          <FaUser style={{ marginRight: '8px' }} />
+                          SignUp/Login
+                        </ButtonLink>
+                        <DonateButton to="/donate" onClick={() => setMenuOpen(false)}>
+                          <DonateText>DONATE</DonateText>
+                        </DonateButton>
+                      </>
+                    )}
+                  </AuthMobile>
+                </NavMenu>
+
+                {/* Desktop Auth */}
+                <AuthDesktop>
+                  {user ? (
+                    <ProfileButton to="/profile">
+                      <Avatar>
+                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                      </Avatar>
+                      Profile
+                    </ProfileButton>
+                  ) : (
+                    <ButtonLink to="/login">
+                      <FaUser style={{ marginRight: '8px' }} />
+                      Login
+                    </ButtonLink>
+                  )}
+                </AuthDesktop>
+
+                {/* Donate Button */}
+                <DonateButton to="/donate">
+                  <DonateText>DONATE</DonateText>
+                </DonateButton>
+
+                {/* Desktop Logout (Only when logged in) */}
+                {user && (
+                  <LogoutButton onClick={handleLogout} style={{ marginLeft: '5px' }}>
+                    <FaSignOutAlt style={{ marginRight: '5px' }} />
+                  </LogoutButton>
+                )}
+
+                {/* Mobile Menu Toggle */}
+                <MobileToggle onClick={handleToggleMenu} aria-label="Toggle menu">
+                  <FaBars />
+                </MobileToggle>
+              </NavContainer>
+            </MainNavContent>
           </Container>
-        </MembershipAlert>
-      )}
-    </HeaderWrapper>
+        </MainNav>
+
+        {/* Membership Alert */}
+        {user && user.membershipStatus === 'pending' && (
+          <MembershipAlert>
+            <Container>
+              Complete your membership to access all features.
+              <MembershipLink to="/profile">Go to your profile</MembershipLink>
+            </Container>
+          </MembershipAlert>
+        )}
+      </HeaderWrapper>
+      <MainContentSpacer hideTopBar={hideTopBar} />
+    </>
   );
 };
+
+const MainContentSpacer = styled.div`
+  @media (max-width: 768px) {
+    height: ${({ hideTopBar }) => hideTopBar ? '60px' : '100px'};
+    transition: height 0.3s ease;
+  }
+`;
 
 export default Header;
 

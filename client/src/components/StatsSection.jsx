@@ -1,65 +1,83 @@
+import React from 'react';
 import styled from 'styled-components';
-import CountUp from 'react-countup';
+
+const StatsContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  background: #fff;
+  width: 100%;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent);
+  }
+`;
+
+const Logo = styled.img`
+  max-width: 150px;
+  margin-bottom: 40px;
+`;
+
+const StatsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const StatItem = styled.div`
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+`;
+
+const StatNumber = styled.h2`
+  font-size: 3rem;
+  color: #cd232e;
+  margin: 0;
+  font-weight: bold;
+  line-height: 1.2;
+`;
+
+const StatLabel = styled.p`
+  font-size: 1.4rem;
+  color: #333;
+  margin: 10px 0 0 0;
+  font-weight: 500;
+`;
 
 const StatsSection = () => {
   return (
     <StatsContainer>
-      <div className="container">
-        <StatsGrid>
-          <StatCard>
-            <StatNumber>
-              <CountUp end={335} duration={2.5} suffix="K+" />
-            </StatNumber>
-            <StatLabel>Global Members</StatLabel>
-          </StatCard>
-
-          <StatCard>
-            <StatNumber>
-              <CountUp end={11.2} duration={2.5} decimals={1} suffix="K+" />
-            </StatNumber>
-            <StatLabel>Global Chapters</StatLabel>
-          </StatCard>
-
-          <StatCard>
-            <StatNumber>
-              <StatPrefix>$</StatPrefix>
-              <CountUp end={25.3} duration={2.5} decimals={1} suffix="B" />
-            </StatNumber>
-            <StatLabel>Revenue Generated for Members</StatLabel>
-            <StatSubtext>Last 12 Months*</StatSubtext>
-          </StatCard>
-
-          <StatCard>
-            <StatNumber>
-              <CountUp end={76} duration={2} />
-            </StatNumber>
-            <StatLabel>Countries</StatLabel>
-          </StatCard>
-
-          <StatCard>
-            <StatNumber>
-              <CountUp end={16.6} duration={2.5} decimals={1} suffix="M" />
-            </StatNumber>
-            <StatLabel>Member Referrals</StatLabel>
-            <StatSubtext>Last 12 Months*</StatSubtext>
-          </StatCard>
-        </StatsGrid>
-
-        <CtaSection>
-          <CtaText>
-            See why 335K+ entrepreneurs like you chose BNI to grow their business
-          </CtaText>
-          <CtaButton href="/find-a-chapter">GET INVITED</CtaButton>
-        </CtaSection>
-      </div>
+      <Logo src="/vgb-logo.png" alt="VGB Logo" />
+      <StatsWrapper>
+        <StatItem>
+          <StatNumber>1000+</StatNumber>
+          <StatLabel>Volunteers</StatLabel>
+        </StatItem>
+        <StatItem>
+          <StatNumber>500+</StatNumber>
+          <StatLabel>Projects</StatLabel>
+        </StatItem>
+      </StatsWrapper>
     </StatsContainer>
   );
 };
-
-const StatsContainer = styled.section`
-  padding: 60px 0;
-  background-color: #f8f8f8;
-`;
 
 const StatsGrid = styled.div`
   display: grid;
@@ -81,25 +99,10 @@ const StatCard = styled.div`
   padding: 20px;
 `;
 
-const StatNumber = styled.div`
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: center;
-`;
-
 const StatPrefix = styled.span`
   font-size: 2.5rem;
   font-weight: 700;
   color: var(--primary-color);
-`;
-
-const StatLabel = styled.div`
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--secondary-color);
 `;
 
 const StatSubtext = styled.div`

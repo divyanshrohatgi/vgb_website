@@ -8,19 +8,17 @@ const notFound = (req, res, next) => {
 };
 
 const errorHandler = (err, req, res, next) => {
-  console.error('Error handling request:', {
-    url: req.originalUrl,
-    method: req.method,
-    error: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : null
+  console.error('Error:', {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'production' ? null : err.stack
   });
-  
+
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   
   res.status(statusCode).json({
     success: false,
     message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
+    stack: process.env.NODE_ENV === 'production' ? null : err.stack
   });
 };
 

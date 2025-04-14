@@ -1,42 +1,49 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { FaOm, FaHandHoldingHeart, FaBookReader } from 'react-icons/fa';
 
 const StepsSection = () => {
   return (
     <StepsContainer>
       <div className="container">
-        <StepsHeader>3 Steps to Success</StepsHeader>
+        <StepsHeader>Path to Enlightenment</StepsHeader>
         <StepsSubheader>
-          Get invited to a BNI networking meeting and witness the power of referrals in action.
+          Join us in our mission to revive and spread India's ancient wisdom
         </StepsSubheader>
 
         <StepsList>
           <StepItem>
-            <StepNumber>1</StepNumber>
-            <StepTitle>Visit a BNI chapter</StepTitle>
+            <StepNumber>
+              <FaOm />
+            </StepNumber>
+            <StepTitle>Learn</StepTitle>
             <StepDescription>
-              and experience the power of the BNI network
+              Explore ancient wisdom through our programs and initiatives
             </StepDescription>
           </StepItem>
 
           <StepItem>
-            <StepNumber>2</StepNumber>
-            <StepTitle>Meet the Members</StepTitle>
+            <StepNumber>
+              <FaHandHoldingHeart />
+            </StepNumber>
+            <StepTitle>Practice</StepTitle>
             <StepDescription>
-              and learn how they can help you grow your business
+              Apply timeless teachings in your daily life
             </StepDescription>
           </StepItem>
 
           <StepItem>
-            <StepNumber>3</StepNumber>
-            <StepTitle>Apply</StepTitle>
+            <StepNumber>
+              <FaBookReader />
+            </StepNumber>
+            <StepTitle>Share</StepTitle>
             <StepDescription>
-              to become a Member of a BNI Chapter
+              Spread the light of knowledge to others
             </StepDescription>
           </StepItem>
         </StepsList>
 
-        <GetInvitedButton to="/find-a-chapter">Get Invited</GetInvitedButton>
+        <JoinButton to="/register">Begin Your Journey</JoinButton>
       </div>
     </StepsContainer>
   );
@@ -125,19 +132,21 @@ const StepDescription = styled.p`
   line-height: 1.5;
 `;
 
-const GetInvitedButton = styled(Link)`
+const JoinButton = styled(Link)`
   display: inline-block;
   background-color: #fff;
   color: var(--primary-color);
   font-weight: 600;
-  padding: 12px 30px;
+  padding: 15px 40px;
   border-radius: 30px;
   text-transform: uppercase;
   transition: all 0.3s;
+  font-size: 1.1rem;
 
   &:hover {
     background-color: #f0f0f0;
     transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   }
 `;
 

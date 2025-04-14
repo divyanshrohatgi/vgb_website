@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaCheck } from 'react-icons/fa';
+import api from '../services/api';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -9,441 +10,250 @@ const ContactPage = () => {
     email: '',
     phone: '',
     subject: '',
-    message: '',
+    message: ''
   });
-  
+
   const [formStatus, setFormStatus] = useState({
-    submitted: false,
-    error: false,
-    message: '',
+    loading: false,
+    success: false,
+    error: null
   });
-  
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Simulate form submission
-    setFormStatus({
-      submitted: true,
-      error: false,
-      message: 'Thank you for your message! We will get back to you soon.'
-    });
-    // Reset form after successful submission
     setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: '',
+      ...formData,
+      [e.target.name]: e.target.value
     });
   };
-  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      setFormStatus({ loading: true, success: false, error: null });
+      
+      await api.post('/api/contact', formData);
+      
+      setFormStatus({
+        loading: false,
+        success: true,
+        error: null
+      });
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      });
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => {
+        setFormStatus(prev => ({ ...prev, success: false }));
+      }, 5000);
+      
+    } catch (error) {
+      setFormStatus({
+        loading: false,
+        success: false,
+        error: error.response?.data?.message || 'Failed to send message. Please try again.'
+      });
+      
+      // Clear error after 5 seconds
+      setTimeout(() => {
+        setFormStatus(prev => ({ ...prev, error: null }));
+      }, 5000);
+    }
+  };
+
   return (
     <PageContainer>
-      <HeroBanner>
-        <HeroOverlay>
-          <HeroContent>
-            <HeroTitle>Contact Us</HeroTitle>
-            <HeroSubtitle>Get in touch with the Vishwa Guru Bharat team</HeroSubtitle>
-          </HeroContent>
-        </HeroOverlay>
-      </HeroBanner>
-
-      <div className="container">
-        <ContactSection>
-          <ContactInfo>
-            <ContactHeader>
-              <ContactTitle>Get In Touch</ContactTitle>
-              <ContactSubtitle>
-                We'd love to hear from you. Whether you have a question about our initiatives, volunteering, or anything else, our team is ready to answer all your questions.
-              </ContactSubtitle>
-            </ContactHeader>
-            
-            <InfoItems>
-              <InfoItem>
-                <InfoIcon><FaMapMarkerAlt /></InfoIcon>
-                <InfoContent>
-                  <InfoLabel>Visit Us</InfoLabel>
-                  <InfoText>Sanyukt Shakti Bhawan, Jammu, J&K, India</InfoText>
-                </InfoContent>
-              </InfoItem>
-              <InfoItem>
-                <InfoIcon><FaPhone /></InfoIcon>
-                <InfoContent>
-                  <InfoLabel>Call Us</InfoLabel>
-                  <InfoText>+91-9103544414</InfoText>
-                </InfoContent>
-              </InfoItem>
-              <InfoItem>
-                <InfoIcon><FaEnvelope /></InfoIcon>
-                <InfoContent>
-                  <InfoLabel>Email Us</InfoLabel>
-                  <InfoText>info@vishwagurubharat.org</InfoText>
-                </InfoContent>
-              </InfoItem>
-              <InfoItem>
-                <InfoIcon><FaClock /></InfoIcon>
-                <InfoContent>
-                  <InfoLabel>Working Hours</InfoLabel>
-                  <InfoText>Monday - Saturday: 9am - 6pm</InfoText>
-                </InfoContent>
-              </InfoItem>
-            </InfoItems>
-            
-            <SocialLinks>
-              <SocialTitle>Connect With Us</SocialTitle>
-              <SocialButtons>
-                <SocialButton href="#" bg="#3b5998">Facebook</SocialButton>
-                <SocialButton href="#" bg="#1da1f2">Twitter</SocialButton>
-                <SocialButton href="#" bg="#c32aa3">Instagram</SocialButton>
-                <SocialButton href="#" bg="#ff0000">YouTube</SocialButton>
-              </SocialButtons>
-            </SocialLinks>
-          </ContactInfo>
+      <h1>Contact Us</h1>
+      
+      <ContactGrid>
+        <ContactInfo>
+          <h2>Get in Touch</h2>
+          <InfoItem>
+            <FaMapMarkerAlt />
+            <div>
+              <h3>Our Location</h3>
+              <p>123 VGB Street, New Delhi, India</p>
+            </div>
+          </InfoItem>
           
-          <ContactForm onSubmit={handleSubmit}>
-            <FormTitle>Send Us A Message</FormTitle>
-            
-            {formStatus.submitted && (
-              <SuccessMessage>
-                <SuccessIcon><FaCheck /></SuccessIcon>
-                {formStatus.message}
-              </SuccessMessage>
-            )}
-            
-            <FormRow>
-              <FormGroup>
-                <FormLabel>Your Name*</FormLabel>
-                <FormInput 
-                  type="text" 
-                  name="name" 
-                  value={formData.name} 
-                  onChange={handleChange} 
-                  placeholder="Enter your full name"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <FormLabel>Your Email*</FormLabel>
-                <FormInput 
-                  type="email" 
-                  name="email" 
-                  value={formData.email} 
-                  onChange={handleChange} 
-                  placeholder="Enter your email address"
-                  required
-                />
-              </FormGroup>
-            </FormRow>
-            
-            <FormRow>
-              <FormGroup>
-                <FormLabel>Phone Number</FormLabel>
-                <FormInput 
-                  type="tel" 
-                  name="phone" 
-                  value={formData.phone} 
-                  onChange={handleChange} 
-                  placeholder="Enter your phone number"
-                />
-              </FormGroup>
-              <FormGroup>
-                <FormLabel>Subject*</FormLabel>
-                <FormInput 
-                  type="text" 
-                  name="subject" 
-                  value={formData.subject} 
-                  onChange={handleChange} 
-                  placeholder="What is this regarding?"
-                  required
-                />
-              </FormGroup>
-            </FormRow>
-            
-            <FormGroup>
-              <FormLabel>Message*</FormLabel>
-              <FormTextarea 
-                name="message" 
-                value={formData.message} 
-                onChange={handleChange} 
-                placeholder="Write your message here..."
-                rows="6"
-                required
-              />
-            </FormGroup>
-            
-            <SubmitButton type="submit" disabled={formStatus.submitted}>
-              {formStatus.submitted ? 'Message Sent' : 'Send Message'}
-            </SubmitButton>
-          </ContactForm>
-        </ContactSection>
-        
-        <MapSection>
-          <MapTitle>Our Location</MapTitle>
-          <MapFrame>
-            <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26967.07831069883!2d74.83855355!3d32.73228885!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391e84ea3f8cef6f%3A0x5f25bddf0f4c8a89!2sJammu%2C%20Jammu%20and%20Kashmir!5e0!3m2!1sen!2sin!4v1710340912345!5m2!1sen!2sin" 
-              width="100%" 
-              height="450" 
-              style={{ border: 0 }} 
-              allowFullScreen 
-              loading="lazy" 
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Vishwa Guru Bharat Location"
-            ></iframe>
-          </MapFrame>
-        </MapSection>
-        
-        <FAQSection>
-          <SectionTitle>Frequently Asked Questions</SectionTitle>
-          <FAQGrid>
-            <FAQItem>
-              <FAQQuestion>How can I join Vishwa Guru Bharat?</FAQQuestion>
-              <FAQAnswer>
-                You can join as a volunteer, supporter, or member by filling out the contact form above or visiting any of our local chapters. We welcome everyone who shares our vision of promoting India's ancient wisdom.
-              </FAQAnswer>
-            </FAQItem>
-            <FAQItem>
-              <FAQQuestion>Do you accept donations?</FAQQuestion>
-              <FAQAnswer>
-                Yes, we welcome donations to support our various initiatives. You can donate through our website or contact us directly for more information on how to contribute.
-              </FAQAnswer>
-            </FAQItem>
-            <FAQItem>
-              <FAQQuestion>How can I volunteer with your organization?</FAQQuestion>
-              <FAQAnswer>
-                We offer various volunteering opportunities across our initiatives. Fill out our contact form specifying your interest in volunteering, and our team will get in touch with available opportunities.
-              </FAQAnswer>
-            </FAQItem>
-            <FAQItem>
-              <FAQQuestion>Do you have chapters outside of India?</FAQQuestion>
-              <FAQAnswer>
-                Yes, we have chapters in several countries around the world. Contact us to find the nearest chapter to you or to explore the possibility of starting a new chapter in your area.
-              </FAQAnswer>
-            </FAQItem>
-          </FAQGrid>
-        </FAQSection>
-      </div>
+          <InfoItem>
+            <FaPhone />
+            <div>
+              <h3>Phone Number</h3>
+              <p>+91 98765 43210</p>
+            </div>
+          </InfoItem>
+          
+          <InfoItem>
+            <FaEnvelope />
+            <div>
+              <h3>Email Address</h3>
+              <p>info@vishwagurubharat.org</p>
+            </div>
+          </InfoItem>
+          
+          <InfoItem>
+            <FaClock />
+            <div>
+              <h3>Working Hours</h3>
+              <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
+            </div>
+          </InfoItem>
+        </ContactInfo>
+
+        <ContactForm onSubmit={handleSubmit}>
+          <h2>Send Us A Message</h2>
+          
+          {formStatus.success && (
+            <SuccessMessage>
+              <FaCheck /> Message sent successfully!
+            </SuccessMessage>
+          )}
+          
+          {formStatus.error && (
+            <ErrorMessage>
+              {formStatus.error}
+            </ErrorMessage>
+          )}
+          
+          <FormGroup>
+            <FormInput
+              type="text"
+              name="name"
+              placeholder="Your Name*"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          
+          <FormGroup>
+            <FormInput
+              type="email"
+              name="email"
+              placeholder="Your Email*"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          
+          <FormGroup>
+            <FormInput
+              type="tel"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+            />
+          </FormGroup>
+          
+          <FormGroup>
+            <FormInput
+              type="text"
+              name="subject"
+              placeholder="Subject*"
+              value={formData.subject}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          
+          <FormGroup>
+            <FormTextarea
+              name="message"
+              placeholder="Your Message*"
+              value={formData.message}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          
+          <SubmitButton 
+            type="submit" 
+            disabled={formStatus.loading}
+          >
+            {formStatus.loading ? 'Sending...' : 'Send Message'}
+          </SubmitButton>
+        </ContactForm>
+      </ContactGrid>
     </PageContainer>
   );
 };
 
-// Styled Components
 const PageContainer = styled.div`
-  padding-bottom: 60px;
-`;
-
-const HeroBanner = styled.div`
-  height: 350px;
-  background-image: url('https://web-assets.same.dev/2691685965/1462887440.png');
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  margin-bottom: 50px;
-`;
-
-const HeroOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const HeroContent = styled.div`
-  text-align: center;
-  color: white;
-  max-width: 800px;
-  padding: 0 20px;
-`;
-
-const HeroTitle = styled.h1`
-  font-size: 3rem;
-  margin-bottom: 15px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
   
-  @media (max-width: 768px) {
-    font-size: 2.3rem;
+  h1 {
+    text-align: center;
+    color: #cd232e;
+    margin-bottom: 40px;
   }
 `;
 
-const HeroSubtitle = styled.p`
-  font-size: 1.3rem;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-  }
-`;
-
-const ContactSection = styled.section`
+const ContactGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.5fr;
   gap: 40px;
-  margin-bottom: 50px;
   
-  @media (max-width: 992px) {
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 `;
 
 const ContactInfo = styled.div`
-  background-color: white;
-  border-radius: 15px;
-  padding: 40px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background: #f8f8f8;
+  padding: 30px;
+  border-radius: 10px;
   
-  @media (max-width: 768px) {
-    padding: 30px 20px;
+  h2 {
+    color: #2b2928;
+    margin-bottom: 30px;
   }
-`;
-
-const ContactHeader = styled.div`
-  margin-bottom: 30px;
-`;
-
-const ContactTitle = styled.h2`
-  color: #cd232e;
-  font-size: 2rem;
-  margin-bottom: 15px;
-  
-  @media (max-width: 768px) {
-    font-size: 1.6rem;
-  }
-`;
-
-const ContactSubtitle = styled.p`
-  color: #444;
-  line-height: 1.8;
-  font-size: 1.1rem;
-`;
-
-const InfoItems = styled.div`
-  margin-bottom: 30px;
 `;
 
 const InfoItem = styled.div`
   display: flex;
   align-items: flex-start;
-  margin-bottom: 20px;
-`;
-
-const InfoIcon = styled.div`
-  width: 40px;
-  height: 40px;
-  background-color: rgba(205, 35, 46, 0.1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #cd232e;
-  font-size: 1.2rem;
-  margin-right: 15px;
-  flex-shrink: 0;
-`;
-
-const InfoContent = styled.div`
-  flex: 1;
-`;
-
-const InfoLabel = styled.h4`
-  color: #333;
-  font-size: 1.1rem;
-  margin-bottom: 5px;
-`;
-
-const InfoText = styled.p`
-  color: #666;
-  font-size: 1rem;
-  line-height: 1.5;
-`;
-
-const SocialLinks = styled.div``;
-
-const SocialTitle = styled.h3`
-  color: #333;
-  font-size: 1.3rem;
-  margin-bottom: 15px;
-`;
-
-const SocialButtons = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-`;
-
-const SocialButton = styled.a`
-  display: inline-block;
-  background-color: ${props => props.bg || '#333'};
-  color: white;
-  padding: 8px 15px;
-  border-radius: 5px;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: all 0.3s;
+  margin-bottom: 25px;
   
-  &:hover {
-    opacity: 0.9;
-    transform: translateY(-3px);
+  svg {
+    color: #cd232e;
+    font-size: 24px;
+    margin-right: 15px;
+    margin-top: 5px;
+  }
+  
+  h3 {
+    color: #2b2928;
+    margin: 0 0 5px;
+    font-size: 18px;
+  }
+  
+  p {
+    color: #666;
+    margin: 0;
   }
 `;
 
 const ContactForm = styled.form`
-  background-color: white;
-  border-radius: 15px;
-  padding: 40px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   
-  @media (max-width: 768px) {
-    padding: 30px 20px;
-  }
-`;
-
-const FormTitle = styled.h2`
-  color: #cd232e;
-  font-size: 2rem;
-  margin-bottom: 25px;
-  
-  @media (max-width: 768px) {
-    font-size: 1.6rem;
-  }
-`;
-
-const SuccessMessage = styled.div`
-  background-color: #d4edda;
-  color: #155724;
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-const SuccessIcon = styled.span`
-  color: #28a745;
-  font-size: 1.2rem;
-`;
-
-const FormRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
-  
-  @media (max-width: 576px) {
-    grid-template-columns: 1fr;
-    gap: 15px;
+  h2 {
+    color: #2b2928;
+    margin-bottom: 30px;
   }
 `;
 
@@ -451,24 +261,16 @@ const FormGroup = styled.div`
   margin-bottom: 20px;
 `;
 
-const FormLabel = styled.label`
-  display: block;
-  color: #333;
-  font-weight: 500;
-  margin-bottom: 8px;
-`;
-
 const FormInput = styled.input`
   width: 100%;
   padding: 12px 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
+  font-size: 16px;
   
   &:focus {
-    border-color: #cd232e;
     outline: none;
+    border-color: #cd232e;
   }
 `;
 
@@ -477,121 +279,56 @@ const FormTextarea = styled.textarea`
   padding: 12px 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 1rem;
-  resize: vertical;
+  font-size: 16px;
   min-height: 150px;
-  transition: border-color 0.3s;
+  resize: vertical;
   
   &:focus {
-    border-color: #cd232e;
     outline: none;
+    border-color: #cd232e;
   }
 `;
 
 const SubmitButton = styled.button`
-  background-color: #cd232e;
+  background: #cd232e;
   color: white;
   border: none;
+  padding: 12px 30px;
   border-radius: 5px;
-  padding: 12px 25px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.3s;
   
   &:hover {
-    background-color: #b01c26;
+    background: #b41e28;
   }
   
   &:disabled {
-    background-color: #ccc;
+    background: #999;
     cursor: not-allowed;
   }
 `;
 
-const MapSection = styled.section`
-  margin-bottom: 50px;
-`;
-
-const MapTitle = styled.h2`
-  color: #cd232e;
-  font-size: 2rem;
-  margin-bottom: 25px;
-  text-align: center;
+const SuccessMessage = styled.div`
+  background: #d4edda;
+  color: #155724;
+  padding: 12px 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
   
-  @media (max-width: 768px) {
-    font-size: 1.6rem;
+  svg {
+    margin-right: 10px;
   }
 `;
 
-const MapFrame = styled.div`
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-`;
-
-const FAQSection = styled.section`
-  background-color: white;
-  border-radius: 15px;
-  padding: 40px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  
-  @media (max-width: 768px) {
-    padding: 30px 20px;
-  }
-`;
-
-const SectionTitle = styled.h2`
-  color: #cd232e;
-  font-size: 2rem;
-  margin-bottom: 30px;
-  text-align: center;
-  position: relative;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 3px;
-    background-color: #cd232e;
-  }
-  
-  @media (max-width: 768px) {
-    font-size: 1.6rem;
-  }
-`;
-
-const FAQGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 20px;
-  margin-top: 40px;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const FAQItem = styled.div`
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 25px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-`;
-
-const FAQQuestion = styled.h3`
-  color: #333;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-`;
-
-const FAQAnswer = styled.p`
-  color: #666;
-  line-height: 1.7;
-  font-size: 1rem;
+const ErrorMessage = styled.div`
+  background: #f8d7da;
+  color: #721c24;
+  padding: 12px 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
 `;
 
 export default ContactPage;

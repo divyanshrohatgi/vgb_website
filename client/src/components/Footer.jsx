@@ -63,6 +63,9 @@ const Footer = () => {
                   <FooterLink to="/experience"><FaChevronRight /> VGB Experience</FooterLink>
                 </FooterLinkItem>
                 <FooterLinkItem>
+                  <FooterLink to="/contact"><FaChevronRight /> Contact Us</FooterLink>
+                </FooterLinkItem>
+                <FooterLinkItem>
                   <FooterLink as="a" href="https://imageworldz.online" target="_blank" rel="noopener noreferrer">
                     <FaChevronRight /> Community Store
                   </FooterLink>

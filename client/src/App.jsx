@@ -60,7 +60,7 @@ function App() {
               <Route path="/about/vision-mission" element={<AboutPage />} />
               <Route path="/about/sankalp" element={<SankalpPage />} />
               <Route path="/about/boards-departments" element={<BoardsDepartmentsPage />} />
-              <Route path="/about/event-calendar" element={<EventCalendarPage />} />
+              <Route path="/about/EventCalendar" element={<EventCalendarPage />} />
               <Route path="/about/whos-who" element={<TeamPage />} />
               <Route path="/experience" element={<ExperiencePage />} />
               <Route path="/community" element={<CommunityPage />} />

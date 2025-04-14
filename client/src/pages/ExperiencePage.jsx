@@ -135,19 +135,19 @@ const ExperiencePage = () => {
                   <EventDate>April 15, 2025</EventDate>
                   <EventTitle>Meditation Retreat in Rishikesh</EventTitle>
                   <EventDetails>A 7-day retreat focusing on deep meditation practices in the spiritual capital of India.</EventDetails>
-                  <EventLink href="#">Learn More</EventLink>
+                  <EventLink to="/contact">Learn More</EventLink>
                 </EventCard>
                 <EventCard>
                   <EventDate>May 2, 2025</EventDate>
                   <EventTitle>Yoga Workshop for Beginners</EventTitle>
                   <EventDetails>A weekend workshop introducing the fundamentals of yoga to newcomers.</EventDetails>
-                  <EventLink href="#">Learn More</EventLink>
+                  <EventLink to="/contact">Learn More</EventLink>
                 </EventCard>
                 <EventCard>
                   <EventDate>May 21, 2025</EventDate>
                   <EventTitle>Advanced Pranayama Techniques</EventTitle>
                   <EventDetails>An intensive one-day workshop on advanced breathing techniques for experienced practitioners.</EventDetails>
-                  <EventLink href="#">Learn More</EventLink>
+                  <EventLink to="/contact">Learn More</EventLink>
                 </EventCard>
               </EventsGrid>
             </UpcomingEvents>
@@ -250,19 +250,19 @@ const ExperiencePage = () => {
                   <EventDate>April 20, 2025</EventDate>
                   <EventTitle>Ayurvedic Cooking Workshop</EventTitle>
                   <EventDetails>Learn to prepare nutritious, dosha-balancing meals using traditional Ayurvedic principles.</EventDetails>
-                  <EventLink href="#">Learn More</EventLink>
+                  <EventLink to="/contact">Learn More</EventLink>
                 </EventCard>
                 <EventCard>
                   <EventDate>May 10, 2025</EventDate>
                   <EventTitle>Seasonal Wellness Retreat</EventTitle>
                   <EventDetails>A weekend retreat focusing on Ayurvedic practices for spring to maintain balance and vitality.</EventDetails>
-                  <EventLink href="#">Learn More</EventLink>
+                  <EventLink to="/contact">Learn More</EventLink>
                 </EventCard>
                 <EventCard>
                   <EventDate>June 5, 2025</EventDate>
                   <EventTitle>Herbal Medicine Masterclass</EventTitle>
                   <EventDetails>Discover the healing properties of common herbs and learn to make your own remedies.</EventDetails>
-                  <EventLink href="#">Learn More</EventLink>
+                  <EventLink to="/contact">Learn More</EventLink>
                 </EventCard>
               </EventsGrid>
             </UpcomingEvents>
@@ -496,8 +496,7 @@ const ExperiencePage = () => {
                     <RetreatFeature>Ganga aarti participation</RetreatFeature>
                     <RetreatFeature>Nature walks</RetreatFeature>
                   </RetreatFeatures>
-                  <RetreatPrice>₹45,000 (all-inclusive)</RetreatPrice>
-                  <RetreatButton href="#">Reserve Your Spot</RetreatButton>
+                  <RetreatButton to="/contact">Reserve Your Spot</RetreatButton>
                 </RetreatCard>
                 <RetreatCard>
                   <RetreatDate>May 5-7, 2025</RetreatDate>
@@ -512,8 +511,7 @@ const ExperiencePage = () => {
                     <RetreatFeature>Nature immersion</RetreatFeature>
                     <RetreatFeature>Vegetarian meals</RetreatFeature>
                   </RetreatFeatures>
-                  <RetreatPrice>₹18,000 (all-inclusive)</RetreatPrice>
-                  <RetreatButton href="#">Reserve Your Spot</RetreatButton>
+                  <RetreatButton to="/contact">Reserve Your Spot</RetreatButton>
                 </RetreatCard>
               </RetreatsGrid>
             </UpcomingRetreats>
@@ -983,7 +981,7 @@ const EventDetails = styled.p`
   margin-bottom: 15px;
 `;
 
-const EventLink = styled.a`
+const EventLink = styled(Link)`
   color: #cd232e;
   font-weight: 600;
   text-decoration: none;
@@ -1317,14 +1315,7 @@ const RetreatFeature = styled.li`
   line-height: 1.5;
 `;
 
-const RetreatPrice = styled.div`
-  color: #333;
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 20px;
-`;
-
-const RetreatButton = styled.a`
+const RetreatButton = styled(Link)`
   display: inline-block;
   background-color: #cd232e;
   color: white;

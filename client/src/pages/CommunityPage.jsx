@@ -247,7 +247,7 @@ const CommunityPage = () => {
                       </ChapterStat>
                     </ChapterStats>
                     <ChapterDescription>{chapter.description}</ChapterDescription>
-                    <ChapterLink href="#">Learn More</ChapterLink>
+                    <ChapterLink to="/community/chapters">Learn More</ChapterLink>
                   </ChapterContent>
                 </ChapterCard>
               ))}
@@ -314,7 +314,7 @@ const CommunityPage = () => {
                     <ForumStat>Last activity: {forum.lastActivity}</ForumStat>
                   </ForumStats>
                   <ForumDescription>{forum.description}</ForumDescription>
-                  <ForumButton href="#">Join Discussion</ForumButton>
+                  <ForumButton to="/community/forum">Join Discussion</ForumButton>
                 </ForumCard>
               ))}
             </ForumsGrid>
@@ -363,7 +363,7 @@ const CommunityPage = () => {
                     </VolunteerDetail>
                   </VolunteerDetails>
                   <VolunteerDescription>{opportunity.description}</VolunteerDescription>
-                  <VolunteerButton href="#">Apply Now</VolunteerButton>
+                  <VolunteerButton to="/community/volunteer">Apply Now</VolunteerButton>
                 </VolunteerCard>
               ))}
             </VolunteerGrid>
@@ -675,26 +675,13 @@ const ChapterDescription = styled.p`
   font-size: 0.95rem;
 `;
 
-const ChapterLink = styled.a`
+const ChapterLink = styled(Link)`
   color: #cd232e;
-  font-weight: 600;
   text-decoration: none;
-  display: inline-block;
-  position: relative;
+  font-weight: 600;
   
-  &:after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -2px;
-    left: 0;
-    background-color: #cd232e;
-    transition: width 0.3s;
-  }
-  
-  &:hover:after {
-    width: 100%;
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
@@ -894,19 +881,19 @@ const ForumDescription = styled.p`
   font-size: 0.95rem;
 `;
 
-const ForumButton = styled.a`
+const ForumButton = styled(Link)`
   display: inline-block;
   background-color: #cd232e;
   color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-weight: 600;
+  padding: 12px 25px;
+  border-radius: 50px;
   text-decoration: none;
+  font-weight: 600;
   transition: all 0.3s;
   
   &:hover {
     background-color: #b01c26;
-    transform: translateY(-3px);
+    transform: translateY(-2px);
   }
 `;
 

@@ -6,7 +6,15 @@ import { FaCheck, FaRegCheckCircle, FaCalendarAlt, FaRupeeSign } from 'react-ico
 import AuthContext from '../context/AuthContext';
 import axios from 'axios';
 import { membershipPlans } from '../constants/membershipBenefits';
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5012';
+
+// Create configured axios instance with baseURL from environment variables
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5012',
+  timeout: 15000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
 const MembershipPage = () => {
   const { user, loading, updateMembership } = useContext(AuthContext);
@@ -52,7 +60,7 @@ const MembershipPage = () => {
       const plan = membershipPlans.find(p => p.id === selectedPlan);
       
       // Create order with Razorpay through your backend
-      const response = await axios.post(`${baseURL}/api/payments/create-order`, {
+      const response = await api.post('/api/payments/create-order', {
         amount: plan.price,
         description: `${plan.name} - ${plan.period} membership`,
         email: user?.email,
@@ -86,7 +94,7 @@ const MembershipPage = () => {
           // Payment successful - verify on the backend
           try {
             // Call your backend to verify the payment
-            await axios.post(`${baseURL}/api/payments/verify-payment`, {
+            await api.post('/api/payments/verify-payment', {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature

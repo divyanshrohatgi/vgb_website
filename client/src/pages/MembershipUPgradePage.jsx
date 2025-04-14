@@ -7,8 +7,15 @@ import AuthContext from '../context/AuthContext';
 import axios from 'axios';
 // Import membership data from the shared constant file
 import { membershipPlans} from '../constants/membershipBenefits';
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5012';
 
+// Create configured axios instance with baseURL from environment variables
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5012',
+  timeout: 15000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
 const MembershipUpgradePage = () => {
   const { user, loading, updateMembership } = useContext(AuthContext);
@@ -59,7 +66,7 @@ const MembershipUpgradePage = () => {
       const plan = eligiblePlans.find(p => p.id === selectedPlan);
       
       // Create order with Razorpay through your backend
-      const response = await axios.post(`${baseURL}/api/payments/create-order`, {
+      const response = await api.post('/api/payments/create-order', {
         amount: plan.price,
         description: `${plan.name} - ${plan.period} membership upgrade`,
         email: user?.email,
@@ -89,7 +96,7 @@ const MembershipUpgradePage = () => {
         handler: async function(response) {
           try {
             // Verify payment on the backend
-            await axios.post(`${baseURL}/api/payments/verify-payment`, {
+            await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5012'}/api/payments/verify-payment`, {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature

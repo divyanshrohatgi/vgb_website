@@ -1,8 +1,18 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { FaRegCheckCircle } from 'react-icons/fa';
-import axios from 'axios'; // Add this import
+import axios from 'axios';
 import RazorpayPaymentForm from '../components/RazorpayPaymentForm';
+import SecuritySection from '../components/SecuritySection';
+
+// Create configured axios instance with baseURL from environment variables
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5012',
+  timeout: 15000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
 const DonationPage = () => {
   const [donationAmount, setDonationAmount] = useState('');
@@ -49,7 +59,7 @@ const DonationPage = () => {
     const amount = getCurrentAmount();
     console.log('Sending donation receipt request with amount:', amount);
     
-    axios.post('/api/users/donation', {
+    api.post('/api/users/donation', {
       name: `${donorInfo.firstName} ${donorInfo.lastName}`,
       email: donorInfo.email,
       amount: amount,
@@ -103,12 +113,8 @@ const DonationPage = () => {
     <DonationContainer>
       <div className="container">
         <PageHeader>
-          <h1>Support Vishwa Guru Bharat Foundation</h1>
+          <h1>Donate For Sankalp Vishwa Guru Bharat</h1>
           <DonationMessage>
-            <p>
-              Your generous donation helps us preserve and promote India's ancient Vedic wisdom and Sanatan culture to the world.
-            </p>
-
             <p>
               विश्व गुरु भारत ट्रस्ट एक ऐसे भविष्य की कल्पना करता है और संकल्प करता है जहां
               भारत अपनी वैदिक और सनातन संस्कृति, दिव्य वेद विज्ञान ज्ञान के साथ दुनिया को
@@ -118,6 +124,11 @@ const DonationPage = () => {
             <p>
               लेकिन इस यात्रा के लिए हर हाथ, हर दिल, हर छोटी-बड़ी सहयोग की अति आवश्यकता है।
               आपका योगदान, चाहे छोटा हो या बड़ा, इस मिशन को गति देता है।
+            </p>
+
+            <p>
+              आपके द्वारा दिया गया प्रत्येक रुपया हमारे मिशन को मजबूत करता है और भारत को विश्व गुरु बनाने की दिशा में एक कदम आगे बढ़ाता है।
+              कृपया इस पवित्र मिशन में अपना योगदान दें।
             </p>
           </DonationMessage>
         </PageHeader>
@@ -282,6 +293,8 @@ const DonationPage = () => {
             )}
           </DonationForm>
         )}
+
+        <SecuritySection />
       </div>
     </DonationContainer>
   );

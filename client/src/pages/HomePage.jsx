@@ -120,7 +120,6 @@ const HomePage = () => {
 
   return (
     <HomeContainer>
-      {/* Hero Section with Video Background */}
       <HeroSection>
         <VideoBackground>
           {!isVideoPlaying && (
@@ -158,217 +157,248 @@ const HomePage = () => {
         </ScrollDown>
       </HeroSection>
       
-      <div className="container">
-        <IntroSection className="animate-section" id="intro-section" visible={isVisible['intro-section']}>
-          <IntroContent>
-            <IntroHeading>Reviving India's Position as <HighlightText>Vishwa Guru</HighlightText></IntroHeading>
-            <IntroDescription>
-              When the world was groping in darkness, India was teaching about the identity of man with the Supreme. 
-              Vishwa Guru Bharat is on a mission to reestablish India as the global center of spiritual wisdom, 
-              sustainable practices, and holistic development.
-            </IntroDescription>
-            
-            <InfographicContainer>
-              <InfographicItem>
-                <InfographicIcon><FaHandHoldingHeart /></InfographicIcon>
-                <InfographicNumber>108</InfographicNumber>
-                <InfographicLabel>Departments</InfographicLabel>
-              </InfographicItem>
-              <InfographicItem>
-                <InfographicIcon><FaOm /></InfographicIcon>
-                <InfographicNumber>1000+</InfographicNumber>
-                <InfographicLabel>Volunteers</InfographicLabel>
-              </InfographicItem>
-              <InfographicItem>
-                <InfographicIcon><FaTree /></InfographicIcon>
-                <InfographicNumber>500+</InfographicNumber>
-                <InfographicLabel>Projects</InfographicLabel>
-              </InfographicItem>
-            </InfographicContainer>
-          </IntroContent>
-          <IntroImage>
-            <img src="https://web-assets.same.dev/335287695/52350043.png" alt="Vishwa Guru Bharat" />
-          </IntroImage>
-        </IntroSection>
-      </div>
-      
-      <CounterSection />
-      
-      <div className="container">
-        <CirclesBackground>
-          <MissionSection className="animate-section" id="mission-section" visible={isVisible['mission-section']}>
-            <SectionTitle>Our Mission & Vision</SectionTitle>
-            <MissionVisionCards>
-              <MissionCard>
-                <MissionCardOverlay>
-                  <CardTitle>Our Mission</CardTitle>
-                  <CardContent>
-                    Vishwa Guru Bharat is driven by the ancient wisdom of India, embarking on a global mission 
-                    to awaken the art of thinking for inner peace and societal unity. We empower individuals 
-                    and communities through sustainable development initiatives and holistic education.
-                  </CardContent>
-                </MissionCardOverlay>
-              </MissionCard>
+      <MainContent>
+        <div className="container">
+          <IntroSection className="animate-section" id="intro-section" visible={isVisible['intro-section']}>
+            <IntroContent>
+              <IntroHeading>Reviving India's Position as <HighlightText>Vishwa Guru</HighlightText></IntroHeading>
+              <IntroDescription>
+                When the world was groping in darkness, India was teaching about the identity of man with the Supreme. 
+                Vishwa Guru Bharat is on a mission to reestablish India as the global center of spiritual wisdom, 
+                sustainable practices, and holistic development.
+              </IntroDescription>
               
-              <VisionCard>
-                <VisionCardOverlay>
-                  <CardTitle>Our Vision</CardTitle>
-                  <CardContent>
-                    We envision a world where India reclaims its position as Vishwa Guru - the world teacher. 
-                    Where Vedic principles of harmony, sustainability, and spiritual growth guide humanity 
-                    towards a more peaceful, balanced existence in accordance with nature and universal consciousness.
-                  </CardContent>
-                </VisionCardOverlay>
-              </VisionCard>
-            </MissionVisionCards>
-          </MissionSection>
-        </CirclesBackground>
+              <InfographicContainer>
+                <InfographicItem>
+                  <InfographicIcon><FaHandHoldingHeart /></InfographicIcon>
+                  <InfographicNumber>108</InfographicNumber>
+                  <InfographicLabel>Departments</InfographicLabel>
+                </InfographicItem>
+                <InfographicItem>
+                  <InfographicIcon><FaOm /></InfographicIcon>
+                  <InfographicNumber>1000+</InfographicNumber>
+                  <InfographicLabel>Volunteers</InfographicLabel>
+                </InfographicItem>
+                <InfographicItem>
+                  <InfographicIcon><FaTree /></InfographicIcon>
+                  <InfographicNumber>500+</InfographicNumber>
+                  <InfographicLabel>Projects</InfographicLabel>
+                </InfographicItem>
+              </InfographicContainer>
+            </IntroContent>
+            <IntroImage>
+              <img src="https://web-assets.same.dev/335287695/52350043.png" alt="Vishwa Guru Bharat" />
+            </IntroImage>
+          </IntroSection>
+        </div>
         
-        <InitiativesSection className="animate-section" id="initiatives-section" visible={isVisible['initiatives-section']}>
-          <SectionTitle>Our 5G Initiative</SectionTitle>
-          <InitiativesDescription>
-            The 5G initiative represents the five pillars of our work, focusing on preserving and reviving ancient wisdom 
-            and practices that benefit all of humanity and our planet.
-          </InitiativesDescription>
+        <CounterSection />
+        
+        <div className="container">
+          <CirclesBackground>
+            <MissionSection className="animate-section" id="mission-section" visible={isVisible['mission-section']}>
+              <SectionTitle>Our Mission & Vision</SectionTitle>
+              <MissionVisionCards>
+                <MissionCard>
+                  <MissionCardOverlay>
+                    <CardTitle>Our Mission</CardTitle>
+                    <CardContent>
+                      Vishwa Guru Bharat is driven by the ancient wisdom of India, embarking on a global mission 
+                      to awaken the art of thinking for inner peace and societal unity. We empower individuals 
+                      and communities through sustainable development initiatives and holistic education.
+                    </CardContent>
+                  </MissionCardOverlay>
+                </MissionCard>
+                
+                <VisionCard>
+                  <VisionCardOverlay>
+                    <CardTitle>Our Vision</CardTitle>
+                    <CardContent>
+                      We envision a world where India reclaims its position as Vishwa Guru - the world teacher. 
+                      Where Vedic principles of harmony, sustainability, and spiritual growth guide humanity 
+                      towards a more peaceful, balanced existence in accordance with nature and universal consciousness.
+                    </CardContent>
+                  </VisionCardOverlay>
+                </VisionCard>
+              </MissionVisionCards>
+            </MissionSection>
+          </CirclesBackground>
+
+          <ValuePropositionSection className="animate-section" id="values-section" visible={isVisible['values-section']}>
+            <SectionTitle>Our Core Values</SectionTitle>
+            <ValueGrid>
+              <ValueCard>
+                <ValueIcon>🕉️</ValueIcon>
+                <ValueTitle>Spiritual Growth</ValueTitle>
+                <ValueText>
+                  Fostering personal and collective spiritual development through ancient wisdom and practices
+                </ValueText>
+              </ValueCard>
+              
+              <ValueCard>
+                <ValueIcon>🌿</ValueIcon>
+                <ValueTitle>Environmental Harmony</ValueTitle>
+                <ValueText>
+                  Promoting sustainable living and respect for nature's elements
+                </ValueText>
+              </ValueCard>
+              
+              <ValueCard>
+                <ValueIcon>🤝</ValueIcon>
+                <ValueTitle>Community Service</ValueTitle>
+                <ValueText>
+                  Building stronger communities through selfless service and shared values
+                </ValueText>
+              </ValueCard>
+            </ValueGrid>
+          </ValuePropositionSection>
           
-          <InitiativesTabs>
-            {Object.keys(initiatives).map(key => (
-              <InitiativeTab 
-                key={key}
-                active={activeTab === key}
-                onClick={() => setActiveTab(key)}
-              >
-                <TabIcon>{initiatives[key].icon}</TabIcon>
-                <TabLabel>{key.charAt(0).toUpperCase() + key.slice(1)}</TabLabel>
-              </InitiativeTab>
-            ))}
-          </InitiativesTabs>
-          
-          <InitiativeContent>
-            <InitiativeDetails>
-              <InitiativeTitle>{initiatives[activeTab].title}</InitiativeTitle>
-              <InitiativeDescription>{initiatives[activeTab].description}</InitiativeDescription>
-              <InitiativeStats>
-                {initiatives[activeTab].stats.map((stat, index) => (
-                  <StatItem key={index}>
-                    <StatValue>{stat.value}</StatValue>
-                    <StatLabel>{stat.label}</StatLabel>
-                  </StatItem>
-                ))}
-              </InitiativeStats>
-              <LearnMoreLink to={`/${activeTab}`}>
-                Learn more about {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} <FaArrowRight />
-              </LearnMoreLink>
-            </InitiativeDetails>
-            <InitiativeImage src={initiatives[activeTab].image} alt={initiatives[activeTab].title} />
-          </InitiativeContent>
-        </InitiativesSection>
-        
-        {/* Updated "Preserving The 5 Elements" Section */}
-        <ElementsSection className="animate-section" id="elements-section" visible={isVisible['elements-section']}>
-          <SectionTitle>Preserving The 5 Elements</SectionTitle>
-          <ElementsDescription>
-            Our trust is working to protect and restore the balance of the five natural elements that sustain all life.
-          </ElementsDescription>
-          
-          <ElementsInfographic>
-            <ElementCenterCircle>
-              <ElementCenterIcon>🌍</ElementCenterIcon>
-              <ElementCenterText>पंचतत्व</ElementCenterText>
-            </ElementCenterCircle>
+          <InitiativesSection className="animate-section" id="initiatives-section" visible={isVisible['initiatives-section']}>
+            <SectionTitle>Our 5G Initiative</SectionTitle>
+            <InitiativesDescription>
+              The 5G initiative represents the five pillars of our work, focusing on preserving and reviving ancient wisdom 
+              and practices that benefit all of humanity and our planet.
+            </InitiativesDescription>
             
-            <ElementsGrid>
-              <ElementCard>
-                <ElementIcon style={{backgroundColor: '#AED9E0'}}>💨</ElementIcon>
-                <ElementName>वायु (Air)</ElementName>
-                <ElementDesc>Combating air pollution through tree plantation, awareness campaigns, and sustainable practices</ElementDesc>
-              </ElementCard>
-              
-              <ElementCard>
-                <ElementIcon style={{backgroundColor: '#B8B8D1'}}>✨</ElementIcon>
-                <ElementName>आकाश (Space)</ElementName>
-                <ElementDesc>Reducing noise pollution and electromagnetic contamination to preserve mental peace</ElementDesc>
-              </ElementCard>
-              
-              <ElementCard>
-                <ElementIcon style={{backgroundColor: '#DDB892'}}>🌍</ElementIcon>
-                <ElementName>पृथ्वी (Earth)</ElementName>
-                <ElementDesc>Fighting soil degradation, promoting organic farming, and preventing deforestation</ElementDesc>
-              </ElementCard>
-              
-              <ElementCard>
-                <ElementIcon style={{backgroundColor: '#5EADF0'}}>💧</ElementIcon>
-                <ElementName>जल (Water)</ElementName>
-                <ElementDesc>Preserving water bodies, promoting rainwater harvesting, and preventing water pollution</ElementDesc>
-              </ElementCard>
-              
-              <ElementCard>
-                <ElementIcon style={{backgroundColor: '#F5CAC3'}}>🔥</ElementIcon>
-                <ElementName>अग्नि (Fire)</ElementName>
-                <ElementDesc>Promoting sustainable energy, reducing fossil fuel dependency, and harnessing solar power</ElementDesc>
-              </ElementCard>
-            </ElementsGrid>
-          </ElementsInfographic>
-        </ElementsSection>
-        
-        <TestimonialSection>
-          <SectionTitle>What People Say About Us</SectionTitle>
-          <TestimonialSlider testimonials={testimonials} />
-        </TestimonialSection>
-        
-        <NewsEventsSection className="animate-section" id="news-section" visible={isVisible['news-section']}>
-          <SectionTitle>Latest News & Events</SectionTitle>
+            <InitiativesTabs>
+              {Object.keys(initiatives).map(key => (
+                <InitiativeTab 
+                  key={key}
+                  active={activeTab === key}
+                  onClick={() => setActiveTab(key)}
+                >
+                  <TabIcon>{initiatives[key].icon}</TabIcon>
+                  <TabLabel>{key.charAt(0).toUpperCase() + key.slice(1)}</TabLabel>
+                </InitiativeTab>
+              ))}
+            </InitiativesTabs>
+            
+            <InitiativeContent>
+              <InitiativeDetails>
+                <InitiativeTitle>{initiatives[activeTab].title}</InitiativeTitle>
+                <InitiativeDescription>{initiatives[activeTab].description}</InitiativeDescription>
+                <InitiativeStats>
+                  {initiatives[activeTab].stats.map((stat, index) => (
+                    <StatItem key={index}>
+                      <StatValue>{stat.value}</StatValue>
+                      <StatLabel>{stat.label}</StatLabel>
+                    </StatItem>
+                  ))}
+                </InitiativeStats>
+                <LearnMoreLink to={`/${activeTab}`}>
+                  Learn more about {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} <FaArrowRight />
+                </LearnMoreLink>
+              </InitiativeDetails>
+              <InitiativeImage src={initiatives[activeTab].image} alt={initiatives[activeTab].title} />
+            </InitiativeContent>
+          </InitiativesSection>
           
-          <NewsGrid>
-            <NewsCard>
-              <NewsImage src="https://web-assets.same.dev/1675577225/3977124565.png" alt="News 1" />
-              <NewsDate>March 10, 2025</NewsDate>
-              <NewsTitle>International Yoga Conference Announced</NewsTitle>
-              <NewsExcerpt>
-                Vishwa Guru Bharat is organizing an International Yoga Conference to promote the ancient practice of yoga...
-              </NewsExcerpt>
-              <NewsLink href="#">Read More</NewsLink>
-            </NewsCard>
+          {/* Updated "Preserving The 5 Elements" Section */}
+          <ElementsSection className="animate-section" id="elements-section" visible={isVisible['elements-section']}>
+            <SectionTitle>Preserving The 5 Elements</SectionTitle>
+            <ElementsDescription>
+              Our trust is working to protect and restore the balance of the five natural elements that sustain all life.
+            </ElementsDescription>
             
-            <NewsCard>
-              <NewsImage src="https://web-assets.same.dev/1645611323/2017019684.png" alt="News 2" />
-              <NewsDate>March 5, 2025</NewsDate>
-              <NewsTitle>Ganga Clean-up Drive Reaches Milestone</NewsTitle>
-              <NewsExcerpt>
-                The Ganga initiative reached a significant milestone with the successful completion of its 100th river cleanup drive...
-              </NewsExcerpt>
-              <NewsLink href="#">Read More</NewsLink>
-            </NewsCard>
+            <ElementsInfographic>
+              <ElementCenterCircle>
+                <ElementCenterIcon>🌍</ElementCenterIcon>
+                <ElementCenterText>पंचतत्व</ElementCenterText>
+              </ElementCenterCircle>
+              
+              <ElementsGrid>
+                <ElementCard>
+                  <ElementIcon style={{backgroundColor: '#AED9E0'}}>💨</ElementIcon>
+                  <ElementName>वायु (Air)</ElementName>
+                  <ElementDesc>Combating air pollution through tree plantation, awareness campaigns, and sustainable practices</ElementDesc>
+                </ElementCard>
+                
+                <ElementCard>
+                  <ElementIcon style={{backgroundColor: '#B8B8D1'}}>✨</ElementIcon>
+                  <ElementName>आकाश (Space)</ElementName>
+                  <ElementDesc>Reducing noise pollution and electromagnetic contamination to preserve mental peace</ElementDesc>
+                </ElementCard>
+                
+                <ElementCard>
+                  <ElementIcon style={{backgroundColor: '#DDB892'}}>🌍</ElementIcon>
+                  <ElementName>पृथ्वी (Earth)</ElementName>
+                  <ElementDesc>Fighting soil degradation, promoting organic farming, and preventing deforestation</ElementDesc>
+                </ElementCard>
+                
+                <ElementCard>
+                  <ElementIcon style={{backgroundColor: '#5EADF0'}}>💧</ElementIcon>
+                  <ElementName>जल (Water)</ElementName>
+                  <ElementDesc>Preserving water bodies, promoting rainwater harvesting, and preventing water pollution</ElementDesc>
+                </ElementCard>
+                
+                <ElementCard>
+                  <ElementIcon style={{backgroundColor: '#F5CAC3'}}>🔥</ElementIcon>
+                  <ElementName>अग्नि (Fire)</ElementName>
+                  <ElementDesc>Promoting sustainable energy, reducing fossil fuel dependency, and harnessing solar power</ElementDesc>
+                </ElementCard>
+              </ElementsGrid>
+            </ElementsInfographic>
+          </ElementsSection>
+          
+          <TestimonialSection>
+            <SectionTitle>What People Say About Us</SectionTitle>
+            <TestimonialSlider testimonials={testimonials} />
+          </TestimonialSection>
+          
+          <NewsEventsSection className="animate-section" id="news-section" visible={isVisible['news-section']}>
+            <SectionTitle>Latest News & Events</SectionTitle>
             
-            <NewsCard>
-              <NewsImage src="https://web-assets.same.dev/1306262657/3509351711.png" alt="News 3" />
-              <NewsDate>February 28, 2025</NewsDate>
-              <NewsTitle>New Spiritual Center Opens in Delhi</NewsTitle>
-              <NewsExcerpt>
-                Vishwa Guru Bharat inaugurated a new Spiritual Center in Delhi, offering meditation classes and spiritual guidance...
-              </NewsExcerpt>
-              <NewsLink href="#">Read More</NewsLink>
-            </NewsCard>
-          </NewsGrid>
-        </NewsEventsSection>
-        
-        <CTASection className="animate-section" id="cta-section" visible={isVisible['cta-section']}>
-          <CTAContainer>
-            <CTAContent>
-              <CTATitle>Join Our Mission Today</CTATitle>
-              <CTADescription>
-                Be part of the movement to reestablish India as Vishwa Guru. Together, we can create a more 
-                harmonious, sustainable world guided by timeless wisdom.
-              </CTADescription>
-              <CTAButtons>
-              <PrimaryCTAButton to="/donate">Make a Donation</PrimaryCTAButton>
-              <SecondaryCTAButton to="/register">Become a Pratinidhi</SecondaryCTAButton>
-            </CTAButtons>
-            </CTAContent>
-            <CTAImage src="https://web-assets.same.dev/2691685965/1462887440.png" alt="Join Vishwa Guru Bharat" />
-          </CTAContainer>
-        </CTASection>
-      </div>
+            <NewsGrid>
+              <NewsCard>
+                <NewsImage src="https://web-assets.same.dev/1675577225/3977124565.png" alt="News 1" />
+                <NewsDate>March 10, 2025</NewsDate>
+                <NewsTitle>International Yoga Conference Announced</NewsTitle>
+                <NewsExcerpt>
+                  Vishwa Guru Bharat is organizing an International Yoga Conference to promote the ancient practice of yoga...
+                </NewsExcerpt>
+                <NewsLink href="#">Read More</NewsLink>
+              </NewsCard>
+              
+              <NewsCard>
+                <NewsImage src="https://web-assets.same.dev/1645611323/2017019684.png" alt="News 2" />
+                <NewsDate>March 5, 2025</NewsDate>
+                <NewsTitle>Ganga Clean-up Drive Reaches Milestone</NewsTitle>
+                <NewsExcerpt>
+                  The Ganga initiative reached a significant milestone with the successful completion of its 100th river cleanup drive...
+                </NewsExcerpt>
+                <NewsLink href="#">Read More</NewsLink>
+              </NewsCard>
+              
+              <NewsCard>
+                <NewsImage src="https://web-assets.same.dev/1306262657/3509351711.png" alt="News 3" />
+                <NewsDate>February 28, 2025</NewsDate>
+                <NewsTitle>New Spiritual Center Opens in Delhi</NewsTitle>
+                <NewsExcerpt>
+                  Vishwa Guru Bharat inaugurated a new Spiritual Center in Delhi, offering meditation classes and spiritual guidance...
+                </NewsExcerpt>
+                <NewsLink href="#">Read More</NewsLink>
+              </NewsCard>
+            </NewsGrid>
+          </NewsEventsSection>
+          
+          <CTASection className="animate-section" id="cta-section" visible={isVisible['cta-section']}>
+            <CTAContainer>
+              <CTAContent>
+                <CTATitle>Join Our Mission Today</CTATitle>
+                <CTADescription>
+                  Be part of the movement to reestablish India as Vishwa Guru. Together, we can create a more 
+                  harmonious, sustainable world guided by timeless wisdom.
+                </CTADescription>
+                <CTAButtons>
+                <PrimaryCTAButton to="/donate">Make a Donation</PrimaryCTAButton>
+                <SecondaryCTAButton to="/register">Become a Pratinidhi</SecondaryCTAButton>
+              </CTAButtons>
+              </CTAContent>
+              <CTAImage src="https://web-assets.same.dev/2691685965/1462887440.png" alt="Join Vishwa Guru Bharat" />
+            </CTAContainer>
+          </CTASection>
+        </div>
+      </MainContent>
     </HomeContainer>
   );
 };
@@ -376,17 +406,6 @@ const HomePage = () => {
 //
 // Animations
 //
-const fadeInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -436,15 +455,16 @@ const bounce = keyframes`
 // Styled Components
 //
 const HomeContainer = styled.div`
-  padding-bottom: 0;
-  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 `;
 
 const HeroSection = styled.section`
   height: 100vh;
   position: relative;
   background-color: #000;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -740,28 +760,10 @@ const InfographicLabel = styled.div`
 
 const CirclesBackground = styled.div`
   position: relative;
-  overflow: hidden;
+  width: 100%;
   padding: 40px 0;
-  
-  &:before, &:after {
-    content: '';
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    background-color: rgba(205, 35, 46, 0.05);
-    z-index: -1;
-  }
-  
-  &:before {
-    top: -100px;
-    left: -100px;
-  }
-  
-  &:after {
-    bottom: -100px;
-    right: -100px;
-  }
+  background-color: #fff;
+  z-index: 1;
 `;
 
 const SectionTitle = styled.h2`
@@ -1159,9 +1161,51 @@ const ElementCenterText = styled.div`
 
 const ElementsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 30px;
   width: 100%;
+  
+  /* Desktop view: 2-3 split layout */
+  @media (min-width: 993px) {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: auto auto;
+    
+    /* First row: 2 items centered */
+    & > *:nth-child(1) {
+      grid-column: 2 / span 2;
+    }
+    & > *:nth-child(2) {
+      grid-column: 4 / span 2;
+    }
+    
+    /* Second row: 3 items */
+    & > *:nth-child(3) {
+      grid-column: 1 / span 2;
+    }
+    & > *:nth-child(4) {
+      grid-column: 3 / span 2;
+    }
+    & > *:nth-child(5) {
+      grid-column: 5 / span 2;
+    }
+  }
+  
+  /* Tablet view */
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+    
+    & > *:last-child {
+      grid-column: 1 / -1;
+    }
+  }
+  
+  /* Mobile view */
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+    
+    & > * {
+      grid-column: 1;
+    }
+  }
 `;
 
 const ElementCard = styled.div`
@@ -1411,6 +1455,67 @@ const CTAImage = styled.img`
     width: 100%;
     height: 300px;
   }
+`;
+
+// Add these styled components with your other styled components
+
+const ValuePropositionSection = styled.section`
+  margin: 80px 0;
+  opacity: ${props => props.visible ? 1 : 0};
+  transform: translateY(${props => props.visible ? 0 : '30px'});
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  
+  @media (max-width: 768px) {
+    margin: 60px 0;
+  }
+`;
+
+const ValueGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+`;
+
+const ValueCard = styled.div`
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+`;
+
+const ValueIcon = styled.div`
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+`;
+
+const ValueTitle = styled.h3`
+  font-size: 1.3rem;
+  color: #2b2928;
+  margin-bottom: 15px;
+`;
+
+const ValueText = styled.p`
+  color: #666;
+  line-height: 1.6;
+`;
+
+const PageContainer = styled.div`
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+`;
+
+const MainContent = styled.main`
+  width: 100%;
+  position: relative;
+  background-color: #fff;
 `;
 
 export default HomePage;

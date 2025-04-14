@@ -45,9 +45,19 @@ const VerifyEmail = () => {
       return;
     }
 
+    if (!verificationData || !verificationData.email) {
+      setFormError('Email information is missing. Please try registering again.');
+      return;
+    }
+
     setFormError('');
 
     try {
+      console.log('Submitting verification with:', {
+        email: verificationData.email,
+        otp: otp
+      });
+      
       const result = await verifyEmail(verificationData.email, otp);
       
       if (result.success) {
@@ -61,6 +71,7 @@ const VerifyEmail = () => {
       }
     } catch (err) {
       setFormError('An unexpected error occurred. Please try again.');
+      console.error('Verification error:', err);
     }
   };
 
