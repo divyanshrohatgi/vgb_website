@@ -19,7 +19,7 @@ const upload = require('../utils/uploadConfig');
 const User = require('../models/userModel');
 
 // Public routes
-router.post('/', registerUser);
+router.post('/register', registerUser);
 router.post('/login', authUser);
 router.post('/verify-email', verifyEmail);
 router.post('/resend-otp', resendOTP);

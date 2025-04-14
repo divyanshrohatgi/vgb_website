@@ -1,7 +1,7 @@
 // client/src/pages/about/SankalpPage.jsx
 import React from 'react';
 import styled from 'styled-components';
-import { FaLeaf, FaGraduationCap, FaMeditation, FaFlask } from 'react-icons/fa';
+import { FaLeaf, FaGraduationCap, FaFlask } from 'react-icons/fa';
 
 const SankalpPage = () => {
   return (

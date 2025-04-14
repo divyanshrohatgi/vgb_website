@@ -12,6 +12,7 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: '',
     dateOfBirth: '',
+    gender: '', // Add gender field
     address: {
       street: '',
       city: '',
@@ -21,6 +22,8 @@ const RegisterPage = () => {
     },
     profession: '',
     organization: '',
+    qualification: '', // Add qualification field
+    occupation: '', // Add occupation field
     socialMedia: {
       facebook: '',
       twitter: '',
@@ -76,46 +79,57 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted, validating...');
+    
+    // Update required fields to only include essential fields
+    const requiredFields = {
+      email: 'Email',
+      phone: 'Phone Number',
+      password: 'Password',
+      confirmPassword: 'Confirm Password'
+    };
 
-    // Validate form
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword || !formData.phone) {
-      setFormError('Please fill in all required fields');
+    const missingFields = Object.entries(requiredFields)
+      .filter(([key]) => !formData[key])
+      .map(([_, label]) => label);
+
+    if (missingFields.length > 0) {
+      setFormError(`Please fill in the following required fields: ${missingFields.join(', ')}`);
       return;
     }
 
+    // Validate password match
     if (formData.password !== formData.confirmPassword) {
       setFormError('Passwords do not match');
       return;
     }
 
+    // Validate password length
     if (formData.password.length < 6) {
       setFormError('Password must be at least 6 characters');
       return;
     }
 
-    // Clear form error
-    setFormError('');
-
     try {
       const result = await register(formData);
-      console.log('Registration result:', result);
       
       if (result.success) {
         if (result.requiresVerification) {
-          console.log('Email verification required, redirecting to verification page');
-          navigate('/verify-email', { state: { email: formData.email } });
+          // Redirect to verification page with email
+          navigate('/verify-email', { 
+            state: { 
+              email: formData.email,
+              message: result.message 
+            }
+          });
         } else {
-          console.log('Registration successful, redirecting to profile');
-          navigate('/profile');
+          // If no verification required (shouldn't happen in your case)
+          navigate('/dashboard');
         }
       } else {
-        console.log('Registration failed:', result.message);
-        setFormError(result.message || 'Registration failed. Please try again.');
+        setFormError(result.message);
       }
-    } catch (error) {
-      console.error('Error during registration submission:', error);
-      setFormError('An unexpected error occurred. Please try again.');
+    } catch (err) {
+      setFormError('Registration failed. Please try again.');
     }
   };
 
@@ -142,7 +156,6 @@ const RegisterPage = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your full name"
-                  required
                 />
               </FormGroup>
 
@@ -182,6 +195,36 @@ const RegisterPage = () => {
                   name="dateOfBirth"
                   value={formData.dateOfBirth}
                   onChange={handleChange}
+                />
+              </FormGroup>
+            </FormRow>
+
+            <FormRow>
+              <FormGroup>
+                <FormLabel htmlFor="gender">Gender*</FormLabel>
+                <FormInput
+                  as="select"
+                  id="gender"
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </FormInput>
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel htmlFor="qualification">Qualification*</FormLabel>
+                <FormInput
+                  type="text"
+                  id="qualification"
+                  name="qualification"
+                  value={formData.qualification}
+                  onChange={handleChange}
+                  placeholder="Enter your qualification"
                 />
               </FormGroup>
             </FormRow>
@@ -276,6 +319,20 @@ const RegisterPage = () => {
                   value={formData.organization}
                   onChange={handleChange}
                   placeholder="Enter your organization"
+                />
+              </FormGroup>
+            </FormRow>
+
+            <FormRow>
+              <FormGroup>
+                <FormLabel htmlFor="occupation">Occupation*</FormLabel>
+                <FormInput
+                  type="text"
+                  id="occupation"
+                  name="occupation"
+                  value={formData.occupation}
+                  onChange={handleChange}
+                  placeholder="Enter your occupation"
                 />
               </FormGroup>
             </FormRow>
