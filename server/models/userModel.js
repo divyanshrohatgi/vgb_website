@@ -4,18 +4,9 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = mongoose.Schema(
   {
-    // Personal Information
     name: {
       type: String,
       required: true,
-    },
-    middleName: {
-      type: String,
-      default: '',
-    },
-    familyName: {
-      type: String,
-      default: '',
     },
     email: {
       type: String,
@@ -26,79 +17,28 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
+    company: {
+      type: String,
+      required: true,
+    },
+    profession: {
+      type: String,
+      required: true,
+    },
+    location: {
+      type: String,
+      default: '',
+    },
     phone: {
       type: String,
-      required: true,
-    },
-    gender: {
-      type: String,
-      enum: ['male', 'female', 'other'],
-      required: true,
-    },
-    dateOfBirth: {
-      type: Date,
-      required: true,
-    },
-    
-    // Address Information
-    address: {
-      type: String,
-      required: true,
-    },
-    city: {
-      type: String,
-      required: true,
-    },
-    state: {
-      type: String,
-      required: true,
-    },
-    
-    // Professional Information
-    qualification: {
-      type: String,
-      required: true,
-    },
-    occupation: {
-      type: String,
-      required: true,
-    },
-    designation: {
-      type: String,
       default: '',
     },
-    
-    // Additional Information
-    interests: {
-      type: String,
-      default: '',
-    },
-    profilePhoto: {
-      type: String, // URL to the stored image
-      default: '',
-    },
-    
-    // Social Media Links
-    socialMediaLinks: {
-      facebook: { type: String, default: '' },
-      twitter: { type: String, default: '' },
-      linkedin: { type: String, default: '' },
-      instagram: { type: String, default: '' },
-    },
-    
-    // Privacy Settings
-    privacySettings: {
-      email: { type: Boolean, default: false },
-      phone: { type: Boolean, default: false },
-      dateOfBirth: { type: Boolean, default: false },
-      address: { type: Boolean, default: false },
-      qualification: { type: Boolean, default: false },
-      occupation: { type: Boolean, default: false },
-      designation: { type: Boolean, default: false },
-      socialMediaLinks: { type: Boolean, default: false },
-    },
-    
-    // Membership Information
     membershipStatus: {
       type: String,
       enum: ['pending', 'active', 'expired'],
@@ -107,7 +47,7 @@ const userSchema = mongoose.Schema(
     membershipType: {
       type: String,
       enum: ['BASIC MEMBERSHIP', 'SILVER MEMBERSHIP', 'GOLD MEMBERSHIP'],
-      default: 'BASIC MEMBERSHIP',
+      default: 'BASIC MEMBERSHIP', // CHANGED THIS TO MATCH THE ENUM
     },
     membershipStartDate: {
       type: Date,
@@ -115,13 +55,12 @@ const userSchema = mongoose.Schema(
     membershipEndDate: {
       type: Date,
     },
-    
-    // Security and Verification
     isAdmin: {
       type: Boolean,
       required: true,
       default: false,
     },
+    // Email verification fields
     isEmailVerified: {
       type: Boolean,
       default: false,
@@ -132,14 +71,6 @@ const userSchema = mongoose.Schema(
     emailVerificationOTPExpires: {
       type: Date,
     },
-    resetPasswordToken: {
-      type: String,
-    },
-    resetPasswordExpires: {
-      type: Date,
-    },
-    
-    // Payment History
     paymentHistory: [
       {
         paymentId: {

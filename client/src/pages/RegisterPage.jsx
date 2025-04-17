@@ -8,28 +8,12 @@ const RegisterPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
     password: '',
     confirmPassword: '',
-    dateOfBirth: '',
-    gender: '', // Add gender field
-    address: {
-      street: '',
-      city: '',
-      state: '',
-      country: '',
-      pincode: ''
-    },
+    company: '',
     profession: '',
-    organization: '',
-    qualification: '', // Add qualification field
-    occupation: '', // Add occupation field
-    socialMedia: {
-      facebook: '',
-      twitter: '',
-      linkedin: '',
-      instagram: ''
-    }
+    phone: '',
+    location: ''
   });
 
   const [formError, setFormError] = useState('');
@@ -48,88 +32,70 @@ const RegisterPage = () => {
     // eslint-disable-next-line
   }, [user, navigate]);
 
+  const { name, email, password, confirmPassword, company, profession, phone, location } = formData;
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    
-    if (name.startsWith('address.')) {
-      const addressField = name.split('.')[1];
-      setFormData(prev => ({
-        ...prev,
-        address: {
-          ...prev.address,
-          [addressField]: value
-        }
-      }));
-    } else if (name.startsWith('socialMedia.')) {
-      const socialField = name.split('.')[1];
-      setFormData(prev => ({
-        ...prev,
-        socialMedia: {
-          ...prev.socialMedia,
-          [socialField]: value
-        }
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Update required fields to only include essential fields
-    const requiredFields = {
-      email: 'Email',
-      phone: 'Phone Number',
-      password: 'Password',
-      confirmPassword: 'Confirm Password'
-    };
+    console.log('Form submitted, validating...');
 
-    const missingFields = Object.entries(requiredFields)
-      .filter(([key]) => !formData[key])
-      .map(([_, label]) => label);
-
-    if (missingFields.length > 0) {
-      setFormError(`Please fill in the following required fields: ${missingFields.join(', ')}`);
+    // Validate form
+    if (!name || !email || !password || !confirmPassword || !company || !profession) {
+      setFormError('Please fill in all required fields');
       return;
     }
 
-    // Validate password match
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       setFormError('Passwords do not match');
       return;
     }
 
-    // Validate password length
-    if (formData.password.length < 6) {
+    if (password.length < 6) {
       setFormError('Password must be at least 6 characters');
       return;
     }
 
+    // Clear form error
+    setFormError('');
+
+    // Prepare data for registration
+    const userData = {
+      name,
+      email,
+      password,
+      company,
+      profession,
+      location,
+      phone
+    };
+
+    // Attempt registration
+    console.log('Attempting registration with:', { ...userData, password: '[REDACTED]' });
+    
     try {
-      const result = await register(formData);
+      const result = await register(userData);
+      console.log('Registration result:', result);
       
       if (result.success) {
         if (result.requiresVerification) {
-          // Redirect to verification page with email
-          navigate('/verify-email', { 
-            state: { 
-              email: formData.email,
-              message: result.message 
-            }
-          });
+          // Redirect to verification page if OTP verification is required
+          console.log('Email verification required, redirecting to verification page');
+          navigate('/verify-email');
         } else {
-          // If no verification required (shouldn't happen in your case)
-          navigate('/dashboard');
+          // Direct login if no verification needed (fallback)
+          console.log('Registration successful, redirecting to profile');
+          navigate('/profile');
         }
       } else {
-        setFormError(result.message);
+        console.log('Registration failed:', result.message);
+        setFormError(result.message || 'Registration failed. Please try again.');
       }
-    } catch (err) {
-      setFormError('Registration failed. Please try again.');
+    } catch (error) {
+      console.error('Error during registration submission:', error);
+      setFormError('An unexpected error occurred. Please try again.');
     }
   };
 
@@ -145,7 +111,6 @@ const RegisterPage = () => {
           {(formError || error) && <ErrorMessage>{formError || error}</ErrorMessage>}
 
           <RegisterForm onSubmit={handleSubmit}>
-            <SectionTitle>Personal Information</SectionTitle>
             <FormRow>
               <FormGroup>
                 <FormLabel htmlFor="name">Full Name*</FormLabel>
@@ -153,9 +118,10 @@ const RegisterPage = () => {
                   type="text"
                   id="name"
                   name="name"
-                  value={formData.name}
+                  value={name}
                   onChange={handleChange}
                   placeholder="Enter your full name"
+                  required
                 />
               </FormGroup>
 
@@ -165,7 +131,7 @@ const RegisterPage = () => {
                   type="email"
                   id="email"
                   name="email"
-                  value={formData.email}
+                  value={email}
                   onChange={handleChange}
                   placeholder="Enter your email"
                   required
@@ -175,236 +141,16 @@ const RegisterPage = () => {
 
             <FormRow>
               <FormGroup>
-                <FormLabel htmlFor="phone">Phone Number*</FormLabel>
-                <FormInput
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Enter your phone number"
-                  required
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel htmlFor="dateOfBirth">Date of Birth</FormLabel>
-                <FormInput
-                  type="date"
-                  id="dateOfBirth"
-                  name="dateOfBirth"
-                  value={formData.dateOfBirth}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-            </FormRow>
-
-            <FormRow>
-              <FormGroup>
-                <FormLabel htmlFor="gender">Gender*</FormLabel>
-                <FormInput
-                  as="select"
-                  id="gender"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </FormInput>
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel htmlFor="qualification">Qualification*</FormLabel>
-                <FormInput
-                  type="text"
-                  id="qualification"
-                  name="qualification"
-                  value={formData.qualification}
-                  onChange={handleChange}
-                  placeholder="Enter your qualification"
-                />
-              </FormGroup>
-            </FormRow>
-
-            <SectionTitle>Address Information</SectionTitle>
-            <FormRow>
-              <FormGroup>
-                <FormLabel htmlFor="street">Street Address</FormLabel>
-                <FormInput
-                  type="text"
-                  id="street"
-                  name="address.street"
-                  value={formData.address.street}
-                  onChange={handleChange}
-                  placeholder="Enter street address"
-                />
-              </FormGroup>
-            </FormRow>
-
-            <FormRow>
-              <FormGroup>
-                <FormLabel htmlFor="city">City</FormLabel>
-                <FormInput
-                  type="text"
-                  id="city"
-                  name="address.city"
-                  value={formData.address.city}
-                  onChange={handleChange}
-                  placeholder="Enter city"
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel htmlFor="state">State</FormLabel>
-                <FormInput
-                  type="text"
-                  id="state"
-                  name="address.state"
-                  value={formData.address.state}
-                  onChange={handleChange}
-                  placeholder="Enter state"
-                />
-              </FormGroup>
-            </FormRow>
-
-            <FormRow>
-              <FormGroup>
-                <FormLabel htmlFor="country">Country</FormLabel>
-                <FormInput
-                  type="text"
-                  id="country"
-                  name="address.country"
-                  value={formData.address.country}
-                  onChange={handleChange}
-                  placeholder="Enter country"
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel htmlFor="pincode">Pincode</FormLabel>
-                <FormInput
-                  type="text"
-                  id="pincode"
-                  name="address.pincode"
-                  value={formData.address.pincode}
-                  onChange={handleChange}
-                  placeholder="Enter pincode"
-                />
-              </FormGroup>
-            </FormRow>
-
-            <SectionTitle>Professional Information</SectionTitle>
-            <FormRow>
-              <FormGroup>
-                <FormLabel htmlFor="profession">Profession</FormLabel>
-                <FormInput
-                  type="text"
-                  id="profession"
-                  name="profession"
-                  value={formData.profession}
-                  onChange={handleChange}
-                  placeholder="Enter your profession"
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel htmlFor="organization">Organization</FormLabel>
-                <FormInput
-                  type="text"
-                  id="organization"
-                  name="organization"
-                  value={formData.organization}
-                  onChange={handleChange}
-                  placeholder="Enter your organization"
-                />
-              </FormGroup>
-            </FormRow>
-
-            <FormRow>
-              <FormGroup>
-                <FormLabel htmlFor="occupation">Occupation*</FormLabel>
-                <FormInput
-                  type="text"
-                  id="occupation"
-                  name="occupation"
-                  value={formData.occupation}
-                  onChange={handleChange}
-                  placeholder="Enter your occupation"
-                />
-              </FormGroup>
-            </FormRow>
-
-            <SectionTitle>Social Media (Optional)</SectionTitle>
-            <FormRow>
-              <FormGroup>
-                <FormLabel htmlFor="facebook">Facebook</FormLabel>
-                <FormInput
-                  type="url"
-                  id="facebook"
-                  name="socialMedia.facebook"
-                  value={formData.socialMedia.facebook}
-                  onChange={handleChange}
-                  placeholder="Facebook profile URL"
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel htmlFor="twitter">Twitter</FormLabel>
-                <FormInput
-                  type="url"
-                  id="twitter"
-                  name="socialMedia.twitter"
-                  value={formData.socialMedia.twitter}
-                  onChange={handleChange}
-                  placeholder="Twitter profile URL"
-                />
-              </FormGroup>
-            </FormRow>
-
-            <FormRow>
-              <FormGroup>
-                <FormLabel htmlFor="linkedin">LinkedIn</FormLabel>
-                <FormInput
-                  type="url"
-                  id="linkedin"
-                  name="socialMedia.linkedin"
-                  value={formData.socialMedia.linkedin}
-                  onChange={handleChange}
-                  placeholder="LinkedIn profile URL"
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel htmlFor="instagram">Instagram</FormLabel>
-                <FormInput
-                  type="url"
-                  id="instagram"
-                  name="socialMedia.instagram"
-                  value={formData.socialMedia.instagram}
-                  onChange={handleChange}
-                  placeholder="Instagram profile URL"
-                />
-              </FormGroup>
-            </FormRow>
-
-            <SectionTitle>Security</SectionTitle>
-            <FormRow>
-              <FormGroup>
                 <FormLabel htmlFor="password">Password*</FormLabel>
                 <FormInput
                   type="password"
                   id="password"
                   name="password"
-                  value={formData.password}
+                  value={password}
                   onChange={handleChange}
                   placeholder="Create a password"
                   required
-                  minLength="6"
                 />
-                <FormHint>Minimum 6 characters</FormHint>
               </FormGroup>
 
               <FormGroup>
@@ -413,19 +159,72 @@ const RegisterPage = () => {
                   type="password"
                   id="confirmPassword"
                   name="confirmPassword"
-                  value={formData.confirmPassword}
+                  value={confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirm your password"
                   required
-                  minLength="6"
+                />
+              </FormGroup>
+            </FormRow>
+
+            <FormRow>
+              <FormGroup>
+                <FormLabel htmlFor="company">Company/Business Name*</FormLabel>
+                <FormInput
+                  type="text"
+                  id="company"
+                  name="company"
+                  value={company}
+                  onChange={handleChange}
+                  placeholder="Enter your company name"
+                  required
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel htmlFor="profession">Profession/Industry*</FormLabel>
+                <FormInput
+                  type="text"
+                  id="profession"
+                  name="profession"
+                  value={profession}
+                  onChange={handleChange}
+                  placeholder="Enter your profession"
+                  required
+                />
+              </FormGroup>
+            </FormRow>
+
+            <FormRow>
+              <FormGroup>
+                <FormLabel htmlFor="phone">Phone Number</FormLabel>
+                <FormInput
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={phone}
+                  onChange={handleChange}
+                  placeholder="Enter your phone number"
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel htmlFor="location">Location</FormLabel>
+                <FormInput
+                  type="text"
+                  id="location"
+                  name="location"
+                  value={location}
+                  onChange={handleChange}
+                  placeholder="City, Country"
                 />
               </FormGroup>
             </FormRow>
 
             <TermsText>
-              By creating an account, you agree to our
-              <TermsLink to="/terms"> Terms of Service</TermsLink> and
-              <TermsLink to="/privacy"> Privacy Policy</TermsLink>.
+              By creating an account, you agree to the
+              <TermsLink to="/terms">Terms of Service</TermsLink> and
+              <TermsLink to="/privacy">Privacy Policy</TermsLink>.
             </TermsText>
 
             <SubmitButton type="submit">Create Account</SubmitButton>
@@ -472,14 +271,6 @@ const RegisterLogo = styled.img`
 const RegisterTitle = styled.h1`
   font-size: 1.8rem;
   color: var(--secondary-color, #2b2928);
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 1.2rem;
-  color: var(--secondary-color, #2b2928);
-  margin: 30px 0 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
 `;
 
 const ErrorMessage = styled.div`
@@ -535,21 +326,15 @@ const FormInput = styled.input`
   }
 `;
 
-const FormHint = styled.div`
-  font-size: 0.8rem;
-  color: #666;
-  margin-top: 5px;
-`;
-
 const TermsText = styled.p`
   margin: 20px 0;
   font-size: 0.9rem;
   color: #666;
-  text-align: center;
 `;
 
 const TermsLink = styled(Link)`
   color: var(--primary-color, #cd232e);
+  margin: 0 5px;
   text-decoration: none;
 
   &:hover {

@@ -2,16 +2,6 @@
 import { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Create axios instance with base configuration
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5012',
-  timeout: 10000,
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
 // Create the context
 const AuthContext = createContext();
 
@@ -21,103 +11,75 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [verificationData, setVerificationData] = useState(null);
 
+  // Set axios defaults
+  // Use your actual API base URL
+  axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5011';
+  // Initialize auth state from localStorage on app load
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      if (localStorage.getItem('userToken')) {
+        try {
+          // Set Authorization header for all requests
+          const token = localStorage.getItem('userToken');
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          
+          // Fetch the user profile
+          const res = await axios.get('/api/users/profile');
+          
+          // Update the user state
+          setUser(res.data);
+          console.log('User authenticated from token');
+        } catch (err) {
+          console.error('Error restoring auth state:', err.response?.data?.message || err.message);
+          // Invalid token or expired, remove it
+          localStorage.removeItem('userToken');
+          delete axios.defaults.headers.common['Authorization'];
+        }
+      }
+      
+      // Done checking auth state
+      setLoading(false);
+    };
+
+    checkLoggedIn();
+  }, []);
+
   // Register a new user
   const register = async (userData) => {
     try {
-      setLoading(true);
-      setError(null);
-
-      // Format the address as a string and clean up the data
-      const formattedData = {
-        ...userData,
-        // Convert address object to string
-        address: userData.address ? 
-          `${userData.address.street.trim()}, ${userData.address.city.trim()}, ${userData.address.state.trim()}, ${userData.address.country.trim()}, ${userData.address.pincode.trim()}` 
-          : '',
-        // Ensure other required fields are present
-        gender: userData.gender || '',
-        dateOfBirth: userData.dateOfBirth || '',
-        qualification: userData.qualification || '',
-        // Remove any extra whitespace
-        city: userData.address?.city.trim() || '',
-        state: userData.address?.state.trim() || '',
-      };
-
-      console.log('Sending formatted data:', formattedData);
-
-      const res = await api.post('/api/users/register', formattedData);
-
-      if (res.data && res.data.token) {
-        localStorage.setItem('token', res.data.token);
-        api.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-        setUser(res.data.user);
-        setLoading(false);
-        return { success: true };
-      }
-
-      if (res.data && res.data.requiresVerification) {
-        setVerificationData({
-          email: userData.email,
-          message: res.data.message || 'Please verify your email'
-        });
-        setLoading(false);
-        return { 
-          success: true, 
-          requiresVerification: true,
-          message: res.data.message 
-        };
-      }
-
-      throw new Error('Invalid response from server');
-    } catch (err) {
-      console.error('Registration failed:', err);
-      const errorMessage = err.response?.data?.message || 
-        'Registration failed. Please try again.';
-      setError(errorMessage);
-      setLoading(false);
-      return { 
-        success: false, 
-        message: errorMessage 
-      };
-    }
-  };
-
-  // Login user
-  const login = async (email, password) => {
-    try {
+      // Set loading state
       setLoading(true);
       setError(null);
       
-      console.log('Attempting login for:', email);
+      console.log('Registering new user:', { ...userData, password: '[REDACTED]' });
       
-      // Make API request
-      const res = await api.post('/api/users/login', { email, password });
+      // Make the API request
+      const res = await axios.post('/api/users', userData);
       
-      console.log('Login API response:', res.data);
+      console.log('Registration API response:', res.data);
       
       // Check if email verification is required
       if (res.data && res.data.requiresVerification) {
         setLoading(false);
-        
         // Store verification data for the verification step
         setVerificationData({
-          email: email,
+          email: userData.email,
           message: res.data.message || 'Please verify your email with the OTP sent to your email address.'
         });
         
         return { 
-          success: false, 
+          success: true, 
           requiresVerification: true,
-          message: res.data.message || 'Please verify your email'
+          message: res.data.message || 'Please verify your email with the OTP sent to your email address.'
         };
-      }
-      // Check for valid response with token
+      } 
+      // Check for token (fallback for systems without verification)
       else if (res.data && res.data.token) {
         // Save token to localStorage
         localStorage.setItem('userToken', res.data.token);
         
         // Set Authorization header for future requests
-        api.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         
         // Update user state
         setUser(res.data);
@@ -125,41 +87,23 @@ export const AuthProvider = ({ children }) => {
         
         return { success: true };
       } else {
-        console.error('No token in login response:', res.data);
-        throw new Error('Invalid response from server: No token received');
+        console.error('Unexpected registration response:', res.data);
+        throw new Error('Invalid response from server');
       }
     } catch (err) {
       // Log detailed error information
-      console.error('Login failed:', err);
+      console.error('Registration failed:', err);
       console.error('Error details:', err.response?.data || err.message);
       
       // Set loading and error states
       setLoading(false);
       
       // Extract specific error message from response
-      const errorMessage = err.response?.data?.message || 'Invalid credentials';
+      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
       setError(errorMessage);
       
       return { success: false, message: errorMessage };
     }
-  };
-
-  // Logout user
-  const logout = () => {
-    // Remove token from localStorage
-    localStorage.removeItem('userToken');
-    
-    // Remove Authorization header
-    delete api.defaults.headers.common['Authorization'];
-    
-    // Reset user and error states
-    setUser(null);
-    setError(null);
-    setVerificationData(null);
-    
-    console.log('User logged out');
-    
-    return { success: true };
   };
 
   // Verify email with OTP
@@ -171,7 +115,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Verifying email with OTP:', { email, otp });
       
       // Make API request
-      const res = await api.post('/api/users/verify-email', { 
+      const res = await axios.post('/api/users/verify-email', { 
         email: email,
         otp: otp 
       });
@@ -183,7 +127,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('userToken', res.data.token);
         
         // Set Authorization header for future requests
-        api.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         
         // Update user state
         setUser(res.data);
@@ -219,7 +163,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Resending OTP to:', email);
       
       // Make API request
-      const res = await api.post('/api/users/resend-otp', { email });
+      const res = await axios.post('/api/users/resend-otp', { email });
       
       console.log('Resend OTP response:', res.data);
       
@@ -242,6 +186,86 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Login user
+  const login = async (email, password) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('Attempting login for:', email);
+      
+      // Make API request
+      const res = await axios.post('/api/users/login', { email, password });
+      
+      console.log('Login API response:', res.data);
+      
+      // Check if email verification is required
+      if (res.data && res.data.requiresVerification) {
+        setLoading(false);
+        
+        // Store verification data for the verification step
+        setVerificationData({
+          email: email,
+          message: res.data.message || 'Please verify your email with the OTP sent to your email address.'
+        });
+        
+        return { 
+          success: false, 
+          requiresVerification: true,
+          message: res.data.message || 'Please verify your email'
+        };
+      }
+      // Check for valid response with token
+      else if (res.data && res.data.token) {
+        // Save token to localStorage
+        localStorage.setItem('userToken', res.data.token);
+        
+        // Set Authorization header for future requests
+        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+        
+        // Update user state
+        setUser(res.data);
+        setLoading(false);
+        
+        return { success: true };
+      } else {
+        console.error('No token in login response:', res.data);
+        throw new Error('Invalid response from server: No token received');
+      }
+    } catch (err) {
+      // Log detailed error information
+      console.error('Login failed:', err);
+      console.error('Error details:', err.response?.data || err.message);
+      
+      // Set loading and error states
+      setLoading(false);
+      
+      // Extract specific error message from response
+      const errorMessage = err.response?.data?.message || 'Invalid credentials';
+      setError(errorMessage);
+      
+      return { success: false, message: errorMessage };
+    }
+  };
+
+  // Logout user
+  const logout = () => {
+    // Remove token from localStorage
+    localStorage.removeItem('userToken');
+    
+    // Remove Authorization header
+    delete axios.defaults.headers.common['Authorization'];
+    
+    // Reset user and error states
+    setUser(null);
+    setError(null);
+    setVerificationData(null);
+    
+    console.log('User logged out');
+    
+    return { success: true };
+  };
+
   // Update user profile
   const updateProfile = async (userData) => {
     try {
@@ -251,7 +275,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Updating profile for user');
       
       // Make API request
-      const res = await api.put('/api/users/profile', userData);
+      const res = await axios.put('/api/users/profile', userData);
       
       console.log('Profile update response:', res.data);
       
@@ -302,7 +326,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Updating membership status');
       
       // Make API request
-      const res = await api.put('/api/users/membership', membershipData);
+      const res = await axios.put('/api/users/membership', membershipData);
       
       console.log('Membership update successful');
       
@@ -339,42 +363,23 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   };
 
-  useEffect(() => {
-    const checkLoggedIn = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          const res = await api.get('/api/users/me');
-          setUser(res.data);
-        } catch (err) {
-          localStorage.removeItem('token');
-          delete api.defaults.headers.common['Authorization'];
-        }
-      }
-      setLoading(false);
-    };
-
-    checkLoggedIn();
-  }, []);
-
-  const value = {
-    user,
-    loading,
-    error,
-    verificationData,
-    register,
-    login,
-    logout,
-    verifyEmail,
-    resendOTP,
-    updateProfile,
-    updateMembership,
-    clearError
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        error,
+        verificationData,
+        register,
+        login,
+        logout,
+        verifyEmail,
+        resendOTP,
+        updateProfile,
+        updateMembership,
+        clearError
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

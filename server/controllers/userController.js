@@ -22,22 +22,7 @@ const registerUser = asyncHandler(async (req, res) => {
       password: '[REDACTED]'
     });
 
-    const {
-      name,
-      email,
-      password,
-      phone,
-      gender,
-      dateOfBirth,
-      address,
-      city,
-      state,
-      qualification,
-      occupation,
-      designation,
-      interests,
-      socialMediaLinks
-    } = req.body;
+    const { name, email, password, company, profession, location, phone } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
@@ -56,18 +41,11 @@ const registerUser = asyncHandler(async (req, res) => {
     const user = await User.create({
       name,
       email,
-      password,
-      phone,
-      gender,
-      dateOfBirth,
-      address,
-      city,
-      state,
-      qualification,
-      occupation,
-      designation: designation || '',
-      interests: interests || '',
-      socialMediaLinks: socialMediaLinks || {},
+      password, // This will be hashed by the pre-save middleware
+      company,
+      profession,
+      location: location || '',
+      phone: phone || '',
       membershipStatus: 'pending',
       isEmailVerified: false,
       emailVerificationOTP: otpData.code,
@@ -334,43 +312,28 @@ const authUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get user profile
-// @route   GET /api/users/profile/:id
+// @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.user._id);
 
     if (user) {
-      // Check if the requesting user is the profile owner
-      const isOwner = req.user && req.user._id.toString() === user._id.toString();
-
-      // Return user data with respect to privacy settings
-      const userResponse = {
+      res.json({
         _id: user._id,
         name: user.name,
-        middleName: user.middleName,
-        familyName: user.familyName,
-        email: isOwner || !user.privacySettings.email ? user.email : null,
-        phone: isOwner || !user.privacySettings.phone ? user.phone : null,
-        gender: user.gender,
-        dateOfBirth: isOwner || !user.privacySettings.dateOfBirth ? user.dateOfBirth : null,
-        address: isOwner || !user.privacySettings.address ? user.address : null,
-        city: isOwner || !user.privacySettings.address ? user.city : null,
-        state: isOwner || !user.privacySettings.address ? user.state : null,
-        qualification: isOwner || !user.privacySettings.qualification ? user.qualification : null,
-        occupation: isOwner || !user.privacySettings.occupation ? user.occupation : null,
-        designation: isOwner || !user.privacySettings.designation ? user.designation : null,
-        interests: user.interests,
-        profilePhoto: user.profilePhoto,
-        socialMediaLinks: isOwner || !user.privacySettings.socialMediaLinks ? user.socialMediaLinks : null,
+        email: user.email,
+        company: user.company,
+        profession: user.profession,
+        location: user.location,
+        phone: user.phone,
         membershipStatus: user.membershipStatus,
         membershipType: user.membershipType,
+        membershipStartDate: user.membershipStartDate,
+        membershipEndDate: user.membershipEndDate,
         isAdmin: user.isAdmin,
-        // Only include privacy settings if the user is viewing their own profile
-        ...(isOwner && { privacySettings: user.privacySettings }),
-      };
-
-      res.json(userResponse);
+        isEmailVerified: user.isEmailVerified
+      });
     } else {
       res.status(404);
       throw new Error('User not found');
@@ -391,81 +354,84 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.user.id || req.user._id);
+    const user = await User.findById(req.user._id);
 
     if (user) {
-      // Update basic information
+      // Check if email is being changed
+      const emailChanged = req.body.email && req.body.email !== user.email;
+
       user.name = req.body.name || user.name;
-      user.middleName = req.body.middleName || user.middleName;
-      user.familyName = req.body.familyName || user.familyName;
-      user.email = req.body.email || user.email;
-      user.phone = req.body.phone || user.phone;
-      user.gender = req.body.gender || user.gender;
-      user.dateOfBirth = req.body.dateOfBirth || user.dateOfBirth;
-      
-      // Update address information
-      user.address = req.body.address || user.address;
-      user.city = req.body.city || user.city;
-      user.state = req.body.state || user.state;
-      
-      // Update professional information
-      user.qualification = req.body.qualification || user.qualification;
-      user.occupation = req.body.occupation || user.occupation;
-      user.designation = req.body.designation || user.designation;
-      
-      // Update additional information
-      user.interests = req.body.interests || user.interests;
-      
-      // Update social media links if provided
-      if (req.body.socialMediaLinks) {
-        user.socialMediaLinks = {
-          ...user.socialMediaLinks,
-          ...req.body.socialMediaLinks
-        };
-      }
-      
-      // Update privacy settings if provided
-      if (req.body.privacySettings) {
-        user.privacySettings = {
-          ...user.privacySettings,
-          ...req.body.privacySettings
-        };
+
+      // Handle email change - require verification for new email
+      if (emailChanged) {
+        const newEmail = req.body.email;
+
+        // Check if new email already exists
+        const emailExists = await User.findOne({ email: newEmail });
+        if (emailExists) {
+          res.status(400);
+          throw new Error('Email already in use');
+        }
+
+        // Generate OTP for new email verification
+        const otpData = createOTP();
+        user.email = newEmail;
+        user.isEmailVerified = false;
+        user.emailVerificationOTP = otpData.code;
+        user.emailVerificationOTPExpires = otpData.expiresAt;
+
+        // Send verification email to new address
+        try {
+          await sendOTPEmail(newEmail, otpData.code);
+          console.log('Verification email sent to new email address');
+        } catch (emailError) {
+          console.error('Failed to send verification email to new address:', emailError);
+        }
+      } else {
+        // Keep existing email if not changed
+        user.email = user.email;
       }
 
-      // Update password if provided
+      user.company = req.body.company || user.company;
+      user.profession = req.body.profession || user.profession;
+      user.location = req.body.location || user.location;
+      user.phone = req.body.phone || user.phone;
+
+      // Only update password if it's provided
       if (req.body.password) {
         user.password = req.body.password;
       }
 
       const updatedUser = await user.save();
 
-      // Return user data (since this is the user's own profile, return all data)
-      const userResponse = {
-        _id: updatedUser._id,
-        name: updatedUser.name,
-        middleName: updatedUser.middleName,
-        familyName: updatedUser.familyName,
-        email: updatedUser.email,
-        phone: updatedUser.phone,
-        gender: updatedUser.gender,
-        dateOfBirth: updatedUser.dateOfBirth,
-        address: updatedUser.address,
-        city: updatedUser.city,
-        state: updatedUser.state,
-        qualification: updatedUser.qualification,
-        occupation: updatedUser.occupation,
-        designation: updatedUser.designation,
-        interests: updatedUser.interests,
-        profilePhoto: updatedUser.profilePhoto,
-        socialMediaLinks: updatedUser.socialMediaLinks,
-        membershipStatus: updatedUser.membershipStatus,
-        membershipType: updatedUser.membershipType,
-        isAdmin: updatedUser.isAdmin,
-        privacySettings: updatedUser.privacySettings,
-        token: generateToken(updatedUser._id)
-      };
+      // If email was changed, don't generate a new token until verified
+      if (emailChanged) {
+        res.json({
+          _id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          requiresVerification: true,
+          message: 'Profile updated. Please verify your new email address with the OTP sent to it.'
+        });
+      } else {
+        // Generate token for the updated user
+        const token = generateToken(updatedUser._id);
 
-      res.json(userResponse);
+        res.json({
+          _id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          company: updatedUser.company,
+          profession: updatedUser.profession,
+          location: updatedUser.location,
+          phone: updatedUser.phone,
+          membershipStatus: updatedUser.membershipStatus,
+          membershipType: updatedUser.membershipType,
+          isAdmin: updatedUser.isAdmin,
+          isEmailVerified: updatedUser.isEmailVerified,
+          token: token,
+        });
+      }
     } else {
       res.status(404);
       throw new Error('User not found');
@@ -475,7 +441,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
     res.status(statusCode);
     res.json({
-      message: error.message || 'Profile update failed',
+      message: error.message || 'Failed to update user profile',
       stack: process.env.NODE_ENV === 'production' ? null : error.stack
     });
   }
@@ -571,7 +537,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     console.log('Forgot password request received for email:', email);
     
     // Find user by email
-    const user = await User.findOne({ email }).select('-password');
+    const user = await User.findOne({ email });
     
     if (!user) {
       // For security, don't indicate whether the email exists
@@ -595,10 +561,10 @@ const forgotPassword = asyncHandler(async (req, res) => {
     user.resetPasswordToken = hashedToken;
     user.resetPasswordExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
     
-    // Save without validation since we're only updating reset token fields
-    await user.save({ validateBeforeSave: false });
+    await user.save();
     
     // Create reset URL with the correct frontend URL
+    // Instead of using req.protocol and req.get('host') which gives backend URL
     const frontendDomain = process.env.NODE_ENV === 'production'
       ? `${req.protocol}://${req.get('host')}`
       : 'http://localhost:3000'; // Your React dev server
@@ -619,7 +585,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
       // If email fails, clear the reset token
       user.resetPasswordToken = undefined;
       user.resetPasswordExpires = undefined;
-      await user.save({ validateBeforeSave: false });
+      await user.save();
       
       console.error('Failed to send password reset email:', error);
       res.status(500);
@@ -716,8 +682,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     
-    // Save without validation since we're only updating password fields
-    await user.save({ validateBeforeSave: false });
+    await user.save();
     console.log('Password reset successfully for user:', user._id);
     
     // Send confirmation email
