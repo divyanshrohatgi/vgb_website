@@ -1,8 +1,8 @@
 // src/pages/ForgotPasswordPage.jsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import axios from 'axios';
+import api from '../services/api'; // Import the centralized api instance
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ const ForgotPasswordPage = () => {
     
     try {
       // Send password reset request to backend
-      const response = await axios.post('/api/users/forgot-password', { email });
+      const response = await api.post('/api/users/forgot-password', { email });
       
       // Show success message
       setMessage(response.data.message || 'Password reset instructions have been sent to your email');

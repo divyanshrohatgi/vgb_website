@@ -1,6 +1,6 @@
 // client/src/context/AuthContext.jsx
 import { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api'; // Import the centralized api instance
 
 // Create the context
 const AuthContext = createContext();
@@ -11,20 +11,13 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [verificationData, setVerificationData] = useState(null);
 
-  // Set axios defaults
-  // Use your actual API base URL
-  axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5011';
   // Initialize auth state from localStorage on app load
   useEffect(() => {
     const checkLoggedIn = async () => {
       if (localStorage.getItem('userToken')) {
         try {
-          // Set Authorization header for all requests
-          const token = localStorage.getItem('userToken');
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          
           // Fetch the user profile
-          const res = await axios.get('/api/users/profile');
+          const res = await api.get('/api/users/profile');
           
           // Update the user state
           setUser(res.data);
@@ -33,7 +26,6 @@ export const AuthProvider = ({ children }) => {
           console.error('Error restoring auth state:', err.response?.data?.message || err.message);
           // Invalid token or expired, remove it
           localStorage.removeItem('userToken');
-          delete axios.defaults.headers.common['Authorization'];
         }
       }
       
@@ -54,7 +46,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Registering new user:', { ...userData, password: '[REDACTED]' });
       
       // Make the API request
-      const res = await axios.post('/api/users', userData);
+      const res = await api.post('/api/users', userData);
       
       console.log('Registration API response:', res.data);
       
@@ -77,9 +69,6 @@ export const AuthProvider = ({ children }) => {
       else if (res.data && res.data.token) {
         // Save token to localStorage
         localStorage.setItem('userToken', res.data.token);
-        
-        // Set Authorization header for future requests
-        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         
         // Update user state
         setUser(res.data);
@@ -115,7 +104,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Verifying email with OTP:', { email, otp });
       
       // Make API request
-      const res = await axios.post('/api/users/verify-email', { 
+      const res = await api.post('/api/users/verify-email', { 
         email: email,
         otp: otp 
       });
@@ -125,9 +114,6 @@ export const AuthProvider = ({ children }) => {
       if (res.data && res.data.token) {
         // Save token to localStorage
         localStorage.setItem('userToken', res.data.token);
-        
-        // Set Authorization header for future requests
-        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         
         // Update user state
         setUser(res.data);
@@ -163,7 +149,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Resending OTP to:', email);
       
       // Make API request
-      const res = await axios.post('/api/users/resend-otp', { email });
+      const res = await api.post('/api/users/resend-otp', { email });
       
       console.log('Resend OTP response:', res.data);
       
@@ -195,7 +181,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Attempting login for:', email);
       
       // Make API request
-      const res = await axios.post('/api/users/login', { email, password });
+      const res = await api.post('/api/users/login', { email, password });
       
       console.log('Login API response:', res.data);
       
@@ -219,9 +205,6 @@ export const AuthProvider = ({ children }) => {
       else if (res.data && res.data.token) {
         // Save token to localStorage
         localStorage.setItem('userToken', res.data.token);
-        
-        // Set Authorization header for future requests
-        axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
         
         // Update user state
         setUser(res.data);
@@ -253,9 +236,6 @@ export const AuthProvider = ({ children }) => {
     // Remove token from localStorage
     localStorage.removeItem('userToken');
     
-    // Remove Authorization header
-    delete axios.defaults.headers.common['Authorization'];
-    
     // Reset user and error states
     setUser(null);
     setError(null);
@@ -275,7 +255,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Updating profile for user');
       
       // Make API request
-      const res = await axios.put('/api/users/profile', userData);
+      const res = await api.put('/api/users/profile', userData);
       
       console.log('Profile update response:', res.data);
       
@@ -326,7 +306,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Updating membership status');
       
       // Make API request
-      const res = await axios.put('/api/users/membership', membershipData);
+      const res = await api.put('/api/users/membership', membershipData);
       
       console.log('Membership update successful');
       

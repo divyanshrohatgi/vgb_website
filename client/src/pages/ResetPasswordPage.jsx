@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import axios from 'axios';
+import api from '../services/api'; // Import the centralized api instance
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState('');
@@ -20,7 +20,7 @@ const ResetPasswordPage = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        await axios.get(`/api/users/reset-password/${token}`);
+        await api.get(`/api/users/reset-password/${token}`);
         setIsTokenValid(true);
       } catch (err) {
         setError('This password reset link is invalid or has expired.');
@@ -52,7 +52,7 @@ const ResetPasswordPage = () => {
     
     try {
       // Reset password through API
-      const response = await axios.post(`/api/users/reset-password/${token}`, {
+      const response = await api.post(`/api/users/reset-password/${token}`, {
         password
       });
       
