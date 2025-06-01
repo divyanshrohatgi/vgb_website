@@ -1,6 +1,6 @@
-# Vishwa Guru Bharat Website
+# VGB Website
 
-A modern, responsive website for Vishwa Guru Bharat, dedicated to promoting India's ancient Vedic wisdom and Sanatan culture globally.
+A modern, responsive website for VGB .
 
 ## 🌟 Features
 
