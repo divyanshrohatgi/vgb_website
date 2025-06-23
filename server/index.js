@@ -28,7 +28,7 @@ require('fs').mkdirSync(uploadsDir, { recursive: true });
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
-// Debug middleware for all routes
+// Debug middleware
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
   next();
@@ -36,19 +36,16 @@ app.use((req, res, next) => {
 
 // Connect to MongoDB
 try {
-  // Check JWT_SECRET is set
   if (!process.env.JWT_SECRET) {
     console.warn('WARNING: JWT_SECRET is not defined in environment variables');
   }
-  
-  // Check email configuration
+
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.warn('WARNING: Email configuration (EMAIL_USER, EMAIL_PASS) is not set or incomplete');
   } else {
     console.log('Email configuration found');
   }
 
-  // Connect to MongoDB
   if (process.env.MONGO_URI) {
     connectDB();
   } else {
@@ -58,12 +55,17 @@ try {
   console.error('Error during startup:', error);
 }
 
-// Routes
+// API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/contact', contactRoutes);
 
-// Error handling
+// Root route for health check or default landing
+app.get('/', (req, res) => {
+  res.send('API is running');
+});
+
+// Error handling middleware
 app.use(notFound);
 app.use(errorHandler);
 
@@ -74,7 +76,7 @@ app.listen(PORT, () => {
   console.log(`API base URL: http://localhost:${PORT}/api`);
 });
 
-// Handle uncaught exceptions to prevent server crashes
+// Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
 });
