@@ -1,7 +1,7 @@
 {
-  "name": "bni-clone",
+  "name": "vgb-website",
   "version": "1.0.0",
-  "description": "BNI website clone using MERN stack",
+  "description": "A modern VGB website built using the MERN stack",
   "main": "index.js",
   "scripts": {
     "start": "node server/index.js",
