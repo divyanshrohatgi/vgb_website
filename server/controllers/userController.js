@@ -565,11 +565,12 @@ const forgotPassword = asyncHandler(async (req, res) => {
     
     // Create reset URL with the correct frontend URL
     // Instead of using req.protocol and req.get('host') which gives backend URL
-    const frontendDomain = process.env.NODE_ENV === 'production'
-      ? `${req.protocol}://${req.get('host')}`
-      : 'http://localhost:3000'; // Your React dev server
-    
-    const resetUrl = `${frontendDomain}/reset-password/${resetToken}`;
+   const frontendDomain = process.env.NODE_ENV === 'production'
+  ? 'https://vgb-website-n6s4.vercel.app'
+  : 'http://localhost:3000';
+
+const resetUrl = `${frontendDomain}/reset-password/${resetToken}`;
+
     
     console.log('Reset URL generated:', resetUrl);
     
@@ -774,7 +775,7 @@ const processDonation = asyncHandler(async (req, res) => {
     res.json({
       success: false,
       message: error.message || 'Failed to process donation',
-      stack: process.env.NODE_ENV === 'production' ? null : error.stack
+      stack: processa.env.NODE_ENV === 'production' ? null : error.stack
     });
   }
 });
