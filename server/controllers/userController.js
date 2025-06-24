@@ -775,7 +775,7 @@ const processDonation = asyncHandler(async (req, res) => {
     res.json({
       success: false,
       message: error.message || 'Failed to process donation',
-      stack: processa.env.NODE_ENV === 'production' ? null : error.stack
+      stack: process.env.NODE_ENV === 'production' ? null : error.stack
     });
   }
 });
