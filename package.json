@@ -1,7 +1,7 @@
 {
-  "name": "bni-clone",
+  "name": "vgb-website",
   "version": "1.0.0",
-  "description": "BNI website clone using MERN stack",
+  "description": "A modern VGB website built using the MERN stack",
   "main": "index.js",
   "scripts": {
     "start": "node server/index.js",
@@ -26,5 +26,8 @@
     "concurrently": "^8.2.2",
     "react-icons": "^5.5.0",
     "styled-components": "^6.1.15"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
   }
 }

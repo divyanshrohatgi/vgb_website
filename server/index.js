@@ -11,9 +11,16 @@ const contactRoutes = require('./routes/contactRoutes');
 // Initialize Express app
 const app = express();
 
+// Prepare CORS origin list with trailing slashes removed
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  process.env.CLIENT_URL?.replace(/\/$/, '')
+].filter(Boolean);
+
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173', process.env.CLIENT_URL].filter(Boolean),
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -21,14 +28,14 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Create uploads directory if it doesn't exist
+// Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'public', 'uploads');
 require('fs').mkdirSync(uploadsDir, { recursive: true });
 
-// Serve static files from the uploads directory
-app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+// Serve static files from uploads
+app.use('/uploads', express.static(uploadsDir));
 
-// Debug middleware for all routes
+// Debug logging middleware
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
   next();
@@ -36,29 +43,26 @@ app.use((req, res, next) => {
 
 // Connect to MongoDB
 try {
-  // Check JWT_SECRET is set
   if (!process.env.JWT_SECRET) {
     console.warn('WARNING: JWT_SECRET is not defined in environment variables');
   }
-  
-  // Check email configuration
+
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.warn('WARNING: Email configuration (EMAIL_USER, EMAIL_PASS) is not set or incomplete');
+    console.warn('WARNING: Email configuration is missing or incomplete');
   } else {
     console.log('Email configuration found');
   }
 
-  // Connect to MongoDB
   if (process.env.MONGO_URI) {
     connectDB();
   } else {
-    console.warn('WARNING: MONGO_URI not set, skipping database connection');
+    console.warn('WARNING: MONGO_URI not set, skipping DB connection');
   }
 } catch (error) {
   console.error('Error during startup:', error);
 }
 
-// Routes
+// Define routes
 app.use('/api/users', userRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/contact', contactRoutes);
@@ -74,7 +78,7 @@ app.listen(PORT, () => {
   console.log(`API base URL: http://localhost:${PORT}/api`);
 });
 
-// Handle uncaught exceptions to prevent server crashes
+// Global error handlers
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
 });

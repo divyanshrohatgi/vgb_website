@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
-
-// Create configured axios instance with baseURL from environment variables
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5012',
-  timeout: 15000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+import api from '../services/api';
 
 const RazorpayPaymentForm = ({
   amount,
