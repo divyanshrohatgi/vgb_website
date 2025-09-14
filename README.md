@@ -1,5 +1,6 @@
 
-A modern, responsive website for my client VGB foundation
+
+A modern, responsive website for my VGB foundation
 
 ## 🌟 Features
 
