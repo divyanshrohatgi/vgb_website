@@ -4,7 +4,7 @@ A modern, responsive website for my VGB foundation
 
 ## 🌟 Features
 
-- **User Authentication**
+- **User Authentication** 
   - Secure login and registration system
   - Email verification
   - Password reset functionality
